@@ -36,7 +36,7 @@ describe("TextBoxSearch", () => {
 
     it("renders with the specified placeholder", () => {
         const newSearchProps: TextBoxSearchProps = {
-            defaultQuery: "query",
+            defaultQuery: "",
             onTextChange:  jasmine.any(Function) as any,
             placeholder: "search"
         };
@@ -48,7 +48,7 @@ describe("TextBoxSearch", () => {
                     className: "form-control",
                     onChange: jasmine.any(Function) as any,
                     placeholder: textSearchProps.placeholder,
-                    value: ""
+                    value: textSearchProps.defaultQuery
                 }),
                 createElement("button", { className: "btn-transparent" },
                     createElement("span", { className: "glyphicon glyphicon-remove" })
@@ -83,8 +83,6 @@ describe("TextBoxSearch", () => {
                 placeholder: "search"
             };
             const searchBar = renderSearchBar(newSearchProps);
-            const textSearchInstance = searchBar.instance() as any;
-            textSearchInstance.componentDidMount();
 
             expect(searchBar.state().query).toEqual("Birds");
         });

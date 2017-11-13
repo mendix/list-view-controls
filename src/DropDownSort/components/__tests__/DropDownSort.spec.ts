@@ -2,7 +2,7 @@ import { shallow } from "enzyme";
 import { createElement } from "react";
 
 import { DropDown, DropDownProps } from "../DropDownSort";
-import { OptionHTMLAttributesType, createOptionProps, parseStyle } from "../../utils/ContainerUtils";
+import { OptionHTMLAttributesType, createOptionProps } from "../../utils/ContainerUtils";
 
 describe("Dropdown", () => {
 
@@ -15,7 +15,7 @@ describe("Dropdown", () => {
             { caption: "Name Desc", name: "Name", defaultSelected: false, sort: "desc" },
             { caption: "Code Desc", name: "Code", defaultSelected: false, sort: "desc" }
         ]),
-        style: parseStyle("html{}")
+        style: {}
     };
 
     const createOptions = (props: DropDownProps) => {
@@ -57,7 +57,7 @@ describe("Dropdown", () => {
         const wrapper = renderDropdown(props);
         const option = wrapper.find("select");
 
-        expect(option.prop("value")).toBe("Name-0");
+        expect(option.prop("value")).toBe("Name-1");
     });
 
     describe("select", () => {
