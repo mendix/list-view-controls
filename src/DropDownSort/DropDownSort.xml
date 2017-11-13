@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.DropDownSort" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Drop down sort</name>
+    <description>Sort Mendix list views using a single-field sort</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAatJREFUKBWNUr9rwmAQvcQoDrZZdHKrpUM6uBYcLO3u4OrmIF1FKHHSTSy4J6uD/4GOpThlt0iRDk6CIGhw8Xd672hCaCs0cLm7d+/d3ffxKXTmazab11x6YHvl+PMvmvoXCOHhcHhsNBo2/HejX1TFNM0rz/PuuHIRrrZaLYtxUhSF6vX6U7jG8Zpxh2q1Wmk2m73zBC9s+/3e8y2MIwYfOm23210mk8lbBn80P5+CDx3Eyul0ouPxSMPhkBaLBWmaRoVCIVB3u12JE4kEFYtFiaHTeLVAnMvlpGDbtjTz1aVSiSaTCc3nc8FxD9Cp6ICpsF6vR5Zl0Wq1krzdbovHNv1+n7LZrOTgQqduNptg8mg0onK5HIir1aqQB4MB5fN5isfjkuOY0Gnb7TYQp1IpwjRVVWXNTCYjm2Nlx3Ek7nQ6FIlECDotPLlSqfjHFI/18PFbEI8fMH+yulwu19Pp9CMajcot46ZhIPnmY/DggQ+dkk6nb7jTPd+gHrTnYDwev7iuS7quk2EYz+EavzyXj/YWxoI4FosZbCZ39+CRB8V/BgZ3x2HPCr8AF+ww9afJbZkAAAAASUVORK5CYII=</icon>
+    <properties>
+        <property key="entity" type="entity">
+            <caption>List view with entity</caption>
+            <category>Data source</category>
+            <description/>
+        </property>
+        <property key="sortAttributes" type="object" isList="true" required="false">
+            <caption>Sort options</caption>
+            <category>General</category>
+            <description></description>
+            <properties>
+                <property key="caption" type="translatableString">
+                    <caption>Caption</caption>
+                    <category>Attribute</category>
+                    <description></description>
+                </property>
+                <property key="name" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="../entity">
+                    <caption>Attribute</caption>
+                    <category>Attribute</category>
+                    <description>Attribute to sort the list view</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Decimal"/>
+                        <attributeType name="Boolean"/>
+                        <attributeType name="DateTime"/>
+                        <attributeType name="Enum"/>
+                        <attributeType name="Long"/>
+                    </attributeTypes>
+                </property>
+                <property key="sort" type="enumeration" defaultValue="asc">
+                    <caption>Sort</caption>
+                    <category>Attribute</category>
+                    <description></description>
+                    <enumerationValues>
+                        <enumerationValue key="asc">Ascending</enumerationValue>
+                        <enumerationValue key="desc">Descending</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="defaultSelected" type="boolean" defaultValue="false">
+                    <caption>Default selected</caption>
+                    <category>Attribute</category>
+                    <description>if non is selected or other attributes are set to true, the widget will select the first</description>
+                </property>
+            </properties>
+        </property>
+    </properties>
+</widget>
