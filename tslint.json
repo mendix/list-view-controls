@@ -98,6 +98,7 @@
       "no-sparse-arrays": true,
       "no-regex-spaces": true,
       "no-invalid-regexp": true,
+      "no-implicit-dependencies": false,
       "valid-typeof": true,
       "array-bracket-spacing": [
         true,

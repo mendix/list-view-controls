@@ -83,8 +83,8 @@ describe("TextBoxSearch", () => {
                 placeholder: "search"
             };
             const searchBar = renderSearchBar(newSearchProps);
-            const textSearxhInstance = searchBar.instance() as any;
-            textSearxhInstance.componentDidMount();
+            const textSearchInstance = searchBar.instance() as any;
+            textSearchInstance.componentDidMount();
 
             expect(searchBar.state().query).toEqual("Birds");
         });
