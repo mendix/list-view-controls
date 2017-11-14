@@ -1,6 +1,4 @@
-import { Component, FormEvent, ReactElement, createElement } from "react";
-
-import { OptionHTMLAttributesType } from "../utils/ContainerUtils";
+import { Component, FormEvent, OptionHTMLAttributes, ReactElement, createElement } from "react";
 import { AttributeType } from "./DropDownSortContainer";
 
 export interface DropDownOptionType extends AttributeType {
@@ -9,7 +7,7 @@ export interface DropDownOptionType extends AttributeType {
 
 export interface DropDownProps {
     onDropDownChangeAction?: (attribute: string, order: string) => void;
-    options: DropDownOptionType[];
+    sortAttributes: AttributeType[];
     style: object;
 }
 
@@ -17,7 +15,10 @@ export interface DropdownState {
     value: string;
 }
 
+export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptionElement> { key: string; }
+
 export class DropDown extends Component<DropDownProps, DropdownState> {
+    private options: DropDownOptionType[] = [];
     constructor(props: DropDownProps) {
         super(props);
 
@@ -26,7 +27,6 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
         this.handleChange = this.handleChange.bind(this);
         this.renderOptions = this.renderOptions.bind(this);
         this.callOnChangeAction = this.callOnChangeAction.bind(this);
-
     }
 
     componentWillReceiveProps(newProps: DropDownProps) {
@@ -48,17 +48,18 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
     }
 
     private getDefaultValue(props: DropDownProps): string {
-        const defaultOption = props.options.filter(option => option.defaultSelected)[0];
+        this.options = this.createOptionProps(props.sortAttributes);
+        const defaultOption = this.options.filter(option => option.defaultSelected)[0];
 
         if (defaultOption) {
             return defaultOption.value;
         }
 
-        return props.options[0].value;
+        return this.options[0].value;
     }
 
     private renderOptions(): Array<ReactElement<{}>> {
-        return this.props.options.map((optionObject) => {
+        return this.options.map((optionObject) => {
             const { caption, value } = optionObject;
 
             const optionValue: OptionHTMLAttributesType = {
@@ -81,11 +82,19 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
     }
 
     private callOnChangeAction(value: string) {
-        const options = this.props.options.filter((optionFilter => optionFilter.value === value));
-        const option = options.pop();
+        const option = this.options.filter((optionFilter => optionFilter.value === value))[0];
 
         if (option && this.props.onDropDownChangeAction) {
             this.props.onDropDownChangeAction(option.name, option.sort);
         }
+    }
+
+    private createOptionProps(sortAttributes: AttributeType[]): DropDownOptionType[] {
+        return sortAttributes.map((optionObject, index) => {
+            const { name, caption, defaultSelected, sort } = optionObject;
+            const value = `${name}-${index}`;
+
+            return { name, caption, defaultSelected, sort, value };
+        });
     }
 }

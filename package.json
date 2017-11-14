@@ -100,7 +100,6 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
-    "classnames": "^2.2.5",
-    "mendix-data-source-helper": "^0.1.2-rc2"
+    "classnames": "^2.2.5"
   }
 }

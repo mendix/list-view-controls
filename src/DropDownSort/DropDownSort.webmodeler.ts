@@ -1,8 +1,10 @@
 import { Component, createElement } from "react";
 
-import { Alert } from "./components/Alert";
+import { Alert } from "../Shared/components/Alert";
+import { SharedUtils } from "../Shared/SharedUtils";
+import { Validate } from "./Validate";
+
 import { DropDown } from "./components/DropDownSort";
-import { Utils, createOptionProps, parseStyle } from "./utils/ContainerUtils";
 import { ContainerProps } from "./components/DropDownSortContainer";
 
 declare function require(name: string): string;
@@ -19,14 +21,14 @@ export class preview extends Component<ContainerProps, {}> {
             this.renderAlert(),
             createElement(DropDown, {
                 onDropDownChangeAction: () => { return; },
-                options: createOptionProps(this.props.sortAttributes),
-                style: parseStyle(this.props.style)
+                sortAttributes: this.props.sortAttributes,
+                style: SharedUtils.parseStyle(this.props.style)
             })
         );
     }
 
     private renderAlert() {
-        const message = Utils.validateProps({
+        const message = Validate.validateProps({
             ...this.props as ContainerProps
         });
 

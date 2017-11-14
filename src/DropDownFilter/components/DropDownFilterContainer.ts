@@ -1,14 +1,15 @@
 import { Component, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
-
-import { Alert } from "./Alert";
-import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
-import { Utils, parseStyle } from "../utils/ContainerUtils";
-import { DataSourceHelper, ListView } from "mendix-data-source-helper";
-
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
+
+import { Alert } from "../../Shared/components/Alert";
+import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils } from "../../Shared/SharedUtils";
+
+import { Validate } from "../Validate";
+import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 
 interface WrapperProps {
     class: string;
@@ -36,27 +37,31 @@ export type filterOptions = "none" | "attribute" | "XPath";
 
 export interface ContainerState {
     alertMessage?: string;
-    listviewAvailable: boolean;
+    listViewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
+    private navigationHandler: object;
 
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listviewAvailable: false, alertMessage: Utils.validateProps(this.props) };
+        this.state = {
+            alertMessage: Validate.validateProps(this.props),
+            listViewAvailable: false
+        };
+
         this.applyFilter = this.applyFilter.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render time
-        this.connectToListView = this.connectToListView.bind(this);
-        dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView);
+        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
     componentDidMount() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(filterNode);
+        const targetNode = SharedUtils.findTargetNode(filterNode);
         if (targetNode) {
             DataSourceHelper.hideContent(targetNode);
         }
@@ -66,7 +71,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return createElement("div",
             {
                 className: classNames("widget-drop-down-filter", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(),
             this.renderDropDownFilter()
@@ -74,11 +79,15 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listviewAvailable
-                && (!prevState.listviewAvailable || prevProps.mxObject !== this.props.mxObject)) {
+        if (this.state.listViewAvailable
+                && (!prevState.listViewAvailable || prevProps.mxObject !== this.props.mxObject)) {
             const selectedFilter = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
             this.applyFilter(selectedFilter);
         }
+    }
+
+    componentWillUnmount() {
+        dojoConnect.disconnect(this.navigationHandler);
     }
 
     private renderAlert() {
@@ -130,7 +139,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private connectToListView() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(filterNode);
+        const targetNode = SharedUtils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
         let errorMessage = "";
 
@@ -145,14 +154,15 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             }
         }
 
-        const validationMessage = Utils.validateCompatibility({
-            ...this.props as ContainerProps,
+        const validationMessage = SharedUtils.validateCompatibility({
+            friendlyId: this.props.friendlyId,
+            listViewEntity: this.props.entity,
             targetListView
         });
 
         this.setState({
             alertMessage: validationMessage || errorMessage,
-            listviewAvailable: !!targetListView,
+            listViewAvailable: !!targetListView,
             targetListView,
             targetNode
         });

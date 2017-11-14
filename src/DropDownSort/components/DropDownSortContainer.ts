@@ -4,10 +4,12 @@ import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 
-import { Alert } from "./Alert";
+import { Alert } from "../../Shared/components/Alert";
+import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils } from "../../Shared/SharedUtils";
+
 import { DropDown, DropDownProps } from "./DropDownSort";
-import { Utils, createOptionProps, parseStyle } from "../utils/ContainerUtils";
-import { DataSourceHelper, ListView } from "mendix-data-source-helper";
+import { Validate } from "../Validate";
 
 import "../ui/DropDownSort.scss";
 
@@ -46,7 +48,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         super(props);
 
         this.state = {
-            alertMessage: Utils.validateProps(this.props),
+            alertMessage: Validate.validateProps(this.props),
             listViewAvailable: false
         };
         this.updateSort = this.updateSort.bind(this);
@@ -56,7 +58,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     render() {
         return createElement("div", {
                 className: classNames("widget-drop-down-sort", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
@@ -69,7 +71,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     componentDidMount() {
         const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(queryNode) as HTMLElement;
+        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
 
         if (targetNode) {
             DataSourceHelper.hideContent(targetNode);
@@ -79,6 +81,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
             const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
+
             if (selectedSort) {
                 this.updateSort(selectedSort.name, selectedSort.sort);
             }
@@ -93,8 +96,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         if (!this.state.alertMessage) {
             return createElement(DropDown, {
                 onDropDownChangeAction: this.updateSort,
-                options: createOptionProps(this.props.sortAttributes),
-                style: parseStyle(this.props.style)
+                sortAttributes: this.props.sortAttributes,
+                style: SharedUtils.parseStyle(this.props.style)
             });
         }
 
@@ -103,7 +106,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     private connectToListView() {
         const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(queryNode) as HTMLElement;
+        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
         let targetListView: ListView | null = null;
         let errorMessage = "";
 
@@ -118,8 +121,9 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
             }
         }
 
-        const validationMessage = Utils.validateCompatibility({
-            ...this.props as ContainerProps,
+        const validationMessage = SharedUtils.validateCompatibility({
+            friendlyId: this.props.friendlyId,
+            listViewEntity: this.props.entity,
             targetListView
         });
 

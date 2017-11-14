@@ -1,8 +1,7 @@
-import { shallow } from "enzyme";
 import { createElement } from "react";
+import { shallow } from "enzyme";
 
-import { DropDown, DropDownProps } from "../DropDownSort";
-import { OptionHTMLAttributesType, createOptionProps } from "../../utils/ContainerUtils";
+import { DropDown, DropDownProps, OptionHTMLAttributesType } from "../DropDownSort";
 
 describe("Dropdown", () => {
 
@@ -10,17 +9,18 @@ describe("Dropdown", () => {
 
     const dropDownProps: DropDownProps = {
         onDropDownChangeAction: () => jasmine.any(Function) as any,
-        options: createOptionProps([
+        sortAttributes: [
             { caption: "Name Asc", name: "Name", defaultSelected: true, sort: "asc" },
             { caption: "Name Desc", name: "Name", defaultSelected: false, sort: "desc" },
             { caption: "Code Desc", name: "Code", defaultSelected: false, sort: "desc" }
-        ]),
+        ],
         style: {}
     };
 
     const createOptions = (props: DropDownProps) => {
-        return props.options.map((optionObject) => {
-            const { caption, value } = optionObject;
+        return props.sortAttributes.map((option, index) => {
+            const { caption } = option;
+            const value = `${option.name}-${index}`;
             const optionValue: OptionHTMLAttributesType = {
                 className: "",
                 key: value,
@@ -48,10 +48,10 @@ describe("Dropdown", () => {
     it("renders with the specified default sort", () => {
         const props: DropDownProps = {
             ...dropDownProps,
-            options: createOptionProps([
+            sortAttributes: [
                 { caption: "Name Asc", name: "Name", defaultSelected: false, sort: "asc" },
                 { caption: "Name Desc", name: "Name", defaultSelected: true, sort: "desc" }
-            ])
+            ]
         };
 
         const wrapper = renderDropdown(props);

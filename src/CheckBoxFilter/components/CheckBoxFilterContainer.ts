@@ -4,10 +4,11 @@ import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 
-import { Alert, AlertProps } from "./Alert";
+import { Alert, AlertProps } from "../../Shared/components/Alert";
+import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils } from "../../Shared/SharedUtils";
 import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
-import { Utils, parseStyle } from "../utils/ContainerUtils";
-import { DataSourceHelper, ListView } from "mendix-data-source-helper";
+import { Validate } from "../Validate";
 
 interface WrapperProps {
     class: string;
@@ -54,19 +55,19 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listViewAvailable: false, alertMessage: Utils.validateProps(props) };
+        this.state = { listViewAvailable: false, alertMessage: Validate.validateProps(props) };
         this.applyFilter = this.applyFilter.bind(this);
         // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render timing
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
     render() {
-        const errorMessage = this.state.alertMessage || Utils.validateProps(this.props);
+        const errorMessage = this.state.alertMessage || Validate.validateProps(this.props);
 
         return createElement("div",
             {
                 className: classNames("widget-checkbox-filter", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(errorMessage),
             this.renderCheckBoxFilter(errorMessage)
@@ -75,7 +76,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     componentDidMount() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(filterNode);
+        const targetNode = SharedUtils.findTargetNode(filterNode);
 
         if (targetNode) {
             DataSourceHelper.hideContent(targetNode);
@@ -170,7 +171,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     private connectToListView() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(filterNode);
+        const targetNode = SharedUtils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
         let errorMessage = "";
 
@@ -185,8 +186,9 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             }
         }
 
-        const validationMessage = Utils.validateCompatibility({
-            ...this.props as ContainerProps,
+        const validationMessage = SharedUtils.validateCompatibility({
+            friendlyId: this.props.friendlyId,
+            listViewEntity: this.props.listViewEntity,
             targetListView
         });
 

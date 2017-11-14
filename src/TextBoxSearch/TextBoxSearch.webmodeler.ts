@@ -1,11 +1,13 @@
 import { Component, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
-import { Alert } from "./components/Alert";
+
+import { Alert } from "../Shared/components/Alert";
+import { SharedUtils } from "../Shared/SharedUtils";
+import { Validate } from "./Validate";
 
 import { TextBoxSearch } from "./components/TextBoxSearch";
 import { ContainerProps, ContainerState } from "./components/TextBoxSearchContainer";
-import { Utils, parseStyle } from "./utils/ContainerUtils";
 
 // tslint:disable-next-line class-name
 export class preview extends Component<ContainerProps, ContainerState> {
@@ -17,7 +19,7 @@ export class preview extends Component<ContainerProps, ContainerState> {
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
@@ -42,10 +44,10 @@ export class preview extends Component<ContainerProps, ContainerState> {
 
     private validateConfigs() {
         const routeNode = findDOMNode(this) as HTMLElement;
-        const targetNode = Utils.findTargetNode(routeNode);
+        const targetNode = SharedUtils.findTargetNode(routeNode);
 
         if (targetNode) {
-            const alertMessage = Utils.validateProps({
+            const alertMessage = Validate.validateProps({
                 ...this.props as ContainerProps
             });
 

@@ -1,4 +1,4 @@
-import { ChangeEvent, Component, OptionHTMLAttributes, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactElement, createElement } from "react";
 
 import { FilterProps } from "./DropDownFilterContainer";
 
@@ -10,12 +10,6 @@ export interface DropDownFilterProps {
 
 interface DropDownFilterState {
     selectedValue: string;
-}
-// Added to deal with typings issue of componentClass, needing to pass a className attribute on select options
-export interface DropDownType extends OptionHTMLAttributes<HTMLOptionElement> {
-    key: string;
-    value: string;
-    label: string;
 }
 
 type Display = Partial<FilterProps> & DropDownFilterState;

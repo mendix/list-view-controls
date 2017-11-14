@@ -1,10 +1,11 @@
 import { Component, createElement } from "react";
 import * as classNames from "classnames";
 
-import { Alert } from "./components/Alert";
+import { Alert } from "../Shared/components/Alert";
+import { SharedUtils } from "../Shared/SharedUtils";
+import { Validate } from "./Validate";
 import { CheckboxFilter } from "./components/CheckBoxFilter";
 import { ContainerProps } from "./components/CheckBoxFilterContainer";
-import { Utils, parseStyle } from "./utils/ContainerUtils";
 
 // tslint:disable-next-line class-name
 export class preview extends Component<ContainerProps, {}> {
@@ -16,7 +17,7 @@ export class preview extends Component<ContainerProps, {}> {
         return createElement("div",
             {
                 className: classNames("widget-checkbox-filter", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(),
             createElement(CheckboxFilter, {
@@ -29,7 +30,7 @@ export class preview extends Component<ContainerProps, {}> {
     private renderAlert() {
         return createElement(Alert, {
             className: "widget-checkbox-filter-alert",
-            message: Utils.validateProps({ ...this.props as ContainerProps, isWebModeler: true })
+            message: Validate.validateProps({ ...this.props as ContainerProps, isWebModeler: true })
         });
     }
 }

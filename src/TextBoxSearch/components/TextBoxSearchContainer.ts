@@ -4,10 +4,12 @@ import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 import * as classNames from "classnames";
 
+import { Alert } from "../../Shared/components/Alert";
+import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils } from "../../Shared/SharedUtils";
+
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
-import { Utils, parseStyle } from "../utils/ContainerUtils";
-import { DataSourceHelper, ListView } from "mendix-data-source-helper";
-import { Alert } from "./Alert";
+import { Validate } from "../Validate";
 
 interface WrapperProps {
     class: string;
@@ -44,7 +46,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         super(props);
 
         this.state = {
-            alertMessage: "",
+            alertMessage: Validate.validateProps(this.props),
             listViewAvailable: false
         };
 
@@ -54,7 +56,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
     componentDidMount() {
         const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(filterNode);
+        const targetNode = SharedUtils.findTargetNode(filterNode);
         if (targetNode) {
             DataSourceHelper.hideContent(targetNode);
         }
@@ -65,15 +67,10 @@ export default class SearchContainer extends Component<ContainerProps, Container
             this.applySearch(this.props.defaultQuery);
         }
     }
-
-    componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
-    }
-
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
@@ -82,6 +79,10 @@ export default class SearchContainer extends Component<ContainerProps, Container
             }),
             this.renderTextBoxSearch()
         );
+    }
+
+    componentWillUnmount() {
+        dojoConnect.disconnect(this.navigationHandler);
     }
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> {
@@ -120,7 +121,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
     private connectToListView() {
         const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = Utils.findTargetNode(queryNode) as HTMLElement;
+        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
         let targetListView: ListView | null = null;
         let errorMessage = "";
 
@@ -135,8 +136,9 @@ export default class SearchContainer extends Component<ContainerProps, Container
             }
         }
 
-        const validationMessage = Utils.validateCompatibility({
-            ...this.props as ContainerProps,
+        const validationMessage = SharedUtils.validateCompatibility({
+            friendlyId: this.props.friendlyId,
+            listViewEntity: this.props.entity,
             targetListView
         });
 

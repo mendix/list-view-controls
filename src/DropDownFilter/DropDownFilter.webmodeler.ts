@@ -1,25 +1,27 @@
 import { Component, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
-import { Alert } from "./components/Alert";
+
+import { Alert } from "../Shared/components/Alert";
+import { SharedUtils } from "../Shared/SharedUtils";
+import { Validate } from "./Validate";
 
 import { DropDownFilter, DropDownFilterProps } from "./components/DropDownFilter";
 import { ContainerProps, ContainerState } from "./components/DropDownFilterContainer";
-import { Utils, parseStyle } from "./utils/ContainerUtils";
 
 // tslint:disable-next-line class-name
 export class preview extends Component<ContainerProps, ContainerState> {
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listviewAvailable: true };
+        this.state = { listViewAvailable: true };
     }
 
     render() {
         return createElement("div",
             {
                 className: classNames("widget-drop-down-filter", this.props.class),
-                style: parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(),
             this.renderDropDownFilter()
@@ -37,16 +39,16 @@ export class preview extends Component<ContainerProps, ContainerState> {
     private validateConfigs() {
         // validate filter values if filterby is attribute, then value should not be empty or "" or " ".
         const routeNode = findDOMNode(this) as HTMLElement;
-        const targetNode = Utils.findTargetNode(routeNode);
+        const targetNode = SharedUtils.findTargetNode(routeNode);
 
         if (targetNode) {
             this.setState({ targetNode });
         }
-        this.setState({ listviewAvailable: true, targetNode });
+        this.setState({ listViewAvailable: true, targetNode });
     }
 
     private renderAlert() {
-        const message = Utils.validateProps({
+        const message = Validate.validateProps({
             ...this.props as ContainerProps
         });
 
