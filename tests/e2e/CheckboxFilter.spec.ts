@@ -1,4 +1,4 @@
-import defaultFilter from "./pages/default.page";
+import defaultFilter from "./CheckBoxFilter/pages/default.page";
 
 describe("CheckBoxFilter", () => {
     /*
@@ -11,7 +11,7 @@ describe("CheckBoxFilter", () => {
         defaultFilter.open();
     });
 
-    describe("when default is not set", () => {
+    describe("when default is not set ", () => {
         it("the checkbox is unchecked", () => {
             defaultFilter.checkBoxFilter.waitForVisible();
             const checkBoxFilter = defaultFilter.checkBoxFilter;
@@ -30,15 +30,13 @@ describe("CheckBoxFilter", () => {
     });
 
     describe("when clicked", () => {
-        beforeAll(() => {
-            defaultFilter.checkBoxFilter.waitForVisible();
-            defaultFilter.checkBoxFilter.click();
-        });
 
         it("the checkbox is checked", () => {
             defaultFilter.checkBoxFilter.waitForVisible();
-            const checkBoxFilter = defaultFilter.checkBoxFilter;
-            const checked = checkBoxFilter.isSelected() as boolean;
+            defaultFilter.checkBoxFilter.click();
+            defaultFilter.checkBoxFilter.waitForVisible();
+            const checked = defaultFilter.checkBoxFilter.isSelected() as boolean;
+
             expect(checked).toBe(true);
         });
 

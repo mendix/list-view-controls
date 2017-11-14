@@ -9,7 +9,7 @@ class DefaultFilter {
     public get listViewItems() { return browser.elements("#mxui_widget_ListView_0 .mx-listview-item"); }
 
     public open(): void {
-        browser.url("/p/homepage");
+        browser.url("/p/checkboxfilter");
     }
 }
 const defaultFilter = new DefaultFilter();

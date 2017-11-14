@@ -1,4 +1,4 @@
-import page from "./pages/home.page";
+import page from "./TextSearch/pages/home.page";
 import { Element } from "webdriverio";
 
 const testValue = "Uganda";

@@ -14,18 +14,16 @@ exports.config = {
     coloredLogs: true,
     bail: 0,
     screenshotPath: "dist/wdio/",
-    baseUrl: debug ? "http://localhost:8080/" : "https://dropdownfilter.mxapps.io/",
-    waitforTimeout: 10000,
-    connectionRetryTimeout: 90000,
-    connectionRetryCount: 0,
+    baseUrl: debug ? "http://localhost:8080/" : "https://listviewcontrols.mxapps.io/",
+    waitforTimeout: 180000,
+    connectionRetryTimeout: 200000,
+    connectionRetryCount: 2,
     services: [ "selenium-standalone" ],
-
     framework: "jasmine",
-    reporters: [ "spec" ],
+    reporters: [ "dot", "spec" ],
     execArgv: debug ? [ "--inspect" ] : undefined,
-    // Options to be passed to Jasmine.
     jasmineNodeOpts: {
-        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (10 * 1000),
+        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (100 * 1000),
         expectationResultHandler: function(passed, assertion) {
             if (passed) {
                 return;

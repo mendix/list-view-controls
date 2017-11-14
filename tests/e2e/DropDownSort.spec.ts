@@ -1,6 +1,6 @@
-import page from "./pages/home.page";
+import page from "./DropDownSort/pages/home.page";
 
-const testValue = "Nigeria";
+const testValue = "Red";
 
 describe("Dropdown sort", () => {
     it("when rendered the list view should be sorted by default", () => {

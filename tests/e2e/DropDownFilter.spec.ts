@@ -1,4 +1,4 @@
-import defaultFilter from "./pages/default.page";
+import defaultFilter from "./DropDownFilter/pages/default.page";
 
 const dropDownTestValue = "Uganda";
 describe("DropDownFilter", () => {
