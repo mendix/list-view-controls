@@ -6,22 +6,37 @@ export interface ValidateConfigProps extends WrapperProps {
     targetListView?: ListView | null;
 }
 
-const getAlertMessage = (friendlyId: string, message: string) => `Custom widget ${friendlyId} error in configuration" ${message}`;
-
 export class Validate {
 
     static validate(props: ValidateConfigProps): string {
-        if (!props.queryNode) {
-            return getAlertMessage(props.friendlyId, "unable to find a list view on the page");
+        const errorMessage: string[] = [];
+        if (props.pagingStyle === "custom") {
+            if (props.items.length < 1) {
+                errorMessage.push("custom style should have at least one item");
+            }
+            props.items.forEach(item => {
+                if (item.item === "pageNumberButtons" && item.maxPageButtons < 7) {
+                    errorMessage.push("Number of page buttons should 7 or larger");
+                }
+                if (item.item === "text" && !item.text) {
+                    errorMessage.push("Custom item text requires a 'Text with placeholder'");
+                }
+                const isButton = item.item === "firstButton" || item.item === "lastButton" || item.item === "nextButton" || item.item === "previousButton";
+                if (isButton && item.showIcon === "none" && !item.buttonCaption) {
+                    errorMessage.push("Custom button requires an caption or icon");
+                }
+            });
         }
-        if (props.pagingStyle === "custom" && props.items.length < 1) {
-            return getAlertMessage(props.friendlyId, "custom style should have at least one item");
+        if (!props.inWebModeler) {
+            if (!props.queryNode) {
+                errorMessage.push("unable to find a list view on the page");
+            }
+            if (props.targetListView && !Validate.isCompatible(props.targetListView)) {
+                errorMessage.push("this Mendix version is incompatible");
+            }
         }
-        if (props.inWebModeler) {
-            return "";
-        }
-        if (props.targetListView && !Validate.isCompatible(props.targetListView)) {
-            return getAlertMessage(props.friendlyId, "this Mendix version is incompatible");
+        if (errorMessage.length) {
+            return `${props.friendlyId} : ${errorMessage.join(", ")}`;
         }
 
         return "";
