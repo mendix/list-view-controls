@@ -55,7 +55,7 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
             return defaultOption.value;
         }
 
-        return this.options[0].value;
+        return this.options.length > 0 ? this.options[0].value : "";
     }
 
     private renderOptions(): Array<ReactElement<{}>> {
