@@ -1,4 +1,3 @@
-
 # Drop-down sort
 
 Add an interactive sort to your list view.

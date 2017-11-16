@@ -7,10 +7,10 @@
 Enable users to filter or search a list view.
 
 ## Available widgets
-* `Check box filter`
-* `Drop down filter`
-* `Drop down sort`
-* `Text box search`
+* `Check box filter`: Filters a list view with various constraints when checked or unchecked
+* `Drop down filter`: Filters a list view with various options that can be selected from a drop-down
+* `Drop down sort`: Adds an interactive sort to your list view.
+* `Text box search`: Adds an interactive search box to all of your list view
 
 ## Demo projects
 [https://listviewcontrols.mxapps.io](https://listviewcontrols.mxapps.io)
@@ -29,5 +29,5 @@ Please follow [development guide](/README.DropDownSort.md)
 ![Demo drop down sort](assets/DropDownSort/demo.gif)
 
 ### Text Search
-Please follow [development guide](/README.TextSearch.md)
-![Demo text search](assets/TextSearch/demo.gif)
+Please follow [development guide](/README.TextBoxSearch.md)
+![Demo text search](assets/TextBoxSearch/demo.gif)
