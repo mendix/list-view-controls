@@ -1,8 +1,6 @@
 import { Component, createElement } from "react";
 
-import { Alert } from "../Shared/components/Alert";
 import { SharedUtils } from "../Shared/SharedUtils";
-import { Validate } from "./Validate";
 
 import { DropDown } from "./components/DropDownSort";
 import { ContainerProps } from "./components/DropDownSortContainer";
@@ -17,26 +15,13 @@ export class preview extends Component<ContainerProps, {}> {
     }
 
     render() {
-        return createElement("div", { className: "widget-dropdown-sort" },
-            this.renderAlert(),
+        return createElement("div", { className: "widget-drop-down-sort" },
             createElement(DropDown, {
                 onDropDownChangeAction: () => { return; },
                 sortAttributes: this.props.sortAttributes,
                 style: SharedUtils.parseStyle(this.props.style)
             })
         );
-    }
-
-    private renderAlert() {
-        const message = Validate.validateProps({
-            ...this.props as ContainerProps
-        });
-
-        return createElement(Alert, {
-            bootstrapStyle: "danger",
-            className: "widget-drop-down-filter-alert",
-            message
-        });
     }
 }
 

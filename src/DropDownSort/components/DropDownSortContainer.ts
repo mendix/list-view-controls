@@ -9,7 +9,6 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
 import { DropDown, DropDownProps } from "./DropDownSort";
-import { Validate } from "../Validate";
 
 import "../ui/DropDownSort.scss";
 
@@ -47,10 +46,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = {
-            alertMessage: Validate.validateProps(this.props),
-            listViewAvailable: false
-        };
+        this.state = { listViewAvailable: false };
         this.updateSort = this.updateSort.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }

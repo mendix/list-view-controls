@@ -12,14 +12,14 @@
         <property key="sortAttributes" type="object" isList="true" required="false">
             <caption>Sort options</caption>
             <category>General</category>
-            <description></description>
+            <description/>
             <properties>
                 <property key="caption" type="translatableString">
                     <caption>Caption</caption>
                     <category>Attribute</category>
-                    <description></description>
+                    <description/>
                 </property>
-                <property key="name" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="../entity">
+                <property key="name" type="attribute" isPath="optional" pathType="reference" entityProperty="../entity">
                     <caption>Attribute</caption>
                     <category>Attribute</category>
                     <description>Attribute to sort the list view</description>
@@ -36,7 +36,7 @@
                 <property key="sort" type="enumeration" defaultValue="asc">
                     <caption>Sort</caption>
                     <category>Attribute</category>
-                    <description></description>
+                    <description/>
                     <enumerationValues>
                         <enumerationValue key="asc">Ascending</enumerationValue>
                         <enumerationValue key="desc">Descending</enumerationValue>

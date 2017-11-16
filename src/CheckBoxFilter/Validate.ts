@@ -23,14 +23,16 @@ export class Validate {
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttributeValue) {
             errorMessage.push("Unchecked filter by 'Attribute' requires an 'Attribute value'");
         }
-        if (!props.isWebModeler && window.mx.isOffline() && props.filterBy === "XPath") {
-            errorMessage.push("Filter by 'XPath' is not supported in offline mode");
-        }
-        if (!props.isWebModeler && window.mx.isOffline() && props.unCheckedFilterBy === "XPath") {
-            errorMessage.push("Unchecked filter by 'XPath' is not supported in offline mode");
-        }
-        if (!props.isWebModeler && !props.mxObject && props.filterBy === "XPath" && props.constraint.indexOf("[%CurrentObject%]'") > -1) {
-            errorMessage.push("Requires a context object");
+        if (!props.isWebModeler) {
+            if (window.mx.isOffline() && props.filterBy === "XPath") {
+                errorMessage.push("Filter by 'XPath' is not supported in offline mode");
+            }
+            if (window.mx.isOffline() && props.unCheckedFilterBy === "XPath") {
+                errorMessage.push("Unchecked filter by 'XPath' is not supported in offline mode");
+            }
+            if (!props.mxObject && props.filterBy === "XPath" && props.constraint.indexOf("[%CurrentObject%]'") > -1) {
+                errorMessage.push("Requires a context object");
+            }
         }
 
         if (errorMessage.length) {

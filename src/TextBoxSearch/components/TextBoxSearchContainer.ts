@@ -9,7 +9,6 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
-import { Validate } from "../Validate";
 
 interface WrapperProps {
     class: string;
@@ -45,10 +44,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = {
-            alertMessage: Validate.validateProps(this.props),
-            listViewAvailable: false
-        };
+        this.state = { listViewAvailable: false };
 
         this.applySearch = this.applySearch.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
@@ -62,11 +58,12 @@ export default class SearchContainer extends Component<ContainerProps, Container
         }
     }
 
-    componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+    componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
+        if (this.state.listViewAvailable && !previousState.listViewAvailable) {
             this.applySearch(this.props.defaultQuery);
         }
     }
+
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
