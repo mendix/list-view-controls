@@ -27,11 +27,3 @@ It supports sorting on a single field similar to the built-in list view sort cap
  
  
  ![Data source](/assets/DropDownSort/SortAttributesItems.png)
-
-## Issues, suggestions and feature requests
-Please report issues at [https://github.com/mendixlabs/listview-sort/issues](https://github.com/mendixlabs/listview-sort/issues).
-
-
-## Development and contribution
-Please follow [development guide](/development.md).
-

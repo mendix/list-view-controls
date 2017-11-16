@@ -7,11 +7,8 @@ Enable users to filter a list view at run time, with various options that can be
 * Select a filter from a list of options
 * Set a default filter option
 
-## Dependencies
-Mendix 7.6
-
-## Demo project
-![Demo](assets/DropDownFilter/Demo.gif)
+## Sample
+![Sample](assets/DropDownFilter/demo.gif)
 
 ## Usage
 Place the Drop-down filter widget above a list view.
@@ -31,10 +28,3 @@ When filtering by `XPath`, input a constraint to filter by.
 **Also to note, only one empty filter option should be selected.**
 
 ![XPathConstraint](assets/DropDownFilter/XPathConstraint.png)
-
-## Issues, suggestions and feature requests
-Please report issues at [https://github.com/mendixlabs/listview-filter/issues](https://github.com/mendixlabs/listview-filter/issues).
-
-## Development and contribution
-Please follow [development guide](/development.md).
-

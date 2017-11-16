@@ -9,8 +9,8 @@ Enable users to filter a list view at run time, with various constraints when ch
 * Set a checked checkbox as default
 * Supports multiple filters on the same list view
 
-## Demo project
-![Demo](assets/CheckBoxFilter/demo.gif)
+## Sample
+![Sample](assets/CheckBoxFilter/demo.gif)
 
 ## Usage
 
