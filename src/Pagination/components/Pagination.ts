@@ -287,7 +287,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private getMessageStatus(message?: string): string {
-        const currentOffset = this.state.currentOffset;
+        const currentOffset = this.state.currentOffset || 0;
         const { listViewSize, offset } = this.props;
         let fromValue = currentOffset + 1;
         let toValue = 0;
@@ -303,11 +303,10 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         if (message) {
             const totalPages = offset && offset !== 0 ? Math.ceil(listViewSize / offset) : listViewSize;
 
-            return message
-                .replace("{firstItem}", fromValue.toString())
+            return message.replace("{firstItem}", fromValue.toString())
                 .replace("{lastItem}", toValue.toString())
                 .replace("{totalItems}", listViewSize.toString())
-                .replace("{currentPageNumber}", this.state.selectedPageNumber ? this.state.selectedPageNumber.toString() : "0")
+                .replace("{currentPageNumber}", this.state.selectedPageNumber ? this.state.selectedPageNumber.toString() : "1")
                 .replace("{totalPages}", totalPages.toString());
         }
 

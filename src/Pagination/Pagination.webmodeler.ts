@@ -60,8 +60,7 @@ export class preview extends Component<WrapperProps, PaginationWebModelerState> 
         const targetNode = SharedUtils.findTargetNode(queryNode);
         const message = Validate.validate({
             ...props as WrapperProps,
-            inWebModeler: true,
-            queryNode: targetNode
+            inWebModeler: true
         });
 
         this.hideLoadMoreButton(targetNode);
@@ -89,10 +88,14 @@ export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any)
         visibilityMap.items = false;
     } else {
         valueMap.items.forEach((item, index) => {
+            const isButton = item.item === "firstButton" || item.item === "lastButton" || item.item === "nextButton" || item.item === "previousButton";
+            visibilityMap.items[index].text = item.item === "text";
+            visibilityMap.items[index].buttonCaption = isButton;
             visibilityMap.items[index].showIcon = item.item !== "text";
             visibilityMap.items[index].maxPageButtons = item.item === "pageNumberButtons";
         });
     }
+
     return visibilityMap;
 }
 

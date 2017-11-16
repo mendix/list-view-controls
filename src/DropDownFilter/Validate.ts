@@ -2,7 +2,6 @@ import { ContainerProps } from "./components/DropDownFilterContainer";
 
 export class Validate {
     static validateProps(props: ContainerProps): string {
-        const widgetName = props.friendlyId;
         const errorMessage: string[] = [];
 
         props.filters.forEach((filter, index) => {
@@ -20,7 +19,7 @@ export class Validate {
             errorMessage.push("Should only have one filter set as default");
         }
         if (errorMessage.length) {
-            return `${widgetName} : ${errorMessage.join(", ")}`;
+            return `${props.friendlyId} : ${errorMessage.join(", ")}`;
         }
 
         return "";

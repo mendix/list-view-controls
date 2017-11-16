@@ -24,7 +24,6 @@ export interface ModelerProps {
     caption: string;
     hideUnusedPaging: boolean;
     items: ItemType[];
-    maxPageButtons: number;
     pagingStyle: PageStyleType;
 }
 
