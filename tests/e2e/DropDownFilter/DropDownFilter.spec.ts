@@ -1,7 +1,7 @@
-import defaultFilter from "./DropDownFilter/pages/default.page";
+import defaultFilter from "./pages/default.page";
 
 const dropDownTestValue = "Uganda";
-describe("DropDownFilter", () => {
+describe("Drop down filter", () => {
     it("should filter african countries by default when the list view is rendered", () => {
         defaultFilter.open();
         defaultFilter.dropDownFilter.waitForVisible();

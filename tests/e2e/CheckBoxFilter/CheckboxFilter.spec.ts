@@ -1,6 +1,6 @@
-import defaultFilter from "./CheckBoxFilter/pages/default.page";
+import defaultFilter from "./pages/default.page";
 
-describe("CheckBoxFilter", () => {
+describe("Check box filter", () => {
     /*
         widget properties in sandbox:
         - Checked: Official language is "English"

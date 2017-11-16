@@ -1,9 +1,9 @@
-import page from "./TextSearch/pages/home.page";
+import page from "./pages/home.page";
 import { Element } from "webdriverio";
 
 const testValue = "Uganda";
 
-describe("Search", () => {
+describe("Text box search", () => {
     it("when query is entered in the search input the list view should be filtered", () => {
         page.open();
         page.searchInput.waitForVisible();

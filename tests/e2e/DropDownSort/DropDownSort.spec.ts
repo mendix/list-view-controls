@@ -1,8 +1,8 @@
-import page from "./DropDownSort/pages/home.page";
+import page from "./pages/home.page";
 
 const testValue = "Red";
 
-describe("Dropdown sort", () => {
+describe("Drop down sort", () => {
     it("when rendered the list view should be sorted by default", () => {
         page.open();
         page.dropdownSort.waitForVisible();
