@@ -7,7 +7,7 @@
     </icon>
     <properties>
         <property key="entity" type="entity">
-            <caption> List view with entity</caption>
+            <caption>List view with entity</caption>
             <category>General</category>
             <description/>
         </property>
@@ -20,10 +20,6 @@
                     <caption>Caption</caption>
                     <category>General</category>
                     <description/>
-                    <translations>
-                        <translation lang="en_US"/>
-                        <translation lang="nl_NL"/>
-                    </translations>
                 </property>
                 <property key="filterBy" type="enumeration" defaultValue="none">
                     <caption>Filter</caption>
@@ -54,12 +50,12 @@
                 <property key="constraint" type="entityConstraint" required="false" entityProperty="../entity">
                     <caption>XPath constraint</caption>
                     <category>General</category>
-                    <description>Constraint on the data from the data entity (used when comparison is XPath)</description>
+                    <description>Constraint on the data from the data entity, when filtering by 'XPath'</description>
                 </property>
                 <property key="isDefault" type="boolean" defaultValue="false">
                     <caption>Selected by default</caption>
                     <category>General</category>
-                    <description>Only one filter can be set as default. If no "Selected by default" is set, the first filter is selected, unless "Enable empty filter" is enabled</description>
+                    <description>Only one filter can be set as default. When there is no default option provided, the first filter option is selected by default</description>
                 </property>
             </properties>
         </property>

@@ -12,12 +12,12 @@
         <property key="defaultChecked" type="boolean" defaultValue="false">
             <caption>Default checked</caption>
             <category>General</category>
-            <description>Checks the checkbox on initial loading</description>
+            <description>Checks the check box on initial loading of the page</description>
         </property>
         <property key="filterBy" type="enumeration" defaultValue="none">
             <caption>Filter by</caption>
             <category>Checked</category>
-            <description>Select the method of filtering</description>
+            <description/>
             <enumerationValues>
                 <enumerationValue key="none">None</enumerationValue>
                 <enumerationValue key="attribute">Attribute</enumerationValue>
@@ -27,7 +27,7 @@
         <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="listViewEntity">
             <caption>Attribute</caption>
             <category>Checked</category>
-            <description>The attribute to apply filter when filtering by 'attribute'. Note: for enum use the key value, for boolean use 'true' or 'false'</description>
+            <description>The attribute to apply filter when filtering by 'Attribute'</description>
             <attributeTypes>
                 <attributeType name="String"/>
                 <attributeType name="Integer"/>
@@ -39,17 +39,17 @@
         <property key="attributeValue" type="string" required="false">
             <caption>Attribute value</caption>
             <category>Checked</category>
-            <description>Value of the attribute to be matching (used when filtering on attribute)</description>
+            <description>Value of the attribute to be matching when filtering by 'Attribute'. Note: for enumeration use the key value, for boolean use 'true' or 'false'</description>
         </property>
         <property key="constraint" type="entityConstraint" required="false" entityProperty="listViewEntity">
             <caption>XPath constraint</caption>
             <category>Checked</category>
-            <description>Constraint on the data (used when filtering by XPath)</description>
+            <description>Constraint on the data when filtering by 'XPath'</description>
         </property>
         <property key="unCheckedFilterBy" type="enumeration" defaultValue="none">
             <caption>Filter by </caption>
             <category>Unchecked</category>
-            <description>Select the method of filtering</description>
+            <description/>
             <enumerationValues>
                 <enumerationValue key="none">None</enumerationValue>
                 <enumerationValue key="attribute">Attribute</enumerationValue>
@@ -59,7 +59,7 @@
         <property key="unCheckedAttribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="listViewEntity">
             <caption>Attribute </caption>
             <category>Unchecked</category>
-            <description>The attribute to apply filter when filtering by 'attribute'. Note: for enum use the key value, for boolean use 'true' or 'false'</description>
+            <description>The attribute to apply filter when filtering by 'Attribute'</description>
             <attributeTypes>
                 <attributeType name="String"/>
                 <attributeType name="Integer"/>
@@ -71,12 +71,12 @@
         <property key="unCheckedAttributeValue" type="string" required="false">
             <caption>Attribute value </caption>
             <category>Unchecked</category>
-            <description>Value of the attribute to be matching (used when filtering on attribute)</description>
+            <description>Value of the attribute to be matching when filtering by 'Attribute'. Note: for enumeration use the key value, for boolean use 'true' or 'false'</description>
         </property>
         <property key="unCheckedConstraint" type="entityConstraint" required="false" entityProperty="listViewEntity">
             <caption>XPath constraint </caption>
             <category>Unchecked</category>
-            <description>Constraint on the data (used when filtering by XPath)</description>
+            <description>Constraint on the data when filtering by 'XPath'</description>
         </property>
     </properties>
 </widget>

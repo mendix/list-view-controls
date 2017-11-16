@@ -7,10 +7,10 @@
         <property key="entity" type="entity">
             <caption>List view with entity</caption>
             <category>General</category>
-            <description>Entity whose attributes will be searched. This entity should match the list view entity</description>
+            <description/>
         </property>
         <property key="attributeList" type="object" isList="true">
-            <caption>Attributes</caption>
+            <caption>Search attributes</caption>
             <category>General</category>
             <description/>
             <properties>
@@ -33,16 +33,16 @@
         <property key="placeHolder" type="translatableString" required="false">
             <caption>Placeholder</caption>
             <category>General</category>
-            <description>Specifies a short hint that describes the expected value of the search input field</description>
+            <description>The text shown in the search input, to hint users that the input can be used for searching</description>
             <translations>
                 <translation lang="en_US">Search</translation>
                 <translation lang="nl_NL">Zoeken</translation>
             </translations>
         </property>
-        <property key="defaultQuery" type="translatableString" required="false">
+        <property key="defaultQuery" type="string" required="false">
             <caption>Default query</caption>
             <category>General</category>
-            <description>The default query that is used to filter the list</description>
+            <description>Query that is used on initial loading of the page</description>
         </property>
     </properties>
 </widget>

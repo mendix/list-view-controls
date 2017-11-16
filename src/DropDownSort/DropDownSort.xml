@@ -6,7 +6,7 @@
     <properties>
         <property key="entity" type="entity">
             <caption>List view with entity</caption>
-            <category>Data source</category>
+            <category>General</category>
             <description/>
         </property>
         <property key="sortAttributes" type="object" isList="true" required="false">
@@ -22,7 +22,7 @@
                 <property key="name" type="attribute" isPath="optional" pathType="reference" entityProperty="../entity">
                     <caption>Attribute</caption>
                     <category>Attribute</category>
-                    <description>Attribute to sort the list view</description>
+                    <description>The attribute of the list view entity</description>
                     <attributeTypes>
                         <attributeType name="String"/>
                         <attributeType name="Integer"/>
@@ -34,7 +34,7 @@
                     </attributeTypes>
                 </property>
                 <property key="sort" type="enumeration" defaultValue="asc">
-                    <caption>Sort</caption>
+                    <caption>Sort order</caption>
                     <category>Attribute</category>
                     <description/>
                     <enumerationValues>
@@ -45,7 +45,7 @@
                 <property key="defaultSelected" type="boolean" defaultValue="false">
                     <caption>Default selected</caption>
                     <category>Attribute</category>
-                    <description>if non is selected or other attributes are set to true, the widget will select the first</description>
+                    <description>Only one filter can be set as default. When there is no default option provided, the first sort option will be selected by default</description>
                 </property>
             </properties>
         </property>

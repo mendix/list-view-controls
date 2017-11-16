@@ -46,7 +46,7 @@
                         <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
                     </translations>
                 </property>
-                <property key="buttonCaption" type="string" required="false">
+                <property key="buttonCaption" type="translatableString" required="false">
                     <caption>Button caption</caption>
                     <category>General</category>
                     <description/>
