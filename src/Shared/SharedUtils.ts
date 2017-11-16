@@ -71,7 +71,7 @@ export class SharedUtils {
 
         while (!targetNode && filterNode) {
             targetNode = filterNode.querySelectorAll(`.mx-listview`)[0] as HTMLElement;
-            if (targetNode || filterNode.isEqualNode(document) || filterNode.classList.contains("mx-incubator")
+            if (targetNode || filterNode.isEqualNode(document) || !filterNode.classList || filterNode.classList.contains("mx-incubator")
                     || filterNode.classList.contains("mx-offscreen")) {
                 break;
             }
