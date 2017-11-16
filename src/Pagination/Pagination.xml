@@ -49,19 +49,19 @@
                 <property key="buttonCaption" type="string" required="false">
                     <caption>Button caption</caption>
                     <category>General</category>
-                    <description></description>
+                    <description/>
                 </property>
                 <property key="showIcon" type="enumeration" defaultValue="default">
                     <caption>Show icon</caption>
                     <category>General</category>
-                    <description></description>
+                    <description/>
                     <enumerationValues>
                         <enumerationValue key="default">Default</enumerationValue>
                         <enumerationValue key="none">None</enumerationValue>
                     </enumerationValues>
                 </property>
                 <property key="maxPageButtons" type="integer" defaultValue="7">
-                    <caption>Max page button</caption>
+                    <caption>Number of page buttons</caption>
                     <category>General</category>
                     <description>Minimal value 7</description>
                 </property>

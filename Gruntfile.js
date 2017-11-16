@@ -2,7 +2,7 @@
 const webpack = require("webpack");
 const webpackConfig = require("./webpack.config");
 const merge = require("webpack-merge");
-const widgetNames = [ "CheckBoxFilter", "DropDownFilter", "DropDownSort", "TextBoxSearch" ];
+const widgetNames = [ "CheckBoxFilter", "DropDownFilter", "DropDownSort", "TextBoxSearch", "Pagination" ];
 
 const webpackConfigRelease = webpackConfig.map(config => merge(config, {
     devtool: false,

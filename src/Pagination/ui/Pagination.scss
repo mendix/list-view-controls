@@ -61,13 +61,19 @@ $widget-pagination-color-disabled: #999;
             display: inline-block;
             padding-left: 15px;
             padding-right: 15px;
+            margin-top: 2px;
+            margin-bottom: 2px;
 
             li {
                 color: black;
                 padding: 8px 16px;
                 display: inline-block;
                 width: 48px;
-                cursor: pointer;
+                cursor: default;
+
+                .break-view{
+                    cursor: default;
+                }
 
                 &.single-digit{
                     padding-left: 20px;
@@ -89,19 +95,29 @@ $widget-pagination-color-disabled: #999;
     display: none !important;
 }
 
-.mx-listview-loading {
-    -webkit-animation: initialHidden 100ms forwards;
-    animation: initialHidden 100ms forwards;
-}
+.widget-pagination-loading
+{
+    ul:before {
+        background-image: url(./loading.gif);
+        background-repeat: no-repeat;
+        background-position: center 15px;
+        background-color: rgba(255, 255, 255, 0.5);
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+    }
 
-@keyframes initialHidden {
-    0%   { opacity: 0; }
-    90%  { opacity: 0; }
-    100% { opacity: 1; }
-}
+    .mx-listview-item {
+        -webkit-filter: blur(3px);
+        filter: blur(3px);
+    }
 
-@-webkit-keyframes initialHidden {
-    0%   { opacity: 0; }
-    90%  { opacity: 0; }
-    100% { opacity: 1; }
+    .mx-list {
+        position: relative;
+    }
 }

@@ -1,7 +1,11 @@
 import { createElement } from "react";
 import { shallow } from "enzyme";
+// import { configure, shallow } from "enzyme";
+// import Adapter = require("enzyme-adapter-react-16");
 
 import { BreakView } from "../BreakView";
+
+// configure({ adapter: new Adapter() });
 
 describe("BreakView", () => {
 

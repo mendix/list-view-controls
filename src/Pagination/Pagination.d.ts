@@ -1,3 +1,9 @@
+import { ListView as SharedListView } from "../Shared/SharedUtils";
+
+export interface PaginationListView extends SharedListView {
+    friendlyId: string;
+}
+
 export type PageStyleType = "custom" | "default" | "pageNumberButtons";
 
 export type ButtonType = "firstButton" | "lastButton" | "nextButton" | "previousButton" | "buttonCaption" | "text" | "pageNumberButtons";

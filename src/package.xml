@@ -6,12 +6,14 @@
             <widgetFile path="DropDownFilter/DropDownFilter.xml"/>
             <widgetFile path="DropDownSort/DropDownSort.xml"/>
             <widgetFile path="TextBoxSearch/TextBoxSearch.xml"/>
+            <widgetFile path="Pagination/Pagination.xml"/>
         </widgetFiles>
         <files>
             <file path="com/mendix/widget/custom/listviewcontrols/CheckBoxFilter"/>
             <file path="com/mendix/widget/custom/listviewcontrols/DropDownFilter"/>
             <file path="com/mendix/widget/custom/listviewcontrols/DropDownSort"/>
             <file path="com/mendix/widget/custom/listviewcontrols/TextBoxSearch"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/Pagination"/>
         </files>
     </clientModule>
 </package>

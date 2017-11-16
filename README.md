@@ -11,6 +11,7 @@ Enable users to filter or search a list view.
 * `Drop down filter`: Filters a list view with various options that can be selected from a drop-down
 * `Drop down sort`: Adds an interactive sort to your list view.
 * `Text box search`: Adds an interactive search box to all of your list view
+* `Pagination`: Adds bootstrap like paging to a list view and page numbers similar to in-built data grid
 
 ## Demo projects
 [https://listviewcontrols.mxapps.io](https://listviewcontrols.mxapps.io)
