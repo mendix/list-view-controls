@@ -32,5 +32,5 @@ When filtering by `Attribute`, select an attribute and input an attribute value 
 When filtering by `XPath`, input a constraint to filter by.
 `None` is for an empty option which resets the filter then selected.
 
-**NB: The widget connects to the first listview it finds from within its parent container and outer wards.** 
+**NB: The widget connects to the first list view it finds from within its parent container and outer wards.** 
 
