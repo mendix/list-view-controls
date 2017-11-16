@@ -1,4 +1,30 @@
-import { ListView } from "./DataSourceHelper/DataSourceHelper";
+
+export interface ListView extends mxui.widget._WidgetBase {
+    _datasource: {
+        setOffset: (offSet: number) => void;
+        _constraints: OfflineConstraint[] | string;
+        _entity: string;
+        _pageSize: number;
+        _setSize: number;
+        _sorting: string[][];
+    };
+    _entity: string;
+    _renderData: () => void;
+    _showLoadingIcon: () => void;
+    _sourceReload: () => void;
+    datasource: {
+        type: "microflow" | "entityPath" | "database" | "xpath";
+    };
+    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
+    sequence: (sequence: string[], callback?: () => void) => void;
+}
+
+export interface OfflineConstraint {
+    attribute: string;
+    operator: string;
+    value: string;
+    path?: string;
+}
 
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {

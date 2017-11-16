@@ -5,8 +5,8 @@ import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
 import { Validate } from "../Validate";
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";

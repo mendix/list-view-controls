@@ -1,3 +1,4 @@
+import { ListView, OfflineConstraint } from "../SharedUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
@@ -11,25 +12,7 @@ export interface Version {
     patch: number;
 }
 
-export interface OfflineConstraint {
-    attribute: string;
-    operator: string;
-    value: string;
-    path?: string;
-}
-
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        _constraints: OfflineConstraint[] | string;
-        _entity: string;
-        _sorting: string[][];
-    };
-    datasource: {
-        type: "microflow" | "entityPath" | "database" | "xpath";
-    };
-    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
-    sequence: (sequence: string[], callback?: () => void) => void;
-    _entity: string;
+interface DataSourceHelperListView extends ListView {
     __customWidgetDataSourceHelper?: DataSourceHelper;
 }
 
@@ -41,19 +24,19 @@ export class DataSourceHelper {
     private delay = 50;
     private timeoutHandle?: number;
     private store: ConstraintStore = { constraints: {}, sorting: {} };
-    private widget: ListView;
+    private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
     private widgetVersionRegister: {
         [version: string]: string[];
     } = {};
 
-    constructor(widget: ListView) {
+    constructor(widget: DataSourceHelperListView) {
         this.compatibilityCheck(widget);
         this.widget = widget;
     }
 
-    static getInstance(widget: ListView, widgetId: string, version: Version) {
+    static getInstance(widget: DataSourceHelperListView, widgetId: string, version: Version) {
         if (!widget.__customWidgetDataSourceHelper) {
             widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
         }

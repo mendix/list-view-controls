@@ -10,7 +10,8 @@ const widgetConfig = {
         CheckBoxFilter: "./src/CheckBoxFilter/components/CheckBoxFilterContainer.ts",
         DropDownFilter: "./src/DropDownFilter/components/DropDownFilterContainer.ts",
         DropDownSort: "./src/DropDownSort/components/DropDownSortContainer.ts",
-        TextBoxSearch: "./src/TextBoxSearch/components/TextBoxSearchContainer.ts"
+        TextBoxSearch: "./src/TextBoxSearch/components/TextBoxSearchContainer.ts",
+        Pagination: "./src/Pagination/components/PaginationContainer.ts"
     },
     output: {
         path: path.resolve(__dirname, "dist/tmp"),
@@ -65,7 +66,8 @@ const previewConfig = {
         CheckBoxFilter: "./src/CheckBoxFilter/CheckBoxFilter.webmodeler.ts",
         DropDownFilter: "./src/DropDownFilter/DropDownFilter.webmodeler.ts",
         DropDownSort: "./src/DropDownSort/DropDownSort.webmodeler.ts",
-        TextBoxSearch: "./src/TextBoxSearch/TextBoxSearch.webmodeler.ts"
+        TextBoxSearch: "./src/TextBoxSearch/TextBoxSearch.webmodeler.ts",
+        Pagination: "./src/Pagination/Pagination.webmodeler.ts"
     },
     output: {
         path: path.resolve(__dirname, "dist/tmp"),

@@ -5,8 +5,8 @@ import * as dojoConnect from "dojo/_base/connect";
 import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper, ListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
 import { Validate } from "../Validate";
