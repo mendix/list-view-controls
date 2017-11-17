@@ -9,21 +9,21 @@ It supports sorting on a single field similar to the built-in list view sort cap
 * If no default select option is specified the widget will always select the first one.
 
 ## Demo project
-![Demo](/assets/DropDownSort/demo.gif)
+![Demo](/../assets/DropDownSort/demo.gif)
 
 ## Usage
 
 ### Data source configuration
 
-![Data source](/assets/DropDownSort/Datasource.png)
+![Data source](/../assets/DropDownSort/Datasource.png)
  - On the `List view with entity` option of the `Data source` tab, browse and 
  select the "entity" property of the list widget you want to sort.
  This `entity` must be the one used on the list view.
  
- ![Data source](/assets/DropDownSort/SortAttributes.png)
+ ![Data source](/../assets/DropDownSort/SortAttributes.png)
  
  - On the `Sort attributes` option of the `Data source` tab, browse and 
  select the attribute on the list widget entity to be sorted. 
  
  
- ![Data source](/assets/DropDownSort/SortAttributesItems.png)
+ ![Data source](/../assets/DropDownSort/SortAttributesItems.png)

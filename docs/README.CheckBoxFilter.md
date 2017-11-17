@@ -10,20 +10,20 @@ Enable users to filter a list view at run time, with various constraints when ch
 * Supports multiple filters on the same list view
 
 ## Sample
-![Sample](assets/CheckBoxFilter/demo.gif)
+![Sample](../assets/CheckBoxFilter/demo.gif)
 
 ## Usage
 
 Configure the widget as below.
 
 Provide the entity name for the target list view.
-![General](assets/CheckBoxFilter/configuration_general.jpg)
+![General](../assets/CheckBoxFilter/configuration_general.jpg)
 
 Set up filter actions to be applied when the widget is checked.
-![Checked](assets/CheckBoxFilter/configuration_checked.jpg)
+![Checked](../assets/CheckBoxFilter/configuration_checked.jpg)
 
 Set up filter actions to be applied when the widget is unchecked
-![Unchecked](assets/CheckBoxFilter/configuration_unchecked.jpg)
+![Unchecked](../assets/CheckBoxFilter/configuration_unchecked.jpg)
 
 When filtering by `Attribute`, select an attribute and input an attribute value to filter by.
 

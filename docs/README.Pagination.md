@@ -17,17 +17,17 @@ ie:
 
 ## Sample
 * Lower Pagination
-![Default buttons](/assets/Pagination/demo.gif)
+![Default buttons](/../assets/Pagination/demo.gif)
 
 * Multiple Paginations
 
-![Page buttons](/assets/Pagination/demo2.gif)
+![Page buttons](/../assets/Pagination/demo2.gif)
 
 ## Usage
 
 ### Appearance configuration
 
-![Data source](/assets/Pagination/Appearance.png)
+![Data source](/../assets/Pagination/Appearance.png)
  - On the `Hide unused paging` option of the `Appearance` 
  tab, specify if the buttons should be hidden when they are not needed.For example when the records are few.
   * On the `Page style` option of the `Appearance` 
