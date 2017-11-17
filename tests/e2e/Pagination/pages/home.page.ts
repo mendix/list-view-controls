@@ -9,7 +9,7 @@ class Home {
 
     public get previousButton() { return browser.element(".mx-name-pagination9 > div > button.btn.mx-button.mx-name-paging-previous"); }
 
-    public get customButtonTwo() { return browser.element(".mx-name-pagination11 > div > ul > li:nth-child(2)"); }
+    public get customButtonTwo() { return browser.element("#mxui_widget_ReactCustomWidgetWrapper_1 > div > ul > li:nth-child(2)"); }
 
     public get lastButton() { return browser.element(".mx-name-pagination9 > div > button.btn.mx-button.mx-name-paging-last"); }
 
@@ -28,7 +28,7 @@ class Home {
     public get listViewLastItem() { return browser.elements(".mx-name-listView1 > ul > li.mx-listview-item.mx-name-index-18 > div > div > span"); }
 
     public open(): void {
-        browser.url("/p/home");
+        browser.url("/p/pagination");
     }
 }
 const home = new Home();

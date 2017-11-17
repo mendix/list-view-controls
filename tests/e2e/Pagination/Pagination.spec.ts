@@ -1,5 +1,4 @@
 import page from "./pages/home.page";
-import indexPage from "./pages/index.page";
 
 const testValueOne = "Color 1";
 const testValueFive = "Color 5";
@@ -7,10 +6,6 @@ const testValueSeven = "Color 7";
 const testLastItemValue = "Color 19";
 
 describe("Pagination", () => {
-
-    beforeAll(() => {
-        indexPage.tearDownSetUp();
-    });
 
     beforeEach(() => {
         // wait for the records to be populated
@@ -87,7 +82,7 @@ describe("Pagination", () => {
 
     it("when custom button is clicked list view should show item on the custom page ", () => {
         page.open();
-        page.customButtonTwo.waitForVisible();
+        page.customButtonTwo.waitForVisible(120000);
         page.customButtonTwo.click();
         page.listView4ThirdItem.waitForVisible();
 
