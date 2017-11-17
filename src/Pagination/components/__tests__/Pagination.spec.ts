@@ -1,14 +1,13 @@
 import { createElement } from "react";
-import { shallow } from "enzyme";
-// import { configure, shallow } from "enzyme";
-// import Adapter = require("enzyme-adapter-react-16");
+import { configure, shallow } from "enzyme";
+import Adapter = require("enzyme-adapter-react-16");
 
 import { Pagination, PaginationProps } from "../Pagination";
 import { PageButton, PageButtonProps } from "../PageButton";
 import { ButtonType, IconType } from "../../Pagination";
 import { PageNumberView, PageNumberViewProps } from "../PageNumberView";
 
-// configure({ adapter: new Adapter() });
+configure({ adapter: new Adapter() });
 
 describe("Pagination", () => {
 

@@ -1,7 +1,12 @@
 import { createElement } from "react";
-import { shallow } from "enzyme";
+import { configure, shallow } from "enzyme";
+import Adapter = require("enzyme-adapter-react-16");
 
 import { DropDown, DropDownProps, OptionHTMLAttributesType } from "../DropDownSort";
+
+configure({ adapter: new Adapter() });
+
+configure({ adapter: new Adapter() });
 
 describe("Dropdown", () => {
 

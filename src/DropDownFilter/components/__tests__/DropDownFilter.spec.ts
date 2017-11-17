@@ -1,7 +1,10 @@
 import { createElement } from "react";
-import { shallow } from "enzyme";
+import { configure, shallow } from "enzyme";
+import Adapter = require("enzyme-adapter-react-16");
 
 import { DropDownFilter, DropDownFilterProps } from "../DropDownFilter";
+
+configure({ adapter: new Adapter() });
 
 describe("DropDownFilter", () => {
     const renderDropDownFilter = (props: DropDownFilterProps) => shallow(createElement(DropDownFilter, props));

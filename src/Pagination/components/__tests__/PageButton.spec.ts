@@ -1,12 +1,11 @@
 import { createElement } from "react";
-import { shallow } from "enzyme";
-// import { configure, shallow } from "enzyme";
-// import Adapter = require("enzyme-adapter-react-16");
-
-import { PageButton, PageButtonProps } from "../PageButton";
+import { configure, shallow } from "enzyme";
+import Adapter = require("enzyme-adapter-react-16");
 import * as classNames from "classnames";
 
-// configure({ adapter: new Adapter() });
+import { PageButton, PageButtonProps } from "../PageButton";
+
+configure({ adapter: new Adapter() });
 
 describe("PageButton", () => {
 
