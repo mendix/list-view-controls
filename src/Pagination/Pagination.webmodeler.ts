@@ -42,7 +42,9 @@ export class preview extends Component<WrapperProps, PaginationWebModelerState> 
                 onClickAction: () => {
                     return;
                 },
-                pagingStyle: this.props.pagingStyle
+                pagingStyle: this.props.pagingStyle,
+                publishedOffset: 0,
+                publishedPageNumber: 1
             })
         );
     }
@@ -91,7 +93,7 @@ export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any)
             const isButton = item.item === "firstButton" || item.item === "lastButton" || item.item === "nextButton" || item.item === "previousButton";
             visibilityMap.items[index].text = item.item === "text";
             visibilityMap.items[index].buttonCaption = isButton;
-            visibilityMap.items[index].showIcon = item.item !== "text";
+            visibilityMap.items[index].showIcon = isButton;
             visibilityMap.items[index].maxPageButtons = item.item === "pageNumberButtons";
         });
     }

@@ -15,7 +15,7 @@ export class Validate {
                 errorMessage.push("custom style should have at least one item");
             }
             props.items.forEach(item => {
-                if (item.item === "pageNumberButtons" && item.maxPageButtons < 7) {
+                if (item.item === "pageNumberButtons" && (!item.maxPageButtons || item.maxPageButtons < 7)) {
                     errorMessage.push("Number of page buttons should 7 or larger");
                 }
                 if (item.item === "text" && !item.text) {

@@ -1,7 +1,7 @@
 import { ReactElement, SFC, createElement } from "react";
-import * as classNames from "classnames";
 
 import { BreakView } from "./BreakView";
+import { PageNumberButton } from "./PageNumberButton";
 
 export interface PageNumberViewProps {
     maxPageButtons: number;
@@ -12,79 +12,48 @@ export interface PageNumberViewProps {
 
 export const PageNumberView: SFC<PageNumberViewProps> = (props) => {
     const pageItems: Array<ReactElement<any>> = [];
-    const margin = 1;
-    let leftSide;
-    let rightSide;
-    let breakViewAdded = false;
-    const divider = Math.ceil(props.maxPageButtons / 2);
-
+    const { selectedPageNumber, onClickAction } = props;
     if (props.pageCount <= props.maxPageButtons) {
-        for (let pageIndex = 1; pageIndex <= props.maxPageButtons; pageIndex++) {
-            pageItems.push(getPageNumberView(pageIndex, props));
+        for (let pageNumber = 1; pageNumber <= props.pageCount; pageNumber++) {
+            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction }));
         }
     } else {
-        leftSide = divider;
-        rightSide = props.maxPageButtons - leftSide;
-
-        if (props.selectedPageNumber > props.pageCount - divider) {
-            rightSide = props.pageCount - props.selectedPageNumber;
-            leftSide = props.maxPageButtons - rightSide;
-        } else if (props.selectedPageNumber < divider) {
-            leftSide = props.selectedPageNumber;
-            rightSide = props.maxPageButtons - leftSide;
+        const leftBreakpoint = Math.ceil(props.maxPageButtons / 2);
+        const rightBreakpoint = Math.floor(props.maxPageButtons / 2);
+        const hasLeftDivider = props.selectedPageNumber > leftBreakpoint;
+        const hasRightDivider = props.selectedPageNumber < (props.pageCount - rightBreakpoint);
+        let leftButtonNumber: number;
+        let rightButtonNumber: number;
+        if (!hasLeftDivider && hasRightDivider) {
+            // [first] [left] _ _ _ [right] [...] [last]
+            leftButtonNumber = 1 + 1; // first
+            rightButtonNumber = props.maxPageButtons - 2; // divider, last
+        } else if (hasLeftDivider && hasRightDivider) {
+            // [first] [...] [left] _ _ _ [right] [...] [last]
+            const leftOfSelected = Math.floor((props.maxPageButtons - 4) / 2); // first, divider, divider, last
+            const rightOfSelected = Math.ceil((props.maxPageButtons - 4) / 2) - 1; // first, divider, divider, last, selected
+            leftButtonNumber = props.selectedPageNumber - leftOfSelected;
+            rightButtonNumber = props.selectedPageNumber + rightOfSelected;
+        } else if (hasLeftDivider && !hasRightDivider) {
+            // [first] [...] [left] _ _ _ [right] [last]
+            leftButtonNumber = props.pageCount - (props.maxPageButtons - 3) ; // first, divider, last
+            rightButtonNumber = props.pageCount - 1; // last
         }
-
-        for (let page = 1; page <= props.pageCount; page++) {
-            if (page <= margin) {
-                pageItems.push(getPageNumberView(page, props));
-                continue;
-            }
-
-            if (page === props.pageCount) {
-                pageItems.push(getPageNumberView(page, props));
-                continue;
-            }
-
-            if ((page - 1 > props.selectedPageNumber - leftSide) && (page < props.selectedPageNumber + rightSide)) {
-                if (props.selectedPageNumber + rightSide >= props.pageCount) {
-                    pageItems.push(getPageNumberView(page, props));
-                    continue;
-                }
-                if (breakViewAdded) {
-                    breakViewAdded = false;
-                } else {
-                    pageItems.push(getPageNumberView(page, props));
-                }
-                continue;
-            }
-
-            // If a page is clicked and on the right side of the pagination there exists a page or pages with value
-            // more than max page buttons, Make sure that the second page is a break view
-            if (page === 2) {
-                pageItems.push(createElement(BreakView, {}));
-                breakViewAdded = true;
-                continue;
-            }
-
-            if (page === props.pageCount - 1) {
-                pageItems.push(createElement(BreakView, {}));
-            }
+        // Add first page button
+        pageItems.push(PageNumberButton({ pageNumber: 1, selectedPageNumber, onClickAction }));
+        if (hasLeftDivider) {
+            pageItems.push(createElement(BreakView, {}));
         }
+        // Add middle page buttons
+        for (let pageNumber = leftButtonNumber; pageNumber <= rightButtonNumber; pageNumber++) {
+            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction }));
+        }
+        if (hasRightDivider) {
+            pageItems.push(createElement(BreakView, {}));
+        }
+        // Add last page button
+        pageItems.push(PageNumberButton({ pageNumber: props.pageCount, selectedPageNumber, onClickAction }));
     }
 
     return createElement("ul", {}, pageItems);
 };
-
-const getPageNumberView = (pageNumber: number, props: PageNumberViewProps) => {
-    return createElement("li", {
-            className: classNames(
-                props.selectedPageNumber === pageNumber ? "active" : "",
-                pageNumber < 10 ? "single-digit" : ""
-            ),
-            onClick: () => props.onClickAction(pageNumber)
-        },
-        pageNumber
-    );
-};
-
-PageNumberView.displayName = "PageNumberView";

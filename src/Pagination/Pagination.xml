@@ -61,9 +61,9 @@
                     </enumerationValues>
                 </property>
                 <property key="maxPageButtons" type="integer" defaultValue="7">
-                    <caption>Number of page buttons</caption>
+                    <caption>Maximum number of page buttons</caption>
                     <category>General</category>
-                    <description>Minimal value 7</description>
+                    <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
                 </property>
             </properties>
         </property>
