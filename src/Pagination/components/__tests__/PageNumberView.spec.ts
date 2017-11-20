@@ -22,7 +22,6 @@ describe("PageNumberView", () => {
                     getDefaultPageNumberView(3, defaultPageNumberViewProps),
                     getDefaultPageNumberView(4, defaultPageNumberViewProps),
                     getDefaultPageNumberView(5, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(6, defaultPageNumberViewProps),
                     createElement(BreakView, {}),
                     getDefaultPageNumberView(10, defaultPageNumberViewProps)
                 )
@@ -30,17 +29,12 @@ describe("PageNumberView", () => {
         });
 
         it("all buttons when page count is less than maximum number of page buttons ", () => {
-            const pageNumberView = shallowRenderPageNumberView({ ...defaultPageNumberViewProps, pageCount: 0 });
+            const pageNumberView = shallowRenderPageNumberView({ ...defaultPageNumberViewProps, pageCount: 2 });
 
             expect(pageNumberView).toBeElement(
                 createElement("ul", {},
                     getDefaultPageNumberView(1, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(2, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(3, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(4, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(5, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(6, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(7, defaultPageNumberViewProps)
+                    getDefaultPageNumberView(2, defaultPageNumberViewProps)
                 )
             );
         });
@@ -60,7 +54,6 @@ describe("PageNumberView", () => {
                     getDefaultPageNumberView(4, pageNumberViewProps),
                     getDefaultPageNumberView(5, pageNumberViewProps),
                     getDefaultPageNumberView(6, pageNumberViewProps),
-                    getDefaultPageNumberView(7, pageNumberViewProps),
                     createElement(BreakView, {}),
                     getDefaultPageNumberView(10, pageNumberViewProps)
                 )
