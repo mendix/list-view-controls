@@ -14,7 +14,7 @@ interface WrapperProps {
     class: string;
     style: string;
     friendlyId: string;
-    mxform?: mxui.lib.form._FormBase;
+    mxform: mxui.lib.form._FormBase;
     mxObject: mendix.lib.MxObject;
 }
 
@@ -82,7 +82,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         dojoConnect.disconnect(this.navigationHandler);
     }
 
-    private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> {
+    private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
         if (!this.state.alertMessage) {
             return createElement(TextBoxSearch, {
                 defaultQuery: this.props.defaultQuery,
@@ -114,12 +114,13 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
             return "[" + constraints.join(" or ") + "]";
         }
+        return "";
     }
 
     private connectToListView() {
         const queryNode = findDOMNode(this).parentNode as HTMLElement;
         const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
-        let targetListView: ListView | null = null;
+        let targetListView: ListView | undefined;
         let errorMessage = "";
 
         if (targetNode) {
@@ -132,6 +133,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
                 }
             }
         }
+        targetListView = targetListView || undefined;
 
         const validationMessage = SharedUtils.validateCompatibility({
             friendlyId: this.props.friendlyId,

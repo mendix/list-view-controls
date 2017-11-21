@@ -160,7 +160,7 @@ export function toElementStructure(node: any): ElementStructure | ElementStructu
 
         const children = from(domNode.childNodes)
             .filter((child: Node) => child.nodeName !== "#comment")
-            .map(domToStructure);
+            .map((child: Node) => domToStructure(child as HTMLElement));
 
         return { type, props, children };
     }

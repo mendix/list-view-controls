@@ -1,9 +1,9 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactElement, SFCElement, createElement } from "react";
 import * as classNames from "classnames";
 
 import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType, UpdateSourceType } from "../Pagination";
-import { PageNumberView } from "./PageNumberView";
+import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
 
 export interface PaginationProps {
     hideUnusedPaging: boolean;
@@ -94,7 +94,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         }
     }
 
-    private renderPagination(): Array<ReactElement<{}>> {
+    private renderPagination(): SFCElement<PageNumberViewProps>[] | ReactElement<{}>[] {
         if (this.props.pagingStyle === "default") {
 
             return this.renderDefault();
