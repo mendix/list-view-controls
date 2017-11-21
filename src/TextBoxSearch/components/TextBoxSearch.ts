@@ -57,6 +57,11 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
     }
 
     private resetQuery() {
-        this.setState({ query: "" });
+        const query = "";
+
+        this.setState({ query });
+        setTimeout(() => {
+            this.props.onTextChange(query);
+        }, this.searchTimeOut);
     }
 }
