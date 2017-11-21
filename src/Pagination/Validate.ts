@@ -36,7 +36,7 @@ export class Validate {
             }
         }
         if (errorMessage.length) {
-            return `${props.friendlyId} : ${errorMessage.join(", ")}`;
+            return `${props.friendlyId}: ${errorMessage.join(", ")}`;
         }
 
         return "";

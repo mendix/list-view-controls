@@ -7,9 +7,11 @@ import * as dojoConnect from "dojo/_base/connect";
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
 import { ListView, SharedUtils } from "../../Shared/SharedUtils";
-
 import { Validate } from "../Validate";
+
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
+
+import "../ui/DropDownFilter.scss";
 
 interface WrapperProps {
     class: string;
