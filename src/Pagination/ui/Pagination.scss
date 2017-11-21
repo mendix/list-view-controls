@@ -71,7 +71,7 @@ $widget-pagination-color-disabled: #999;
                 width: 48px;
                 cursor: pointer;
 
-                .break-view{
+                &.break-view{
                     cursor: default;
                 }
 
