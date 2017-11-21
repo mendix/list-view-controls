@@ -50,14 +50,6 @@ export default class SearchContainer extends Component<ContainerProps, Container
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
-    componentDidMount() {
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-        }
-    }
-
     componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
         if (this.state.listViewAvailable && !previousState.listViewAvailable) {
             this.applySearch(this.props.defaultQuery);
@@ -124,6 +116,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         let errorMessage = "";
 
         if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 try {

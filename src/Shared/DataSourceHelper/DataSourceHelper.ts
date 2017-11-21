@@ -21,6 +21,8 @@ export class DataSourceHelper {
     static VERSION: Version = { major: 1, minor: 0, patch: 0 };
     // Expose the version dataSourceHelper instances.
     public version: Version = DataSourceHelper.VERSION;
+
+    private initialLoad = true;
     private delay = 50;
     private timeoutHandle?: number;
     private store: ConstraintStore = { constraints: {}, sorting: {} };
@@ -41,6 +43,7 @@ export class DataSourceHelper {
             widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
         }
         widget.__customWidgetDataSourceHelper.versionCompatibility(version, widgetId);
+        widget.__customWidgetDataSourceHelper.initialLoad = true;
 
         return widget.__customWidgetDataSourceHelper;
     }
@@ -123,9 +126,14 @@ export class DataSourceHelper {
 
         this.widget._datasource._constraints = constraints;
         this.widget._datasource._sorting = sorting;
-        this.showLoader();
+
+        if (!this.initialLoad) {
+            this.showLoader();
+        }
+
         this.widget.update(null, () => {
            this.hideLoader();
+           this.initialLoad = false;
            callback();
         });
     }

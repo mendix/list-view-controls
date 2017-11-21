@@ -65,15 +65,6 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         );
     }
 
-    componentDidMount() {
-        const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
-
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-        }
-    }
-
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
             const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
@@ -107,6 +98,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         let errorMessage = "";
 
         if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 try {

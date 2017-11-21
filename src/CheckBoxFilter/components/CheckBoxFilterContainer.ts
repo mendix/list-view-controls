@@ -74,15 +74,6 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         );
     }
 
-    componentDidMount() {
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
-
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-        }
-    }
-
     componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable
                 && (!prevState.listViewAvailable || prevProps.mxObject !== this.props.mxObject)) {
@@ -170,12 +161,13 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     private connectToListView() {
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
         let targetListView: ListView | null = null;
         let errorMessage = "";
+        const filterNode = findDOMNode(this).parentNode as HTMLElement;
+        const targetNode = SharedUtils.findTargetNode(filterNode);
 
         if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 try {

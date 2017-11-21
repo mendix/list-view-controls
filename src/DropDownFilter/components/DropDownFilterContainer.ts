@@ -61,14 +61,6 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
-    componentDidMount() {
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-        }
-    }
-
     render() {
         return createElement("div",
             {
@@ -146,6 +138,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         let errorMessage = "";
 
         if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 try {
