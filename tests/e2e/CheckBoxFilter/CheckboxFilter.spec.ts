@@ -30,10 +30,12 @@ describe("Check box filter", () => {
     });
 
     describe("when clicked", () => {
-
-        it("the checkbox is checked", () => {
+        beforeAll(() => {
             defaultFilter.checkBoxFilter.waitForVisible();
             defaultFilter.checkBoxFilter.click();
+        });
+
+        it("the checkbox is checked", () => {
             defaultFilter.checkBoxFilter.waitForVisible();
             const checked = defaultFilter.checkBoxFilter.isSelected() as boolean;
 
