@@ -81,7 +81,14 @@ describe("Pagination", () => {
     });
 
     it("when custom button is clicked list view should show item on the custom page ", () => {
+        // Change page size
+        browser.setViewportSize({
+            height: 720,
+            width: 1720
+        });
+        browser.windowHandleSize();
         page.open();
+
         page.customButtonTwo.waitForVisible(120000);
         page.customButtonTwo.click();
         page.listView4ThirdItem.waitForVisible();

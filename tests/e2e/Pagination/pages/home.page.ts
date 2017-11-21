@@ -17,7 +17,7 @@ class Home {
 
     public get listViewThirdItem() { return browser.elements(".mx-name-listView1 > ul > li.mx-listview-item.mx-name-index-2 > div > div > span"); }
 
-    public get listView4ThirdItem() { return browser.elements(".mx-name-listView4 > ul > li.mx-listview-item.mx-name-index-2 > div > div > span"); }
+    public get listView4ThirdItem() { return browser.elements("#mxui_widget_ListView_1 > ul > li.mx-listview-item.mx-name-index-2"); }
 
     public get listViewFifthItem() { return browser.elements(".mx-name-listView1 > ul > li.mx-listview-item.mx-name-index-4 > div > div > span"); }
 
