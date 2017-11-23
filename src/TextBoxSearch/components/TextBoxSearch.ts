@@ -14,6 +14,7 @@ interface TextBoxSearchState {
 
 export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchState> {
     private searchTimeOut = 500;
+    private updateHandle: number;
 
     constructor(props: TextBoxSearchProps) {
         super(props);
@@ -39,6 +40,7 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
             )
         );
     }
+
     componentWillReceiveProps(newProps: TextBoxSearchProps) {
         if (this.state.query !== newProps.defaultQuery) {
             this.setState({ query: this.props.defaultQuery });
@@ -49,7 +51,10 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
         const query = event.currentTarget.value;
 
         if (this.state.query !== query) {
-            setTimeout(() => {
+            if (this.updateHandle) {
+                window.clearTimeout(this.updateHandle);
+            }
+            this.updateHandle = window.setTimeout(() => {
                 this.props.onTextChange(query);
             }, this.searchTimeOut);
         }
@@ -60,8 +65,6 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
         const query = "";
 
         this.setState({ query });
-        setTimeout(() => {
-            this.props.onTextChange(query);
-        }, this.searchTimeOut);
+        this.props.onTextChange(query);
     }
 }
