@@ -1,0 +1,27 @@
+.widget-data-source-helper-initial-loading > * {
+    opacity: 0 !important;
+}
+
+.widget-data-source-helper-loading ul:before {
+    background-image: url(./loading.gif);
+    background-repeat: no-repeat;
+    background-position: center 15px;
+    background-color: rgba(255, 255, 255, 0.5);
+    content: "";
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1;
+}
+
+.widget-data-source-helper-loading .mx-listview-item {
+    -webkit-filter: blur(3px);
+    filter: blur(3px);
+}
+
+.widget-data-source-helper-loading .mx-list {
+    position: relative;
+}

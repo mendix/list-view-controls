@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.TextBoxSearch" offlineCapable="false" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Text-box search</name>
+    <description>Search Mendix list views using a search input</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAA8AAAAPCAYAAAA71pVKAAAAAXNSR0IArs4c6QAAAh9JREFUKBVjZICCqKgowV+/fukzMjJKATH3////vwLxMzY2tovLli17D1OHTDOCOL6+voqCwmKO5s6+mgZGZipSorwSv37+enfy5Imbe7asu/L+7av9mzdvvo+sEcRm9vb2FuQVEPIOTi6xU1bT1JET4xNlYWRiYWNl5ZVXUJQXV9bjvXXxHJOsrPT927dv/0A2gOnv379GFi5+WryCIvKC3GxsTAwMYNeAFIHY8tISKtYe/rogdcgaQWwWoD9lVbVN5ECcZ++//wBhEBsZaOmbKK6e90sWWQzEZvnz5w8/JyeX0J9//8BymlJ8fOiKnr7/zgpShy7OBLT525/f3z+DJLBpBIkz/v31GaQOxEYGTD9//nxy49yxZyzMTMx//vz/iywJYv8H4ivnjj8FqUOXY/r69evpJXOm3P375d2bn/9Q9TIzMzB/+/Tu19K50x8A4/42umbmt2/ffvv+7euHfbu2CAoJCjJqqKtwc3Gy8/79/ePzji0b7+VkpF0qLy+tOX78+BN5efmnjx8//ggzBB4tQAExZmZmB6ANykA2KNA+AVPYXaDYFU5Ozphly1ZW9vR013/79mXNyZMnr8EMIEizs7OrSktL9x88eOK/r69/h7W1tQVIEzNBnUAFwATy7sePH28OHz7EMHXqvPzr169/4+fnYSVGL1wNCwuLi6Wl1aIbN178NzIyKkP2M1wRPgYwDGKAOU1XSkpqMQAi/NjGfJCO6QAAAABJRU5ErkJggg==</icon>
+    <properties>
+        <property key="entity" type="entity">
+            <caption>List view with entity</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="attributeList" type="object" isList="true">
+            <caption>Search attributes</caption>
+            <category>General</category>
+            <description/>
+            <properties>
+                <property key="attribute" type="attribute" isPath="optional" pathType="reference" entityProperty="../entity">
+                    <caption>Attribute</caption>
+                    <category>General</category>
+                    <description>The attribute of the list view entity</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Decimal"/>
+                        <attributeType name="Boolean"/>
+                        <attributeType name="DateTime"/>
+                        <attributeType name="Enum"/>
+                        <attributeType name="Long"/>
+                    </attributeTypes>
+                </property>
+            </properties>
+        </property>
+        <property key="placeHolder" type="translatableString" required="false">
+            <caption>Placeholder</caption>
+            <category>General</category>
+            <description>The text shown in the search input, to hint users that the input can be used for searching</description>
+            <translations>
+                <translation lang="en_US">Search</translation>
+                <translation lang="nl_NL">Zoeken</translation>
+            </translations>
+        </property>
+        <property key="defaultQuery" type="string" required="false">
+            <caption>Default query</caption>
+            <category>General</category>
+            <description>Query that is used on initial loading of the page</description>
+        </property>
+    </properties>
+</widget>

@@ -1,0 +1,123 @@
+$widget-pagination-color-active: #0595DB;
+$widget-pagination-color-disabled: #999;
+
+.widget-pagination {
+    overflow: hidden;
+    .pagination {
+        margin: 0;
+        overflow: hidden;
+        white-space: nowrap;
+
+        .paging-status {
+            vertical-align: middle;
+            margin-bottom: 0;
+            padding: 0.6em 1em;
+            line-height: 1.42857;
+            border-color: transparent;
+            background-color: transparent;
+            cursor: text;
+        }
+
+        button {
+            span.only-text{
+                font-weight:600;
+            }
+        }
+
+        .mx-button,.btn {
+            color: #000;
+            border-color: transparent;
+            background-color: transparent;
+
+            &:hover{
+                color: $widget-pagination-color-active;
+                border-color: transparent;
+                background-color: transparent;
+            }
+        }
+
+        .disabled, .disabled:focus {
+            border-color: transparent;
+            color: $widget-pagination-color-disabled;
+        }
+
+        button {
+            span{
+                &.glyphicon{
+                    line-height: inherit;
+                }
+
+                &.nextButton {
+                    margin-right: 4px;
+                }
+
+                &.previousButton {
+                    margin-left: 4px;
+                }
+            }
+        }
+
+        ul {
+            display: inline-block;
+            padding-left: 15px;
+            padding-right: 15px;
+            margin-top: 2px;
+            margin-bottom: 2px;
+
+            li {
+                color: black;
+                padding: 8px 16px;
+                display: inline-block;
+                width: 48px;
+                cursor: pointer;
+
+                &.break-view{
+                    cursor: default;
+                }
+
+                &.single-digit{
+                    padding-left: 20px;
+                }
+                &.active:not(.break-view), &.active:hover:not(.break-view){
+                    background-color: $widget-pagination-color-active;
+                    color: white;
+                }
+                &:hover:not(.break-view){
+                    color: $widget-pagination-color-active;
+                    background-color: #DDDDDD;
+                }
+            }
+        }
+    }
+}
+
+.widget-pagination-hide-load-more {
+    display: none !important;
+}
+
+.widget-pagination-loading
+{
+    ul:before {
+        background-image: url(./loading.gif);
+        background-repeat: no-repeat;
+        background-position: center 15px;
+        background-color: rgba(255, 255, 255, 0.5);
+        content: "";
+        display: block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 1;
+    }
+
+    .mx-listview-item {
+        -webkit-filter: blur(3px);
+        filter: blur(3px);
+    }
+
+    .mx-list {
+        position: relative;
+    }
+}

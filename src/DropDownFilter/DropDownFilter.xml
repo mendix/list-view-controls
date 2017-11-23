@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.DropDownFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Drop-down filter</name>
+    <description>Filter Mendix list views using a drop-down</description>
+    <icon>
+        iVBORw0KGgoAAAANSUhEUgAAAA0AAAAPCAYAAAA/I0V3AAAAAXNSR0IArs4c6QAAAZ9JREFUKBWNkr9rwkAUx19+GM1voyg4umSTTM4dpFMpurk4V2mXjoVCCx0q3YVi/4UOFUqHCjp1cWzBUqpIZ0WXaE1KTPouFZGo0IPjvXf3/XzfHXdUPp8/HAwGqV6vB5ZlAQ4Wp0bTtMLzPEiS5MiybMdiMRujJQjCF0tRVKrVatUdx/Gh+XwOs5kNo9E3MEwIIRkURQFZloCYVCrFY+IKuVyuXKvV6qZpIjAD05zCZDIFluV8QNM0UFUVqtWLU+wGbKPRuMtkMkfpdBrG4zGKJ+iuoNUUOI6HeDwOiUQColGV+APqb2mSuK7b1nW9jPdAIQehEAs0TWEnFsLhMB6TgVLp4AzjM9H7ULfb7Xue1zYMoxyJRHyQYf4MRFGAYnH/Eu/+2Gw2P1YQSWzb7mNoZ7PZE9KNYSgfLhT2rrHjQ6fTeSe6XUPHjfOnpxdPFMWbZDJpBIX+8QKLn+v1cDh8Xa9Jvg0KajbqXZC3VLobBC7sgn6IeLFYzP8N4Xv5HfBr+XAQ3NoJH5sj3wXj1n0q6LKsrzCSvXucb8u1VfgFhT5/n4nGOh0AAAAASUVORK5CYII=
+    </icon>
+    <properties>
+        <property key="entity" type="entity">
+            <caption>List view with entity</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="filters" type="object" isList="true">
+            <caption>Filter options</caption>
+            <category>General</category>
+            <description/>
+            <properties>
+                <property key="caption" type="translatableString" required="false">
+                    <caption>Caption</caption>
+                    <category>General</category>
+                    <description/>
+                </property>
+                <property key="filterBy" type="enumeration" defaultValue="none">
+                    <caption>Filter</caption>
+                    <category>General</category>
+                    <description/>
+                    <enumerationValues>
+                        <enumerationValue key="none">None</enumerationValue>
+                        <enumerationValue key="attribute">Attribute</enumerationValue>
+                        <enumerationValue key="XPath">XPath</enumerationValue>
+                    </enumerationValues>
+                </property>
+                <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="../entity">
+                    <caption>Attribute</caption>
+                    <category>General</category>
+                    <description>The attribute on which the filter method is applied to</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Decimal"/>
+                        <attributeType name="Boolean"/>
+                    </attributeTypes>
+                </property>
+                <property key="attributeValue" type="string" required="false">
+                    <caption>Attribute value</caption>
+                    <category>General</category>
+                    <description/>
+                </property>
+                <property key="constraint" type="entityConstraint" required="false" entityProperty="../entity">
+                    <caption>XPath constraint</caption>
+                    <category>General</category>
+                    <description>Constraint on the data from the data entity, when filtering by 'XPath'</description>
+                </property>
+                <property key="isDefault" type="boolean" defaultValue="false">
+                    <caption>Selected by default</caption>
+                    <category>General</category>
+                    <description>Only one filter can be set as default. When there is no default option provided, the first filter option is selected by default</description>
+                </property>
+            </properties>
+        </property>
+    </properties>
+</widget>

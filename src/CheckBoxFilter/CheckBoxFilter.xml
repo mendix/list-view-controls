@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.CheckBoxFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Check-box filter</name>
+    <description>Filter Mendix list views using a checkbox</description>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAAV1BMVEUAAAB+fn4sLCwAAAB+fn52dnZqampaWlpKSkomJiYAAAACAgIBAQEAAAAAAABycnKEhISioqKkpKSysrK/v7/Kysrq6urs7Ozt7e3x8fH29vb4+Pj+/v52ANGvAAAAD3RSTlMATVZXZ2hqbG5zdYKsr+pcwTBcAAAAVUlEQVR42o3NORKAIBBE0QFlccWVde5/TocAikCr/B119ID1FIOSQMRb1CuvuJ+yXnUYExTMXd4E2m/WayjxgeLwqzcXGzfFmBo3OEfuOuYt5Npv9wG6DgRaVjOGtQAAAABJRU5ErkJggg==</icon>
+    <properties>
+        <property key="listViewEntity" type="entity">
+            <caption>List view with entity</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="defaultChecked" type="boolean" defaultValue="false">
+            <caption>Default checked</caption>
+            <category>General</category>
+            <description>Checks the check box on initial loading of the page</description>
+        </property>
+        <property key="filterBy" type="enumeration" defaultValue="none">
+            <caption>Filter by</caption>
+            <category>Checked</category>
+            <description/>
+            <enumerationValues>
+                <enumerationValue key="none">None</enumerationValue>
+                <enumerationValue key="attribute">Attribute</enumerationValue>
+                <enumerationValue key="XPath">XPath</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="listViewEntity">
+            <caption>Attribute</caption>
+            <category>Checked</category>
+            <description>The attribute to apply filter when filtering by 'Attribute'</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+                <attributeType name="Integer"/>
+                <attributeType name="Decimal"/>
+                <attributeType name="Boolean"/>
+                <attributeType name="Enum"/>
+            </attributeTypes>
+        </property>
+        <property key="attributeValue" type="string" required="false">
+            <caption>Attribute value</caption>
+            <category>Checked</category>
+            <description>Value of the attribute to be matching when filtering by 'Attribute'. Note: for enumeration use the key value, for boolean use 'true' or 'false'</description>
+        </property>
+        <property key="constraint" type="entityConstraint" required="false" entityProperty="listViewEntity">
+            <caption>XPath constraint</caption>
+            <category>Checked</category>
+            <description>Constraint on the data when filtering by 'XPath'</description>
+        </property>
+        <property key="unCheckedFilterBy" type="enumeration" defaultValue="none">
+            <caption>Filter by </caption>
+            <category>Unchecked</category>
+            <description/>
+            <enumerationValues>
+                <enumerationValue key="none">None</enumerationValue>
+                <enumerationValue key="attribute">Attribute</enumerationValue>
+                <enumerationValue key="XPath">XPath</enumerationValue>
+            </enumerationValues>
+        </property>
+        <property key="unCheckedAttribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="listViewEntity">
+            <caption>Attribute </caption>
+            <category>Unchecked</category>
+            <description>The attribute to apply filter when filtering by 'Attribute'</description>
+            <attributeTypes>
+                <attributeType name="String"/>
+                <attributeType name="Integer"/>
+                <attributeType name="Decimal"/>
+                <attributeType name="Boolean"/>
+                <attributeType name="Enum"/>
+            </attributeTypes>
+        </property>
+        <property key="unCheckedAttributeValue" type="string" required="false">
+            <caption>Attribute value </caption>
+            <category>Unchecked</category>
+            <description>Value of the attribute to be matching when filtering by 'Attribute'. Note: for enumeration use the key value, for boolean use 'true' or 'false'</description>
+        </property>
+        <property key="unCheckedConstraint" type="entityConstraint" required="false" entityProperty="listViewEntity">
+            <caption>XPath constraint </caption>
+            <category>Unchecked</category>
+            <description>Constraint on the data when filtering by 'XPath'</description>
+        </property>
+    </properties>
+</widget>

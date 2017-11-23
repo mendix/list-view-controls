@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<package xmlns="http://www.mendix.com/package/1.0/">
+    <clientModule name="ListViewControls" version="1.0.0" xmlns="http://www.mendix.com/clientModule/1.0/">
+        <widgetFiles>
+            <widgetFile path="CheckBoxFilter/CheckBoxFilter.xml"/>
+            <widgetFile path="DropDownFilter/DropDownFilter.xml"/>
+            <widgetFile path="DropDownSort/DropDownSort.xml"/>
+            <widgetFile path="TextBoxSearch/TextBoxSearch.xml"/>
+            <widgetFile path="Pagination/Pagination.xml"/>
+        </widgetFiles>
+        <files>
+            <file path="com/mendix/widget/custom/listviewcontrols/CheckBoxFilter"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/DropDownFilter"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/DropDownSort"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/TextBoxSearch"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/Pagination"/>
+        </files>
+    </clientModule>
+</package>
