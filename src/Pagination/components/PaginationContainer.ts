@@ -50,7 +50,6 @@ interface ValidateProps {
 
 export default class PaginationContainer extends Component<WrapperProps, PaginationContainerState> {
     private navigationHandler: object;
-    private listListViewHeight: number;
 
     constructor(props: WrapperProps) {
         super(props);
@@ -128,7 +127,6 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
             let listViewSize = 0;
             let offset = 0;
             let dataSource: ListView["_datasource"];
-            let listNode: HTMLUListElement;
 
             if (targetNode) {
                 targetListView = dijitRegistry.byNode(targetNode);
@@ -140,8 +138,6 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
                     listViewSize = dataSource._setSize;
                     offset = dataSource._pageSize;
                     hideUnusedPaging = this.isHideUnUsed(targetListView);
-                    listNode = targetNode.querySelector("ul") as HTMLUListElement;
-                    this.listListViewHeight = listNode.clientHeight;
 
                     this.afterListViewLoad(targetListView, targetNode);
                     this.afterListViewDataRender(targetListView);
@@ -176,10 +172,6 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
                 const listViewSize = dataSource._setSize;
                 const offset = dataSource._pageSize;
                 const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
-                const listNode = targetNode.querySelector("ul") as HTMLUListElement;
-                this.listListViewHeight = listNode.clientHeight;
-
-                this.maintainListViewStructure(targetNode);
 
                 this.setState({
                     findingListViewWidget: false,
@@ -267,15 +259,6 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
     private publishListViewUpdate(offSet: number, pageNumber: number) {
         if (this.state.targetListView) {
             dojoTopic.publish(this.state.targetListView.friendlyId, [ offSet, pageNumber ]);
-        }
-    }
-
-    private maintainListViewStructure(targetNode: HTMLElement) {
-        if (this.listListViewHeight > 0) {
-            const listNode = targetNode.querySelector("ul") as HTMLUListElement;
-
-            listNode.style.height = `${this.listListViewHeight}px`;
-            listNode.style.overflow = "hidden";
         }
     }
 
