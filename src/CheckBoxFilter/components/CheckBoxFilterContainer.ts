@@ -179,9 +179,9 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         }
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.listViewEntity,
-            targetListView
+            targetListView,
+            widgetName: "Check box filter"
         });
 
         errorMessage = validationMessage || errorMessage;

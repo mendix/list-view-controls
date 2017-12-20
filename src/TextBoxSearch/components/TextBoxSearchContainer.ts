@@ -129,9 +129,9 @@ export default class SearchContainer extends Component<ContainerProps, Container
         targetListView = targetListView || undefined;
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.entity,
-            targetListView
+            targetListView,
+            widgetName: "List view controls Text-box search"
         });
 
         this.setState({

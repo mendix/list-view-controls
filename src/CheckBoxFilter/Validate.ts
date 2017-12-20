@@ -2,26 +2,26 @@ import { ContainerProps } from "./components/CheckBoxFilterContainer";
 
 export class Validate {
     static validateProps(props: ContainerProps & { isWebModeler?: boolean }): string {
-        const widgetName = props.friendlyId;
+        const widgetName = "List view controls Check box filter";
         const errorMessage = [];
 
         if (props.filterBy === "XPath" && !props.constraint) {
-            errorMessage.push("Filter by 'XPath' requires an 'XPath constraint'");
+            errorMessage.push("Checked Filter by 'XPath' constraint is required");
         }
         if (props.filterBy === "attribute" && !props.attribute) {
-            errorMessage.push("Filter by 'Attribute' requires an 'Attribute'");
+            errorMessage.push("Checked Filter by 'Attribute' is required");
         }
         if (props.filterBy === "attribute" && !props.attributeValue) {
-            errorMessage.push("Filter by 'Attribute' requires an 'Attribute value'");
+            errorMessage.push("Checked Filter by 'Attribute value' is required");
         }
         if (props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
-            errorMessage.push("Unchecked filter by 'XPath' requires an 'XPath constraint'");
+            errorMessage.push("Unchecked filter by 'XPath' constraint is required");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttribute) {
-            errorMessage.push("Unchecked filter by 'Attribute' requires an 'Attribute'");
+            errorMessage.push("Unchecked filter by 'Attribute' is required");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttributeValue) {
-            errorMessage.push("Unchecked filter by 'Attribute' requires an 'Attribute value'");
+            errorMessage.push("Unchecked filter by 'Attribute value' is required");
         }
         if (!props.isWebModeler) {
             if (window.mx.isOffline() && props.filterBy === "XPath") {

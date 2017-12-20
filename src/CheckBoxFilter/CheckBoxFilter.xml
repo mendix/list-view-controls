@@ -7,7 +7,7 @@
         <property key="listViewEntity" type="entity">
             <caption>List view with entity</caption>
             <category>General</category>
-            <description/>
+            <description>Select the same entity as the list view that this widget should interact with. If multiple list views with this entity are found, the closest is used</description>
         </property>
         <property key="defaultChecked" type="boolean" defaultValue="false">
             <caption>Default checked</caption>

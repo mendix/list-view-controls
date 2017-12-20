@@ -10,6 +10,7 @@ export class Validate {
 
     static validate(props: ValidateConfigProps): string {
         const errorMessage: string[] = [];
+
         if (props.pagingStyle === "custom") {
             if (props.items.length < 1) {
                 errorMessage.push("custom style should have at least one item");
@@ -27,6 +28,7 @@ export class Validate {
                 }
             });
         }
+
         if (!props.inWebModeler) {
             if (!props.queryNode) {
                 errorMessage.push("unable to find a list view on the page");
@@ -35,8 +37,9 @@ export class Validate {
                 errorMessage.push("this Mendix version is incompatible");
             }
         }
+
         if (errorMessage.length) {
-            return `${props.friendlyId}: ${errorMessage.join(", ")}`;
+            return `List view controls Pagination: ${errorMessage.join(", ")}`;
         }
 
         return "";

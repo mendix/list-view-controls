@@ -19,7 +19,7 @@ export class Validate {
             errorMessage.push("Should only have one filter set as default");
         }
         if (errorMessage.length) {
-            return `${props.friendlyId} : ${errorMessage.join(", ")}`;
+            return `List view controls Drop down filter : ${errorMessage.join(", ")}`;
         }
 
         return "";

@@ -7,7 +7,7 @@
         <property key="entity" type="entity">
             <caption>List view with entity</caption>
             <category>General</category>
-            <description/>
+            <description>Select the same entity as the list view that this widget should interact with. If multiple list views with this entity are found, the closest is used</description>
         </property>
         <property key="attributeList" type="object" isList="true">
             <caption>Search attributes</caption>
@@ -40,7 +40,7 @@
             </translations>
         </property>
         <property key="defaultQuery" type="string" required="false">
-            <caption>Default query</caption>
+            <caption>Default search text</caption>
             <category>General</category>
             <description>Query that is used on initial loading of the page</description>
         </property>

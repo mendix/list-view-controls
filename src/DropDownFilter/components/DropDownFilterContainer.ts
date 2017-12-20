@@ -150,9 +150,9 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         }
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.entity,
-            targetListView
+            targetListView,
+            widgetName: "List view controls Drop down filter"
         });
 
         this.setState({

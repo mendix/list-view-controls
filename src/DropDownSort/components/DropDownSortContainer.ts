@@ -110,9 +110,9 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.entity,
-            targetListView
+            targetListView,
+            widgetName: "List view controls Drop down sort"
         });
 
         this.setState({
