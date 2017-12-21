@@ -6,32 +6,35 @@ export class Validate {
         const errorMessage = [];
 
         if (props.filterBy === "XPath" && !props.constraint) {
-            errorMessage.push("Checked Filter by 'XPath' constraint is required");
+            errorMessage.push("The checked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.filterBy === "attribute" && !props.attribute) {
-            errorMessage.push("Checked Filter by 'Attribute' is required");
+            errorMessage.push("The checked 'Attribute' is required when 'Filter by' is set to 'Attribute'");
         }
         if (props.filterBy === "attribute" && !props.attributeValue) {
-            errorMessage.push("Checked Filter by 'Attribute value' is required");
+            errorMessage.push("The checked 'Attribute value' is required when 'Filter by' is set to 'Attribute'");
         }
         if (props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
-            errorMessage.push("Unchecked filter by 'XPath' constraint is required");
+            errorMessage.push("The unchecked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttribute) {
-            errorMessage.push("Unchecked filter by 'Attribute' is required");
+            errorMessage.push("The unchecked 'Attribute' is required when 'Filter by' is set to 'Attribute'");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttributeValue) {
-            errorMessage.push("Unchecked filter by 'Attribute value' is required");
+            errorMessage.push("The unchecked 'Attribute value' is required when 'Filter by' is set to 'Attribute'");
         }
         if (!props.isWebModeler) {
             if (window.mx.isOffline() && props.filterBy === "XPath") {
-                errorMessage.push("Filter by 'XPath' is not supported in offline mode");
+                errorMessage.push("The checked 'Filter by' 'XPath' is not supported for offline application");
             }
             if (window.mx.isOffline() && props.unCheckedFilterBy === "XPath") {
-                errorMessage.push("Unchecked filter by 'XPath' is not supported in offline mode");
+                errorMessage.push("The unchecked 'Filter by' 'XPath' is not supported for offline application");
             }
             if (!props.mxObject && props.filterBy === "XPath" && props.constraint.indexOf("[%CurrentObject%]'") > -1) {
-                errorMessage.push("Requires a context object");
+                errorMessage.push("The checked 'XPath constraint', requires a context object");
+            }
+            if (!props.mxObject && props.unCheckedFilterBy === "XPath" && props.unCheckedConstraint.indexOf("[%CurrentObject%]'") > -1) {
+                errorMessage.push("The unchecked 'XPath constraint', requires a context object");
             }
         }
 
