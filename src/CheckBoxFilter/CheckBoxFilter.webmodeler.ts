@@ -14,17 +14,26 @@ export class preview extends Component<ContainerProps, {}> {
     }
 
     render() {
-        return createElement("div",
-            {
-                className: classNames("widget-checkbox-filter", this.props.class),
-                style: SharedUtils.parseStyle(this.props.style)
-            },
-            this.renderAlert(),
-            createElement(CheckboxFilter, {
-                handleChange:  () => { return; },
-                isChecked: this.props.defaultChecked
-            })
+        return createElement("div", { ref: this.parentInline },
+            createElement("div",
+                {
+                    className: classNames("widget-checkbox-filter", this.props.class),
+                    style: SharedUtils.parseStyle(this.props.style)
+                },
+                this.renderAlert(),
+                createElement(CheckboxFilter, {
+                    handleChange: () => { return; },
+                    isChecked: this.props.defaultChecked
+                })
+            )
         );
+    }
+
+    private parentInline(node?: HTMLElement | null) {
+        // Temporary fix, the web modeler add a containing div, to render inline we need to change it.
+        if (node && node.parentElement) {
+            node.parentElement.style.display = "inline-block";
+        }
     }
 
     private renderAlert() {
