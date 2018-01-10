@@ -1,4 +1,5 @@
 import { Component, createElement } from "react";
+import * as classNames from "classnames";
 
 import { SharedUtils } from "../Shared/SharedUtils";
 
@@ -15,13 +16,17 @@ export class preview extends Component<ContainerProps, {}> {
     }
 
     render() {
-        return createElement("div", { className: "widget-header-sort" },
+        return createElement("div",
+            {
+                className: classNames("widget-header-sort", this.props.class),
+                style: SharedUtils.parseStyle(this.props.style)
+            },
             createElement(HeaderSort, {
                 caption: this.props.caption,
+                initialSorted: this.props.initialSorted,
                 onClickAction: () => { return; },
-                sortAttributes: this.props.sortAttributes,
-                sortOrder: this.props.sortOrder,
-                style: SharedUtils.parseStyle(this.props.style)
+                sortAttribute: this.props.sortAttribute,
+                sortOrder: this.props.sortOrder
             })
         );
     }

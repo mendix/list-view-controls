@@ -1,22 +1,20 @@
 import { Component, createElement } from "react";
 import * as classNames from "classnames";
 
-import { AttributeType } from "./HeaderSortContainer";
-
-export interface SortOptionType extends AttributeType {
-    value: string;
-}
-
 export interface HeaderSortProps {
     caption: string;
     onClickAction?: (attribute: string, order: string) => void;
-    sortAttributes: AttributeType[];
-    sortOrder: string;
-    style: object;
+    sortAttribute: string;
+    sortOrder: SortOrder;
+    initialSorted: boolean;
 }
 
+export type SortOrder = "desc" | "asc";
+type StateSortOrder = "" | SortOrder;
+
 export interface HeaderSortState {
-    sortOrder: string;
+    sortOrder: StateSortOrder;
+    isClicked: boolean;
 }
 
 export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
@@ -24,16 +22,25 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
         super(props);
 
         this.state = {
-            sortOrder: this.props.sortOrder
+            isClicked: false,
+            sortOrder: this.getInitialState(this.props)
         };
 
         this.handleClick = this.handleClick.bind(this);
     }
 
     componentWillReceiveProps(newProps: HeaderSortProps) {
-        this.setState({
-            sortOrder: newProps.sortOrder
-        });
+        if (this.state.sortOrder !== newProps.sortOrder) {
+            if (this.state.isClicked) {
+                this.setState({
+                    sortOrder: newProps.sortOrder
+                });
+            } else {
+                this.setState({
+                    sortOrder: this.getInitialState(newProps)
+                });
+            }
+        }
     }
 
     render() {
@@ -42,22 +49,27 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
                 onClick: this.handleClick
             },
             createElement("span", { className: "" }, this.props.caption),
-            createElement("span", { className: classNames("sortIcon", this.state.sortOrder) })
+            createElement("span", { className: classNames("sort-icon", this.state.sortOrder) })
         );
     }
 
-    private handleClick() {
-        const sortOrder = this.state.sortOrder;
-
-        if (sortOrder !== "asc") {
-            this.setState({ sortOrder: "asc" });
-        } else {
-            this.setState({ sortOrder: "desc" });
+    private getInitialState(props: HeaderSortProps): StateSortOrder {
+        if (props.initialSorted) {
+            return props.sortOrder;
         }
-        const primarySort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.isPrimary)[0];
+        return "";
+    }
 
-        if (primarySort && this.props.onClickAction) {
-            this.props.onClickAction(primarySort.name, this.state.sortOrder);
+    private handleClick() {
+        this.setState({ isClicked: true });
+        const sortOrder = this.state.sortOrder !== "asc"
+            ? "asc"
+            : "desc";
+
+        this.setState({ sortOrder });
+
+        if (this.props.sortAttribute && this.props.onClickAction) {
+            this.props.onClickAction(this.props.sortAttribute, sortOrder);
         }
     }
 }

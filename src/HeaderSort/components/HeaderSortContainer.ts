@@ -8,7 +8,7 @@ import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
 import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
-import { HeaderSort, HeaderSortProps } from "./HeaderSort";
+import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 
 import "../ui/HeaderSort.scss";
 
@@ -23,13 +23,9 @@ interface WrapperProps {
 export interface ContainerProps extends WrapperProps {
     entity: string;
     caption: string;
-    sortAttributes: AttributeType[];
-    sortOrder: string;
-}
-
-export interface AttributeType {
-    name: string;
-    isPrimary: boolean;
+    sortAttribute: string;
+    sortOrder: SortOrder;
+    initialSorted: boolean;
 }
 
 export interface ContainerState {
@@ -39,7 +35,7 @@ export interface ContainerState {
     targetNode?: HTMLElement;
 }
 
-export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
+export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
 
@@ -67,10 +63,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.isPrimary)[0];
-
-            if (selectedSort) {
-                this.updateSort(selectedSort.name, this.props.sortOrder);
+            if (this.props.initialSorted) {
+                this.updateSort(this.props.sortAttribute, this.props.sortOrder);
             }
         }
     }
@@ -83,10 +77,10 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         if (!this.state.alertMessage) {
             return createElement(HeaderSort, {
                 caption: this.props.caption,
+                initialSorted: this.props.initialSorted,
                 onClickAction: this.updateSort,
-                sortAttributes: this.props.sortAttributes,
-                sortOrder: this.props.sortOrder,
-                style: SharedUtils.parseStyle(this.props.style)
+                sortAttribute: this.props.sortAttribute,
+                sortOrder: this.props.sortOrder
             });
         }
 
