@@ -1,0 +1,20 @@
+.widget-header-sort {
+    .sort-header {
+        display:flex;
+        align-items:center;
+        justify-content:space-between;
+        cursor: pointer;
+    }
+
+    .asc::after {
+        content:"\25B2"
+    }
+
+    .desc::after {
+        content:"\25BC"
+    }
+
+    .none::after {
+        content:"";
+    }
+}

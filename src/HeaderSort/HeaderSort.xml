@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.HeaderSort" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Header sort</name>
+    <description>Sort Mendix list views using headers</description>
+    <icon></icon>
+    <properties>
+        <property key="entity" type="entity">
+            <caption>List view with entity</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="caption" type="translatableString">
+            <caption>Header caption</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="sortAttributes" type="object" isList="true" required="false">
+            <caption>Sort options</caption>
+            <category>General</category>
+            <description/>
+            <properties>
+                <property key="name" type="attribute" isPath="optional" pathType="reference" entityProperty="../entity">
+                    <caption>Attribute</caption>
+                    <category>Attribute</category>
+                    <description>The attribute of the list view entity</description>
+                    <attributeTypes>
+                        <attributeType name="String"/>
+                        <attributeType name="Integer"/>
+                        <attributeType name="Decimal"/>
+                        <attributeType name="Boolean"/>
+                        <attributeType name="DateTime"/>
+                        <attributeType name="Enum"/>
+                        <attributeType name="Long"/>
+                    </attributeTypes>
+                </property>
+                <property key="isPrimary" type="boolean" defaultValue="false">
+                    <caption>Is primary sort</caption>
+                    <category>General</category>
+                    <description>Only one filter can be set as 'Primary' When there is no default option provided, the first sort option will be selected by default</description>
+                </property>
+            </properties>
+        </property>
+        <property key="sortOrder" type="enumeration" defaultValue="asc">
+            <caption>Sort order</caption>
+            <category>General</category>
+            <description/>
+            <enumerationValues>
+                <enumerationValue key="none">None</enumerationValue>
+                <enumerationValue key="asc">Ascending</enumerationValue>
+                <enumerationValue key="desc">Descending</enumerationValue>
+            </enumerationValues>
+        </property>
+    </properties>
+</widget>
