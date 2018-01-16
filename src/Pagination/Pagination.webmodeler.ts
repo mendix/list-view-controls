@@ -1,4 +1,4 @@
-import { Component, createElement } from "react";
+import { Component, ReactChild, createElement } from "react";
 import { findDOMNode } from "react-dom";
 
 import { Alert } from "../Shared/components/Alert";
@@ -11,7 +11,7 @@ import { Pagination } from "./components/Pagination";
 interface PaginationWebModelerState {
     findingListViewWidget: boolean;
     hideUnusedPaging: boolean;
-    message: string;
+    message: ReactChild;
 }
 
 // tslint:disable-next-line class-name

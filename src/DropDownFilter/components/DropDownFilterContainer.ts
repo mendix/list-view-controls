@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement, ReactChild } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
