@@ -30,9 +30,8 @@ export class preview extends Component<WrapperProps, PaginationWebModelerState> 
     render() {
         return createElement("div", { className: "widget-pagination" },
             createElement(Alert, {
-                className: "widget-pagination-alert",
-                message: this.state.message
-            }),
+                className: "widget-pagination-alert"
+            }, this.state.message),
             createElement(Pagination, {
                 getMessageStatus: () => "[2 to 10 of 50]",
                 hideUnusedPaging: false,

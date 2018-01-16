@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
@@ -41,7 +41,7 @@ interface OfflineConstraint {
 }
 
 export interface ContainerState {
-    alertMessage: string;
+    alertMessage: ReactChild;
     listViewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
@@ -85,14 +85,13 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         dojoConnect.disconnect(this.navigationHandler);
     }
 
-    private renderAlert(message: string): ReactElement<AlertProps> {
+    private renderAlert(message: ReactChild): ReactElement<AlertProps> {
         return createElement(Alert, {
-            className: "widget-checkbox-filter-alert",
-            message
-        });
+            className: "widget-checkbox-filter-alert"
+        }, message);
     }
 
-    private renderCheckBoxFilter(alertMessage: string): ReactElement<CheckboxFilterProps> {
+    private renderCheckBoxFilter(alertMessage: ReactChild): ReactElement<CheckboxFilterProps> {
         if (!alertMessage) {
             return createElement(CheckboxFilter, {
                 handleChange: this.applyFilter,
@@ -180,8 +179,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
         const validationMessage = SharedUtils.validateCompatibility({
             listViewEntity: this.props.listViewEntity,
-            targetListView,
-            widgetName: "Check box filter"
+            targetListView
         });
 
         errorMessage = validationMessage || errorMessage;

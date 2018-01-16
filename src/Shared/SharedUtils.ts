@@ -45,22 +45,21 @@ export class SharedUtils {
         return {};
     }
 
-    static validateCompatibility(props: {widgetName: string, listViewEntity?: string, targetListView?: ListView; }): string {
+    static validateCompatibility(props: { listViewEntity?: string, targetListView?: ListView; }): string {
         const { targetListView } = props;
         const type = targetListView && targetListView.datasource && targetListView.datasource.type;
-        const widgetName = props.widgetName;
 
         if (!targetListView) {
-            return `${widgetName}: unable to find a list view to connect`;
+            return "This widget is unable to find a list view to connect";
         }
         if (type && type !== "database" && type !== "xpath") {
-            return `${widgetName}: is only compatible with list view data source type 'Database' and 'XPath'`;
+            return "This widget is only compatible with list view data source type 'Database' and 'XPath'";
         }
         if (!(targetListView && targetListView._datasource && targetListView._entity && targetListView.update)) {
-            return `${widgetName}: this mendix version is incompatible`;
+            return "This widget version is not compatible with this Mendix version";
         }
         if (targetListView._entity && props.listViewEntity !== targetListView._entity) {
-            return `${widgetName}: supplied entity "${props.listViewEntity}" does not belong to list view data source`;
+            return `The supplied entity "${props.listViewEntity}" does not belong to list view data source`;
         }
 
         return "";

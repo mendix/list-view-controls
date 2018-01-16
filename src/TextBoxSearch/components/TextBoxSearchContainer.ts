@@ -63,9 +63,8 @@ export default class SearchContainer extends Component<ContainerProps, Container
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
-                className: "widget-text-box-search-alert",
-                message: this.state.alertMessage
-            }),
+                className: "widget-text-box-search-alert"
+            }, this.state.alertMessage),
             this.renderTextBoxSearch()
         );
     }
@@ -130,8 +129,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         const validationMessage = SharedUtils.validateCompatibility({
             listViewEntity: this.props.entity,
-            targetListView,
-            widgetName: "List view controls Text-box search"
+            targetListView
         });
 
         this.setState({

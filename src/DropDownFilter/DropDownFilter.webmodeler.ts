@@ -25,9 +25,8 @@ export class preview extends Component<ContainerProps> {
     private renderAlert() {
         return createElement(Alert, {
             bootstrapStyle: "danger",
-            className: "widget-drop-down-filter-alert",
-            message: Validate.validateProps(this.props)
-        });
+            className: "widget-drop-down-filter-alert"
+        }, Validate.validateProps(this.props));
     }
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
