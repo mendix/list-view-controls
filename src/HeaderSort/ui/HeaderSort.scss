@@ -2,8 +2,20 @@
     .sort-header {
         display:flex;
         align-items:center;
+        border-style: solid;
+        border-color: #D7D7D7;
+        border-top-width: 0;
+        border-right: 0;
+        border-bottom-width: 1px;
+        border-left: 0;
+        background-color: transparent;
         justify-content:space-between;
         cursor: pointer;
+        color: #555555;
+        font-weight: bold;
+        text-align: center;
+        padding: 15px;
+        font-size: 14px;
     }
 
     .asc::after {
