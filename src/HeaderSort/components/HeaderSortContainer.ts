@@ -3,22 +3,17 @@ import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
+import * as dojoTopic from "dojo/topic";
+
+import { HeaderSortListView as ListView, WrapperProps } from "../HeaderSort";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { SharedUtils } from "../../Shared/SharedUtils";
 
 import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 
 import "../ui/HeaderSort.scss";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-    friendlyId: string;
-    mxform: mxui.lib.form._FormBase;
-    mxObject: mendix.lib.MxObject;
-}
 
 export interface ContainerProps extends WrapperProps {
     entity: string;
@@ -31,6 +26,8 @@ export interface ContainerProps extends WrapperProps {
 export interface ContainerState {
     alertMessage?: string;
     listViewAvailable: boolean;
+    publishedSortAttribute?: string;
+    publishedSortOrder?: SortOrder;
     targetListView?: ListView | null;
     targetNode?: HTMLElement;
 }
@@ -43,8 +40,11 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         super(props);
 
         this.state = { listViewAvailable: false };
+
         this.updateSort = this.updateSort.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
+        this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
+        this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
     }
 
     render() {
@@ -79,6 +79,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
                 caption: this.props.caption,
                 initialSorted: this.props.initialSorted,
                 onClickAction: this.updateSort,
+                publishedSortAttribute: this.state.publishedSortAttribute,
+                publishedSortOrder: this.state.publishedSortOrder,
                 sortAttribute: this.props.sortAttribute,
                 sortOrder: this.props.sortOrder
             });
@@ -96,6 +98,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         if (targetNode) {
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
+                this.subScribeToWidgetChanges(targetListView);
                 try {
                     this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
                 } catch (error) {
@@ -123,6 +126,17 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
 
         if (targetListView && targetNode && this.dataSourceHelper) {
             this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
+            this.publishWidgetChanges(attribute, order);
         }
+    }
+
+    private subScribeToWidgetChanges(targetListView: ListView) {
+        dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
+            this.setState({ publishedSortAttribute: message[0], publishedSortOrder: message[1] as SortOrder });
+        });
+    }
+
+    private publishWidgetChanges(attribute: string, order: string) {
+        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order ]);
     }
 }

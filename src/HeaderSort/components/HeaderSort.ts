@@ -4,41 +4,39 @@ import * as classNames from "classnames";
 export interface HeaderSortProps {
     caption: string;
     onClickAction?: (attribute: string, order: string) => void;
+    publishedSortAttribute?: string;
+    publishedSortOrder?: SortOrder;
     sortAttribute: string;
     sortOrder: SortOrder;
     initialSorted: boolean;
 }
 
 export type SortOrder = "desc" | "asc";
-type StateSortOrder = "" | SortOrder;
 
 export interface HeaderSortState {
-    sortOrder: StateSortOrder;
-    isClicked: boolean;
+    sortOrder: SortOrder;
 }
 
 export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
     constructor(props: HeaderSortProps) {
         super(props);
 
-        this.state = {
-            isClicked: false,
-            sortOrder: this.getInitialState(this.props)
-        };
+        this.state = { sortOrder: this.getInitialState(this.props) };
 
         this.handleClick = this.handleClick.bind(this);
     }
 
     componentWillReceiveProps(newProps: HeaderSortProps) {
         if (this.state.sortOrder !== newProps.sortOrder) {
-            if (this.state.isClicked) {
-                this.setState({
-                    sortOrder: newProps.sortOrder
-                });
+            this.setState({ sortOrder: newProps.sortOrder });
+        }
+
+        // Received update from one of the widgets
+        if (newProps.publishedSortAttribute && newProps.publishedSortOrder) {
+            if (newProps.publishedSortAttribute === this.props.sortAttribute) {
+                this.setState({ sortOrder: newProps.publishedSortOrder });
             } else {
-                this.setState({
-                    sortOrder: this.getInitialState(newProps)
-                });
+                this.setState({ sortOrder: null });
             }
         }
     }
@@ -53,15 +51,15 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
         );
     }
 
-    private getInitialState(props: HeaderSortProps): StateSortOrder {
+    private getInitialState(props: HeaderSortProps): SortOrder {
         if (props.initialSorted) {
             return props.sortOrder;
         }
-        return "";
+
+        return null;
     }
 
     private handleClick() {
-        this.setState({ isClicked: true });
         const sortOrder = this.state.sortOrder !== "asc"
             ? "asc"
             : "desc";

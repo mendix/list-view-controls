@@ -49,6 +49,7 @@ export class DataSourceHelper {
     }
 
     setSorting(widgetId: string, sortConstraint: string[]) {
+        this.store.sorting = {} ;
         this.store.sorting[widgetId] = sortConstraint;
         this.registerUpdate();
     }
