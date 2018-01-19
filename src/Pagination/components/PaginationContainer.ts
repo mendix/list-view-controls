@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
@@ -24,7 +24,7 @@ import "../ui/Pagination.scss";
 interface PaginationContainerState {
     findingListViewWidget: boolean;
     listViewSize: number;
-    message: string;
+    message: ReactChild;
     offset: number;
     hideUnusedPaging: boolean;
     isLoadingItems: boolean;
@@ -80,9 +80,8 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
-                className: "widget-pagination-alert",
-                message: this.state.message
-            }),
+                className: "widget-pagination-alert"
+            }, this.state.message),
             this.renderPageButton()
         );
     }

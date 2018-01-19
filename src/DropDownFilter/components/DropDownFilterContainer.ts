@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
 import * as dijitRegistry from "dijit/registry";
@@ -38,7 +38,7 @@ export interface FilterProps {
 export type filterOptions = "none" | "attribute" | "XPath";
 
 export interface ContainerState {
-    alertMessage?: string;
+    alertMessage?: ReactChild;
     listViewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
@@ -87,9 +87,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     private renderAlert() {
         return createElement(Alert, {
             bootstrapStyle: "danger",
-            className: "widget-drop-down-filter-alert",
-            message: this.state.alertMessage
-        });
+            className: "widget-drop-down-filter-alert"
+        }, this.state.alertMessage);
     }
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
@@ -150,7 +149,6 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         }
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.entity,
             targetListView
         });

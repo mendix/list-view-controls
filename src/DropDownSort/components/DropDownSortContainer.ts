@@ -58,9 +58,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
-                className: "widget-drop-down-sort-alert",
-                message: this.state.alertMessage
-            }),
+                className: "widget-drop-down-sort-alert"
+            }, this.state.alertMessage),
             this.renderDropDown()
         );
     }
@@ -110,7 +109,6 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
 
         const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
             listViewEntity: this.props.entity,
             targetListView
         });

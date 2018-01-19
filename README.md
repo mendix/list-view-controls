@@ -15,7 +15,7 @@ Enable users to filter or search a list view.
 * `Pagination`: Adds bootstrap like paging to a list view and page numbers similar to in-built data grid
 
 ## Dependencies
-Mendix 7.7.1
+Mendix 7.9.0
 
 ## Demo projects
 [https://listviewcontrols.mxapps.io](https://listviewcontrols.mxapps.io)

@@ -1,4 +1,4 @@
-import { Component, createElement } from "react";
+import { Component, ReactChild, createElement } from "react";
 import { findDOMNode } from "react-dom";
 
 import { Alert } from "../Shared/components/Alert";
@@ -11,7 +11,7 @@ import { Pagination } from "./components/Pagination";
 interface PaginationWebModelerState {
     findingListViewWidget: boolean;
     hideUnusedPaging: boolean;
-    message: string;
+    message: ReactChild;
 }
 
 // tslint:disable-next-line class-name
@@ -30,9 +30,8 @@ export class preview extends Component<WrapperProps, PaginationWebModelerState> 
     render() {
         return createElement("div", { className: "widget-pagination" },
             createElement(Alert, {
-                className: "widget-pagination-alert",
-                message: this.state.message
-            }),
+                className: "widget-pagination-alert"
+            }, this.state.message),
             createElement(Pagination, {
                 getMessageStatus: () => "[2 to 10 of 50]",
                 hideUnusedPaging: false,

@@ -1,5 +1,7 @@
 import { ChangeEvent, Component, createElement } from "react";
 
+import "./ui/CheckBoxFilter.scss";
+
 export interface CheckboxFilterProps {
     isChecked: boolean;
     handleChange: (value: boolean) => void;
