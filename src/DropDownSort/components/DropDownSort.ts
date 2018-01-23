@@ -6,7 +6,11 @@ export interface DropDownOptionType extends AttributeType {
 }
 
 export interface DropDownProps {
+    friendlyId?: string;
     onDropDownChangeAction?: (attribute: string, order: string) => void;
+    publishedSortAttribute?: string;
+    publishedSortOrder?: string;
+    publishedSortWidgetFriendlyId?: string;
     sortAttributes: AttributeType[];
     style: object;
 }
@@ -15,10 +19,13 @@ export interface DropdownState {
     value: string;
 }
 
-export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptionElement> { key: string; }
+export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptionElement> {
+    key: string;
+}
 
 export class DropDown extends Component<DropDownProps, DropdownState> {
     private options: DropDownOptionType[] = [];
+
     constructor(props: DropDownProps) {
         super(props);
 
@@ -34,6 +41,13 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
 
         if (this.state.value !== value) {
             this.setState({ value });
+        }
+
+        // Received update from one of the widgets
+        if (newProps.publishedSortAttribute
+            && newProps.publishedSortOrder
+            && !(this.props.friendlyId === newProps.publishedSortWidgetFriendlyId)) {
+            this.setState({ value: "empty-0" });
         }
     }
 
@@ -59,7 +73,18 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
     }
 
     private renderOptions(): Array<ReactElement<{}>> {
-        return this.options.map((optionObject) => {
+        const options: Array<ReactElement<OptionHTMLAttributesType>> = [];
+        const emptyOption = createElement("option", {
+            caption: "",
+            className: "",
+            key: "empty",
+            label: "",
+            value: "empty-0"
+        }, "");
+
+        options.push(emptyOption);
+
+        this.options.forEach((optionObject) => {
             const { caption, value } = optionObject;
 
             const optionValue: OptionHTMLAttributesType = {
@@ -69,8 +94,10 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
                 value
             };
 
-            return createElement("option", optionValue, caption);
+            options.push(createElement("option", optionValue, caption));
         });
+
+        return options;
     }
 
     private handleChange(event: FormEvent<HTMLSelectElement>) {

@@ -3,22 +3,17 @@ import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
+import * as dojoTopic from "dojo/topic";
+
+import { DropDownSortListView as ListView, WrapperProps } from "../DropDownSort";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { SharedUtils } from "../../Shared/SharedUtils";
 
 import { DropDown, DropDownProps } from "./DropDownSort";
 
 import "../ui/DropDownSort.scss";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-    friendlyId: string;
-    mxform: mxui.lib.form._FormBase;
-    mxObject: mendix.lib.MxObject;
-}
 
 export interface ContainerProps extends WrapperProps {
     entity: string;
@@ -35,6 +30,9 @@ export interface AttributeType {
 export interface ContainerState {
     alertMessage?: string;
     listViewAvailable: boolean;
+    publishedSortAttribute?: string;
+    publishedSortOrder?: string;
+    publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView | null;
     targetNode?: HTMLElement;
 }
@@ -49,6 +47,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         this.state = { listViewAvailable: false };
         this.updateSort = this.updateSort.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
+        this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
+        this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
     }
 
     render() {
@@ -81,7 +81,11 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     private renderDropDown(): ReactElement<DropDownProps> | null {
         if (!this.state.alertMessage) {
             return createElement(DropDown, {
+                friendlyId: this.props.friendlyId,
                 onDropDownChangeAction: this.updateSort,
+                publishedSortAttribute: this.state.publishedSortAttribute,
+                publishedSortOrder: this.state.publishedSortOrder,
+                publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
                 sortAttributes: this.props.sortAttributes,
                 style: SharedUtils.parseStyle(this.props.style)
             });
@@ -100,6 +104,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
             DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
+                this.subScribeToWidgetChanges(targetListView);
                 try {
                     this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
                 } catch (error) {
@@ -126,6 +131,21 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
         if (targetListView && targetNode && this.dataSourceHelper) {
             this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
+            this.publishWidgetChanges(attribute, order);
         }
+    }
+
+    private subScribeToWidgetChanges(targetListView: ListView) {
+        dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
+            this.setState({
+                publishedSortAttribute: message[0],
+                publishedSortOrder: message[1],
+                publishedSortWidgetFriendlyId: message[2]
+            });
+        });
+    }
+
+    private publishWidgetChanges(attribute: string, order: string) {
+        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
     }
 }

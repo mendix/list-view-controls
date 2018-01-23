@@ -18,9 +18,9 @@ import "../ui/HeaderSort.scss";
 export interface ContainerProps extends WrapperProps {
     entity: string;
     caption: string;
+    initialSorted: boolean;
     sortAttribute: string;
     sortOrder: SortOrder;
-    initialSorted: boolean;
 }
 
 export interface ContainerState {
@@ -28,6 +28,7 @@ export interface ContainerState {
     listViewAvailable: boolean;
     publishedSortAttribute?: string;
     publishedSortOrder?: SortOrder;
+    publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView | null;
     targetNode?: HTMLElement;
 }
@@ -77,10 +78,12 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         if (!this.state.alertMessage) {
             return createElement(HeaderSort, {
                 caption: this.props.caption,
+                friendlyId: this.props.friendlyId,
                 initialSorted: this.props.initialSorted,
                 onClickAction: this.updateSort,
                 publishedSortAttribute: this.state.publishedSortAttribute,
                 publishedSortOrder: this.state.publishedSortOrder,
+                publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
                 sortAttribute: this.props.sortAttribute,
                 sortOrder: this.props.sortOrder
             });
@@ -132,11 +135,15 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
 
     private subScribeToWidgetChanges(targetListView: ListView) {
         dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
-            this.setState({ publishedSortAttribute: message[0], publishedSortOrder: message[1] as SortOrder });
+            this.setState({
+                publishedSortAttribute: message[0],
+                publishedSortOrder: message[1] as SortOrder,
+                publishedSortWidgetFriendlyId: message[2]
+            });
         });
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
-        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order ]);
+        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
     }
 }

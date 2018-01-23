@@ -3,12 +3,14 @@ import * as classNames from "classnames";
 
 export interface HeaderSortProps {
     caption: string;
+    friendlyId?: string;
+    initialSorted: boolean;
     onClickAction?: (attribute: string, order: string) => void;
     publishedSortAttribute?: string;
     publishedSortOrder?: SortOrder;
+    publishedSortWidgetFriendlyId?: string;
     sortAttribute: string;
     sortOrder: SortOrder;
-    initialSorted: boolean;
 }
 
 export type SortOrder = "desc" | "asc";
@@ -33,7 +35,7 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
 
         // Received update from one of the widgets
         if (newProps.publishedSortAttribute && newProps.publishedSortOrder) {
-            if (newProps.publishedSortAttribute === this.props.sortAttribute) {
+            if (this.props.friendlyId === newProps.publishedSortWidgetFriendlyId) {
                 this.setState({ sortOrder: newProps.publishedSortOrder });
             } else {
                 this.setState({ sortOrder: null });
