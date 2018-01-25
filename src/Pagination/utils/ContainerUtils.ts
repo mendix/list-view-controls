@@ -32,7 +32,10 @@ export const getListNode = (targetNode: HTMLElement): HTMLUListElement => {
 };
 
 export const setListNodeToEmpty = (listNode: HTMLUListElement) => {
-    listNode.innerHTML = "";
+    // Explicitly remove children as IE does not like listNode.innerHTML = "";
+    while (listNode.firstChild) {
+        listNode.removeChild(listNode.firstChild);
+    }
 };
 
 export const showLoader = (targetListView: ListView) => {
