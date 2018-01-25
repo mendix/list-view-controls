@@ -9,15 +9,10 @@
             <category>General</category>
             <description/>
         </property>
-        <property key="caption" type="translatableString">
-            <caption>Header caption</caption>
+        <property key="sortAttribute" type="attribute" isPath="optional" pathType="reference" entityProperty="entity">
+            <caption>Sort attribute</caption>
             <category>General</category>
             <description/>
-        </property>
-        <property key="sortAttribute" type="attribute" isPath="optional" pathType="reference" entityProperty="entity">
-            <caption>Attribute</caption>
-            <category>Attribute</category>
-            <description>The attribute of the list view entity</description>
             <attributeTypes>
                 <attributeType name="String"/>
                 <attributeType name="Integer"/>
@@ -28,19 +23,24 @@
                 <attributeType name="Long"/>
             </attributeTypes>
         </property>
+        <property key="caption" type="translatableString">
+            <caption>Caption</caption>
+            <category>General</category>
+            <description/>
+        </property>
+        <property key="initialSorted" type="boolean" defaultValue="false">
+            <caption>Initial sorted</caption>
+            <category>General</category>
+            <description>On loading of the page the initial sort will be applied. Initial sort can only set to a single control</description>
+        </property>
         <property key="sortOrder" type="enumeration" defaultValue="asc">
-            <caption>Sort order</caption>
+            <caption>Initial sort order</caption>
             <category>General</category>
             <description/>
             <enumerationValues>
                 <enumerationValue key="asc">Ascending</enumerationValue>
                 <enumerationValue key="desc">Descending</enumerationValue>
             </enumerationValues>
-        </property>
-        <property key="initialSorted" type="boolean" defaultValue="false">
-            <caption>Initial sort</caption>
-            <category>General</category>
-            <description>On loading of the page the initial sort will be applied. Inital sort can only set to a single control</description>
         </property>
     </properties>
 </widget>
