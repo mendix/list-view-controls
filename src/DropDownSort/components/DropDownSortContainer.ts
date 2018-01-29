@@ -101,7 +101,6 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         let errorMessage = "";
 
         if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 this.subScribeToWidgetChanges(targetListView);
