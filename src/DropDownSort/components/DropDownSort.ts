@@ -25,6 +25,7 @@ export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptio
 
 export class DropDown extends Component<DropDownProps, DropdownState> {
     private options: DropDownOptionType[] = [];
+    private selectorDomNode: HTMLSelectElement;
 
     constructor(props: DropDownProps) {
         super(props);
@@ -47,7 +48,7 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
         if (newProps.publishedSortAttribute
             && newProps.publishedSortOrder
             && !(this.props.friendlyId === newProps.publishedSortWidgetFriendlyId)) {
-            this.setState({ value: "empty-0" });
+            this.setState({ value: "" });
         }
     }
 
@@ -55,10 +56,17 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
         return createElement("select", {
                 className: "form-control",
                 onChange: this.handleChange,
+                ref: (selector: HTMLSelectElement) => this.selectorDomNode = selector,
                 value: this.state.value
             },
             this.renderOptions()
         );
+    }
+
+    componentDidUpdate(_previousProps: DropDownProps, _previousState: DropdownState) {
+        if (this.state.value === "") {
+            this.selectorDomNode.selectedIndex = -1;
+        }
     }
 
     private getDefaultValue(props: DropDownProps): string {
@@ -69,22 +77,11 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
             return defaultOption.value;
         }
 
-        return this.options.length > 0 ? this.options[0].value : "";
+        return "";
     }
 
     private renderOptions(): Array<ReactElement<{}>> {
-        const options: Array<ReactElement<OptionHTMLAttributesType>> = [];
-        const emptyOption = createElement("option", {
-            caption: "",
-            className: "",
-            key: "empty",
-            label: "",
-            value: "empty-0"
-        }, "");
-
-        options.push(emptyOption);
-
-        this.options.forEach((optionObject) => {
+        return this.options.map((optionObject) => {
             const { caption, value } = optionObject;
 
             const optionValue: OptionHTMLAttributesType = {
@@ -94,10 +91,8 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
                 value
             };
 
-            options.push(createElement("option", optionValue, caption));
+            return createElement("option", optionValue, caption);
         });
-
-        return options;
     }
 
     private handleChange(event: FormEvent<HTMLSelectElement>) {
