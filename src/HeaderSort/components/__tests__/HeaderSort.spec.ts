@@ -58,7 +58,7 @@ describe("HeaderSort", () => {
         headerSort.simulate("click", {
             currentTarget: { childElementCount: 2 }
         });
-        headerSort.setState({ isClicked: true });
+
         headerSortInstance.componentWillReceiveProps(props);
 
         setTimeout(() => {

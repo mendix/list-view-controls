@@ -20,7 +20,7 @@ export interface ContainerProps extends WrapperProps {
     caption: string;
     initialSorted: boolean;
     sortAttribute: string;
-    sortOrder: SortOrder;
+    sortOrder: "asc" | "desc";
 }
 
 export interface ContainerState {
@@ -85,7 +85,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
                 publishedSortOrder: this.state.publishedSortOrder,
                 publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
                 sortAttribute: this.props.sortAttribute,
-                sortOrder: this.props.sortOrder
+                sortOrder: this.initialSortOrder(this.props.initialSorted, this.props.sortOrder)
             });
         }
 
@@ -144,6 +144,16 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
-        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+        if (this.state.targetListView) {
+            dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+        }
+    }
+
+    private initialSortOrder(initialSorted: boolean, sortOrder: SortOrder): SortOrder {
+        if (initialSorted) {
+            return sortOrder;
+        }
+
+        return "";
     }
 }

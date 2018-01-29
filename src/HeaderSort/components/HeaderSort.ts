@@ -13,7 +13,7 @@ export interface HeaderSortProps {
     sortOrder: SortOrder;
 }
 
-export type SortOrder = "desc" | "asc";
+export type SortOrder = "" | "desc" | "asc";
 
 export interface HeaderSortState {
     sortOrder: SortOrder;
@@ -23,7 +23,7 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
     constructor(props: HeaderSortProps) {
         super(props);
 
-        this.state = { sortOrder: this.getInitialState(this.props) };
+        this.state = { sortOrder: this.props.sortOrder };
 
         this.handleClick = this.handleClick.bind(this);
     }
@@ -38,7 +38,7 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
             if (this.props.friendlyId === newProps.publishedSortWidgetFriendlyId) {
                 this.setState({ sortOrder: newProps.publishedSortOrder });
             } else {
-                this.setState({ sortOrder: null });
+                this.setState({ sortOrder: "" });
             }
         }
     }
@@ -51,14 +51,6 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
             createElement("span", { className: "" }, this.props.caption),
             createElement("span", { className: classNames("sort-icon", this.state.sortOrder) })
         );
-    }
-
-    private getInitialState(props: HeaderSortProps): SortOrder {
-        if (props.initialSorted) {
-            return props.sortOrder;
-        }
-
-        return null;
     }
 
     private handleClick() {
