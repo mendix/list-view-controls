@@ -1,8 +1,4 @@
-import { ListView as SharedListView } from "../Shared/SharedUtils";
-
-export interface PaginationListView extends SharedListView {
-    friendlyId: string;
-}
+import { WrapperProps } from "../Shared/SharedUtils";
 
 export type PageStyleType = "custom" | "default" | "pageNumberButtons";
 
@@ -20,16 +16,9 @@ export interface ItemType {
     text: string;
 }
 
-export interface ModelerProps {
+export interface ModelerProps extends WrapperProps {
     caption: string;
     hideUnusedPaging: boolean;
     items: ItemType[];
     pagingStyle: PageStyleType;
-}
-
-export interface WrapperProps extends ModelerProps {
-    "class"?: string;
-    friendlyId: string;
-    mxform: mxui.lib.form._FormBase;
-    style: string;
 }
