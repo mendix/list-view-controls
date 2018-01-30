@@ -7,10 +7,9 @@ import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
-import {
-    PaginationListView as ListView, UpdateSourceType, WrapperProps } from "../Pagination";
+import { ModelerProps, UpdateSourceType } from "../Pagination";
 import {
     getListNode, hideLoadMoreButton, hideLoader, resetListViewStructure,
     setListNodeToEmpty, showLoadMoreButton, showLoader
@@ -48,10 +47,10 @@ interface ValidateProps {
     targetNode?: HTMLElement | null;
 }
 
-export default class PaginationContainer extends Component<WrapperProps, PaginationContainerState> {
+export default class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
     private navigationHandler: object;
 
-    constructor(props: WrapperProps) {
+    constructor(props: ModelerProps) {
         super(props);
 
         this.state = {
@@ -216,7 +215,7 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
 
     private validateListView(props: ValidateProps) {
         const message = Validate.validate({
-            ...this.props as WrapperProps,
+            ...this.props as ModelerProps,
             queryNode: props.targetNode,
             targetListView: props.targetListView
         });

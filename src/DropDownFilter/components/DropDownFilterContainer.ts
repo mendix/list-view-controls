@@ -6,20 +6,12 @@ import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { Validate } from "../Validate";
 
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 
 import "../ui/DropDownFilter.scss";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-    friendlyId: string;
-    mxform?: mxui.lib.form._FormBase;
-    mxObject: mendix.lib.MxObject;
-}
 
 export interface ContainerProps extends WrapperProps {
     entity: string;

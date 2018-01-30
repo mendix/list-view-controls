@@ -6,17 +6,9 @@ import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
 import { Validate } from "../Validate";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-    friendlyId: string;
-    mxform: mxui.lib.form._FormBase;
-    mxObject: mendix.lib.MxObject;
-}
 
 export interface ContainerProps extends WrapperProps {
     listViewEntity: string;

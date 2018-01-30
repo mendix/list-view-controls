@@ -5,11 +5,9 @@ import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 import * as dojoTopic from "dojo/topic";
 
-import { DropDownSortListView as ListView, WrapperProps } from "../DropDownSort";
-
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { DropDown, DropDownProps } from "./DropDownSort";
 

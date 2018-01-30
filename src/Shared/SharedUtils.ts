@@ -1,3 +1,10 @@
+export interface WrapperProps {
+    class: string;
+    style: string;
+    friendlyId: string;
+    mxform: mxui.lib.form._FormBase;
+    mxObject: mendix.lib.MxObject;
+}
 
 export interface ListView extends mxui.widget._WidgetBase {
     _datasource: {
@@ -12,6 +19,7 @@ export interface ListView extends mxui.widget._WidgetBase {
     _renderData: () => void;
     _showLoadingIcon: () => void;
     _sourceReload: () => void;
+    friendlyId: string;
     datasource: {
         type: "microflow" | "entityPath" | "database" | "xpath";
     };

@@ -5,11 +5,9 @@ import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 import * as dojoTopic from "dojo/topic";
 
-import { HeaderSortListView as ListView, WrapperProps } from "../HeaderSort";
-
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 
