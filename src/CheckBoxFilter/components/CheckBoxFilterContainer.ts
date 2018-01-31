@@ -107,7 +107,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             const attribute = isChecked ? this.props.attribute : this.props.unCheckedAttribute;
             const filterBy = isChecked ? this.props.filterBy : this.props.unCheckedFilterBy;
             const constraint = isChecked ? this.props.constraint : this.props.unCheckedConstraint;
-            const attributeValue = isChecked ? this.props.attributeValue : this.props.unCheckedAttributeValue;
+            const attributeValue = (isChecked ? this.props.attributeValue : this.props.unCheckedAttributeValue).trim();
             const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
 
             if (filterBy === "XPath" && constraint.indexOf(`[%CurrentObject%]'`) !== -1) {
@@ -117,7 +117,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
                 return "";
             } else if (filterBy === "XPath") {
                 return constraint;
-            } else if (filterBy === "attribute") {
+            } else if (filterBy === "attribute" && attributeValue) {
                 return this.getAttributeConstraint(attribute, attributeValue);
             }
 
@@ -138,17 +138,20 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
             return constraints;
         }
-        if (targetListView && targetListView._datasource) {
+
+        if (targetListView && targetListView._datasource && attributeValue) {
             const entityMeta = mx.meta.getEntity(this.props.listViewEntity);
 
             if (entityMeta.isEnum(attribute)) {
-                return `[${attribute}='${attributeValue.trim()}']`;
+                return `[${attribute}='${attributeValue}']`;
             } else if (entityMeta.isBoolean(attribute)) {
-                return `[${attribute} = '${attributeValue.trim().toLowerCase()}']`;
+                return `[${attribute} = '${attributeValue.toLowerCase()}']`;
             } else {
                 return `[contains(${attribute},'${attributeValue}')]`;
             }
         }
+
+        return "";
     }
 
     private connectToListView() {
