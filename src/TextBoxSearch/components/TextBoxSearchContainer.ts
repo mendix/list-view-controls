@@ -97,8 +97,9 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private getConstraint(searchQuery: string) {
         const { targetListView } = this.state;
         const constraints: string[] = [];
+        searchQuery = searchQuery.trim();
 
-        if (targetListView && targetListView._datasource) {
+        if (targetListView && targetListView._datasource && searchQuery) {
             this.props.attributeList.forEach(searchAttribute => {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
             });
