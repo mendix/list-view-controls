@@ -1,11 +1,11 @@
 # Header sort
 
-Add an interactive sort to your list view.
-It supports sorting on a single field using headers.
+Add sorting behavior to the headers of a list view.
+It supports sorting on a single field similar to the built-in list view sort capabilities.
 
 ## Features
-* Sort through a single field
-* If there is no initial sort order, the widget will always not impact the listview sort mechanism.
+* Sort through a single field.
+* Click on the header to toggle the sort.
 
 ## Sample
 ![Sample](../assets/HeaderSort/demo.gif)
@@ -14,10 +14,11 @@ It supports sorting on a single field using headers.
 
 Configure the widget as below.
 
-![General](../assets/HeaderSort/general.jpg)
+![General](../assets/HeaderSort/attribute.jpg)
 
-- On the `List view with entity` option of the `General` tab, select an entity that matches listview entity.
+- On the `List view with entity` option of the `General` tab, select an entity that matches the target list view's entity.
 
 - On the `Sort attribute` option of the `General` tab, select an attribute to be sorted.
 
-![General](../assets/HeaderSort/attribute.jpg)
+- `Caption` is the header text. eg *<b>My color</b>* in the sample above.
+
