@@ -13,7 +13,7 @@ Enable users to filter or search a list view.
 * `Drop down sort`: Adds an interactive sort to your list view.
 * `Text box search`: Adds an interactive search box to all of your list view
 * `Pagination`: Adds bootstrap like paging to a list view and page numbers similar to in-built data grid
-* `Header sort`: Adds an interactive sort to your list view using headers.
+* `Header sort`: Add sorting behavior to the headers of a list view.
 
 ## Dependencies
 Mendix 7.9.0
