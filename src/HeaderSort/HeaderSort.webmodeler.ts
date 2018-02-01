@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 
 import { SharedUtils } from "../Shared/SharedUtils";
 
-import { HeaderSort } from "./components/HeaderSort";
+import { HeaderSort, SortOrder } from "./components/HeaderSort";
 import { ContainerProps } from "./components/HeaderSortContainer";
 
 declare function require(name: string): string;
@@ -26,9 +26,17 @@ export class preview extends Component<ContainerProps, {}> {
                 initialSorted: this.props.initialSorted,
                 onClickAction: () => { return; },
                 sortAttribute: this.props.sortAttribute,
-                sortOrder: this.props.sortOrder
+                sortOrder: this.initialSortOrder(this.props.initialSorted, this.props.sortOrder)
             })
         );
+    }
+
+    private initialSortOrder(initialSorted: boolean, sortOrder: SortOrder): SortOrder {
+        if (initialSorted) {
+            return sortOrder;
+        }
+
+        return "";
     }
 }
 
