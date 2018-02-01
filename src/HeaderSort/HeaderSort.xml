@@ -2,7 +2,7 @@
 <widget id="com.mendix.widget.custom.listviewcontrols.HeaderSort" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Header sort</name>
     <description>Sort Mendix list views using headers</description>
-    <icon></icon>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAYAAAFoTx1HAAAAAXNSR0IArs4c6QAAAaBJREFUKBV9UTFIAlEYfu9ObikaIyQlsClbRFDI4SBpTC5oMdyiuyEICcLJybHFluCKmiScwsYoB0frGYkgOAYXmsiVi+Ch97r/4l3dCf3w3/f93/f/d+/9h3O53DZyRT6fl22h1+tRxxmNRk6BmTqXvsnYHGacOeYC4kgkcgRk9/blDNCO9RqlfCqVkhOJxB4h5F7TtIVAILDS6XQarMlGXdedz4rXH8RlsiJ4/Ei26pQCYu8xCoXCBWtE0+mUhsNhGRK4Y1iE43keh0IhBAn8r+mDYjKZcEwUr3oq8Nr+kmJrg8GAQkIROW0TSOCu1yxnH1SOw1EwTJO67wriXLpEIIEjRVFk+k+Abzd6Hr5ms9mNxWIKxrguCEK8Wq2qyWRSMQzDWhONW7fremZmS0mS5OFwSAFnXbfyuxZR3PH7/Wvj8RgBilbNWjfO34j6Tikg0+y9QtFut4VWq6WVy+UTqK0jCoAQer+Pnj+DNv4onrUykeGicpcxp2Z281CKvn4htDqP0JNaaXA8V3T9DzbgRUG6zJiUZjmMi0bloAT+Nx7zxEYIk/LuAAAAAElFTkSuQmCC</icon>
     <properties>
         <property key="entity" type="entity">
             <caption>List view with entity</caption>
