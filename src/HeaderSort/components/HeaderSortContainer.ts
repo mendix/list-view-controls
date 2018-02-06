@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import { findDOMNode } from "react-dom";
 import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
@@ -22,7 +22,7 @@ export interface ContainerProps extends WrapperProps {
 }
 
 export interface ContainerState {
-    alertMessage?: string;
+    alertMessage?: ReactChild;
     listViewAvailable: boolean;
     publishedSortAttribute?: string;
     publishedSortOrder?: SortOrder;
@@ -53,18 +53,17 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
-                className: "widget-header-sort-alert",
-                message: this.state.alertMessage
-            }),
+                className: "widget-header-sort-alert"
+            }, this.state.alertMessage),
             this.renderSort()
         );
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            if (this.props.initialSorted) {
-                this.updateSort(this.props.sortAttribute, this.props.sortOrder);
-            }
+        if (this.state.listViewAvailable
+                && !prevState.listViewAvailable
+                && this.props.initialSorted) {
+            this.updateSort(this.props.sortAttribute, this.props.sortOrder);
         }
     }
 
@@ -97,6 +96,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         let errorMessage = "";
 
         if (targetNode) {
+            DataSourceHelper.hideContent(targetNode);
             targetListView = dijitRegistry.byNode(targetNode);
             if (targetListView) {
                 this.subScribeToWidgetChanges(targetListView);
@@ -108,14 +108,17 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             }
         }
 
-        const validationMessage = SharedUtils.validateCompatibility({
-            friendlyId: this.props.friendlyId,
+        const validationMessage = errorMessage || SharedUtils.validateCompatibility({
             listViewEntity: this.props.entity,
             targetListView
         });
 
+        if (!this.props.initialSorted && targetListView) {
+            DataSourceHelper.showContent(targetListView.domNode);
+        }
+
         this.setState({
-            alertMessage: validationMessage || errorMessage,
+            alertMessage: validationMessage,
             listViewAvailable: !!targetListView,
             targetListView,
             targetNode

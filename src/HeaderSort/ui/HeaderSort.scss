@@ -1,3 +1,4 @@
+// Target headersort's css such that when its contained in a table or grid. the padding is 0 15px, but when in a layout grid padding is.
 .widget-header-sort {
     .sort-header {
         display:flex;
@@ -10,11 +11,9 @@
         background-color: transparent;
         justify-content:space-between;
         cursor: pointer;
-        color: #555555;
         font-weight: bold;
-        text-align: center;
+        text-align: left;
         padding: 15px;
-        font-size: 14px;
     }
 
     .asc::after {
