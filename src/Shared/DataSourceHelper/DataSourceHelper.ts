@@ -1,4 +1,4 @@
-import { ListView, OfflineConstraint } from "../SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
@@ -6,22 +6,11 @@ interface ConstraintStore {
     sorting: { [widgetId: string]: string[] };
 }
 
-export interface Version {
-    major: number;
-    minor: number;
-    patch: number;
-}
-
 interface DataSourceHelperListView extends ListView {
     __customWidgetDataSourceHelper?: DataSourceHelper;
 }
 
 export class DataSourceHelper {
-    // The version of a Datasource is static, it never changes.
-    static VERSION: Version = { major: 1, minor: 0, patch: 0 };
-    // Expose the version dataSourceHelper instances.
-    public version: Version = DataSourceHelper.VERSION;
-
     private initialLoad = true;
     private delay = 50;
     private timeoutHandle?: number;
@@ -29,23 +18,26 @@ export class DataSourceHelper {
     private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
-    private widgetVersionRegister: {
-        [version: string]: string[];
-    } = {};
 
     constructor(widget: DataSourceHelperListView) {
-        this.compatibilityCheck(widget);
         this.widget = widget;
     }
 
-    static getInstance(widget: DataSourceHelperListView, widgetId: string, version: Version) {
-        if (!widget.__customWidgetDataSourceHelper) {
-            widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
-        }
-        widget.__customWidgetDataSourceHelper.versionCompatibility(version, widgetId);
-        widget.__customWidgetDataSourceHelper.initialLoad = true;
+    static getInstance(widgetParent: HTMLElement, widgetEntity?: string) {
+        const widget = SharedUtils.findTargetListView(widgetParent, widgetEntity) as DataSourceHelperListView;
+        const compatibilityMessage = SharedUtils.validateCompatibility({ listViewEntity: widgetEntity, targetListView: widget });
 
-        return widget.__customWidgetDataSourceHelper;
+        if (!compatibilityMessage) {
+            if (!widget.__customWidgetDataSourceHelper) {
+                widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
+            }
+            widget.__customWidgetDataSourceHelper.initialLoad = true;
+            this.hideContent(widget.domNode);
+
+            return widget.__customWidgetDataSourceHelper;
+        }
+
+        throw new Error(compatibilityMessage);
     }
 
     setSorting(widgetId: string, sortConstraint: string[]) {
@@ -57,6 +49,10 @@ export class DataSourceHelper {
     setConstraint(widgetId: string, constraint: string | OfflineConstraint) {
         this.store.constraints[widgetId] = constraint as string | OfflineConstraint;
         this.registerUpdate();
+    }
+
+    getListView(): ListView {
+        return this.widget as ListView;
     }
 
     private registerUpdate() {
@@ -84,30 +80,6 @@ export class DataSourceHelper {
                 this.updateInProgress = false;
             }
         });
-    }
-
-    private versionCompatibility(version: Version, widgetId: string) {
-        this.widgetVersionRegister[`${version.major}`] = this.widgetVersionRegister[`${version.major}`] || [];
-        if (this.widgetVersionRegister[`${version.major}`].indexOf(widgetId) === -1) {
-            this.widgetVersionRegister[`${version.major}`].push(widgetId);
-        }
-        const maxVersion = Math.max(...Object.keys(this.widgetVersionRegister).map(value => Number(value)));
-
-        if (maxVersion !== version.major) {
-            const widgetsToUpdate = { ...this.widgetVersionRegister };
-            delete widgetsToUpdate[`${maxVersion}`];
-            const widgetsToUpdateList = Object.keys(widgetsToUpdate).map(key => widgetsToUpdate[key]).join(", ");
-
-            logger.error(`Update version to '${maxVersion}' for widgets: ${widgetsToUpdateList}`);
-            throw new Error(`This widget is not compatible with: ${widgetsToUpdateList}, please update them from the App Store`);
-        }
-    }
-
-    private compatibilityCheck(widget: ListView) {
-        if (!(widget._datasource && (widget._datasource._constraints !== undefined) && widget._entity
-                && widget.update && widget.datasource.type)) {
-            throw new Error("Mendix version is incompatible");
-        }
     }
 
     private updateDataSource(callback: () => void) {

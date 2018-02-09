@@ -1,6 +1,4 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
-import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 import * as dojoTopic from "dojo/topic";
@@ -27,13 +25,13 @@ export interface ContainerState {
     publishedSortAttribute?: string;
     publishedSortOrder?: SortOrder;
     publishedSortWidgetFriendlyId?: string;
-    targetListView?: ListView | null;
-    targetNode?: HTMLElement;
+    targetListView?: ListView;
 }
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
+    private widgetDOM: HTMLElement;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -49,6 +47,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     render() {
         return createElement("div", {
                 className: classNames("widget-header-sort", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -90,45 +89,34 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     private connectToListView() {
-        const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
-        let targetListView: ListView | null = null;
         let errorMessage = "";
+        let targetListView: ListView | undefined;
 
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-            targetListView = dijitRegistry.byNode(targetNode);
-            if (targetListView) {
-                this.subScribeToWidgetChanges(targetListView);
-                try {
-                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
-                } catch (error) {
-                    errorMessage = error.message;
-                }
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            errorMessage = error.message;
+        }
+
+        if (targetListView) {
+            this.subScribeToWidgetChanges(targetListView);
+            if (!this.props.initialSorted || errorMessage) {
+                DataSourceHelper.showContent(targetListView.domNode);
             }
         }
 
-        const validationMessage = errorMessage || SharedUtils.validateCompatibility({
-            listViewEntity: this.props.entity,
-            targetListView
-        });
-
-        if (!this.props.initialSorted && targetListView) {
-            DataSourceHelper.showContent(targetListView.domNode);
-        }
-
         this.setState({
-            alertMessage: validationMessage,
+            alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            targetNode
+            targetListView
         });
     }
 
     private updateSort(attribute: string, order: string) {
-        const { targetNode, targetListView } = this.state;
+        const { targetListView } = this.state;
 
-        if (targetListView && targetNode && this.dataSourceHelper) {
+        if (targetListView && this.dataSourceHelper) {
             this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
             this.publishWidgetChanges(attribute, order);
         }

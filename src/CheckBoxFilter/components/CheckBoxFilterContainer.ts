@@ -1,7 +1,5 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
-import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
@@ -36,13 +34,13 @@ export interface ContainerState {
     alertMessage: ReactChild;
     listViewAvailable: boolean;
     targetListView?: ListView;
-    targetNode?: HTMLElement;
     validationPassed?: boolean;
 }
 
 export default class CheckboxFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private navigationHandler: object;
+    private widgetDOM: HTMLElement;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -59,6 +57,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         return createElement("div",
             {
                 className: classNames("widget-checkbox-filter", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(errorMessage),
@@ -107,7 +106,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             const attribute = isChecked ? this.props.attribute : this.props.unCheckedAttribute;
             const filterBy = isChecked ? this.props.filterBy : this.props.unCheckedFilterBy;
             const constraint = isChecked ? this.props.constraint : this.props.unCheckedConstraint;
-            const attributeValue = (isChecked ? this.props.attributeValue : this.props.unCheckedAttributeValue).trim();
+            const attributeValue = (isChecked ? this.props.attributeValue : this.props.unCheckedAttributeValue);
             const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
 
             if (filterBy === "XPath" && constraint.indexOf(`[%CurrentObject%]'`) !== -1) {
@@ -155,38 +154,24 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     private connectToListView() {
-        let targetListView: ListView | null = null;
+        let targetListView: ListView | undefined;
         let errorMessage = "";
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
 
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-            targetListView = dijitRegistry.byNode(targetNode);
-            if (targetListView) {
-                try {
-                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
-                } catch (error) {
-                    errorMessage = error.message;
-                }
-            }
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.listViewEntity);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            errorMessage = error.message;
         }
 
-        const validationMessage = SharedUtils.validateCompatibility({
-            listViewEntity: this.props.listViewEntity,
-            targetListView
-        });
-
-        errorMessage = validationMessage || errorMessage;
-        if (errorMessage) {
-            DataSourceHelper.showContent(targetNode);
+        if (errorMessage && targetListView) {
+            DataSourceHelper.showContent(targetListView.domNode);
         }
 
         this.setState({
             alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            targetNode
+            targetListView
         });
     }
 }

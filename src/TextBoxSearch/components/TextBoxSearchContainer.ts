@@ -1,6 +1,4 @@
 import { Component, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
-import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 import * as classNames from "classnames";
 
@@ -40,6 +38,7 @@ export interface ContainerState {
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private navigationHandler: object;
+    private widgetDOM: HTMLElement;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -59,6 +58,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -110,34 +110,20 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private connectToListView() {
-        const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
-        let targetListView: ListView | undefined;
         let errorMessage = "";
+        let targetListView: ListView | undefined;
 
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-            targetListView = dijitRegistry.byNode(targetNode);
-            if (targetListView) {
-                try {
-                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
-                } catch (error) {
-                    errorMessage = error.message;
-                }
-            }
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            errorMessage = error.message;
         }
-        targetListView = targetListView || undefined;
-
-        const validationMessage = SharedUtils.validateCompatibility({
-            listViewEntity: this.props.entity,
-            targetListView
-        });
 
         this.setState({
-            alertMessage: validationMessage || errorMessage,
+            alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            targetNode
+            targetListView
         });
     }
 }
