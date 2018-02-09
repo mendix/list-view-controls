@@ -2,7 +2,7 @@ import { ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
-    constraints: { [widgetId: string]: string | OfflineConstraint; };
+    constraints: { [group: string]: { [widgetId: string]: string | OfflineConstraint; } };
     sorting: { [widgetId: string]: string[] };
 }
 
@@ -14,7 +14,7 @@ export class DataSourceHelper {
     private initialLoad = true;
     private delay = 50;
     private timeoutHandle?: number;
-    private store: ConstraintStore = { constraints: {}, sorting: {} };
+    private store: ConstraintStore = { constraints: { _none: {} }, sorting: {} };
     private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
@@ -46,8 +46,13 @@ export class DataSourceHelper {
         this.registerUpdate();
     }
 
-    setConstraint(widgetId: string, constraint: string | OfflineConstraint) {
-        this.store.constraints[widgetId] = constraint as string | OfflineConstraint;
+    setConstraint(widgetId: string, constraint: string | OfflineConstraint, groupName = "_none") {
+        const group = groupName.trim() || "_none";
+        if (this.store.constraints[group]) {
+            this.store.constraints[group][widgetId] = constraint;
+        } else {
+            this.store.constraints[group] = { [widgetId] : constraint };
+        }
         this.registerUpdate();
     }
 
@@ -89,12 +94,26 @@ export class DataSourceHelper {
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
 
         if (window.mx.isOffline()) {
+            // TODO implement OR groups for offline
             constraints = Object.keys(this.store.constraints)
-                .map(key => this.store.constraints[key] as OfflineConstraint)
+                .map(key => this.store.constraints[key].constraint as OfflineConstraint)
                 .filter(mobileConstraint => mobileConstraint.value);
         } else {
-            constraints = Object.keys(this.store.constraints)
-                .map(key => this.store.constraints[key]).join("");
+            const noneGroupedConstraints = Object.keys(this.store.constraints._none)
+            .map(key => this.store.constraints._none[key])
+            .join("");
+
+            const groupedConstraints = Object.keys(this.store.constraints)
+                .filter(c => c !== "_none")
+                .map(group => "[" + Object.keys(this.store.constraints[group])
+                    .map(key => this.store.constraints[group][key] as string)
+                    .filter(c => c) // Remove empty
+                    .map(c => c.trim().substr(1, c.trim().length - 2)) // Strip []
+                    .join(" or ") + "]")
+                .join("")
+                .replace(/\[]/g, ""); // Remove empty string "[]"
+
+            constraints = noneGroupedConstraints + groupedConstraints;
         }
 
         this.widget._datasource._constraints = constraints;

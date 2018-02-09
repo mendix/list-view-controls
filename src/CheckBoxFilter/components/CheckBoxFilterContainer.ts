@@ -10,6 +10,7 @@ import { Validate } from "../Validate";
 
 export interface ContainerProps extends WrapperProps {
     listViewEntity: string;
+    group: string;
     filterBy: FilterOptions;
     attribute: string;
     attributeValue: string;
@@ -95,7 +96,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     private applyFilter(isChecked: boolean) {
         if (this.dataSourceHelper) {
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked));
+            this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group);
         }
     }
 

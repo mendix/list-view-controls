@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <widget id="com.mendix.widget.custom.listviewcontrols.CheckBoxFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
-    <name>Check box filter</name>
+    <name>Check-box filter</name>
     <description>Filter Mendix list views using a checkbox</description>
     <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAAHqsLF6AAABDlBMVEUAAAD///+Av/9gv/+Ojo6ZmZmLi4uVlZVOsf+JiYlVu/+Li4tOsf+MjIxNsveKioqMjIyJiYlLtPmLi4uIiIiLi4tLtPuIiIhLtPtIs/eLi4tJsviLi4uJiYlLsfmKiopIsflJs/lKsvmJiYlIsfmJiYlKsveKiopIsveKiopJsfhJsfmJiYlJsfdIsfhJsfhJsfiJiYmJiYmIiIiJiYlKsfeIiIiIiIhIsfhIsfhIsfiIiIiIiIhJsfhIsPeJiYlIsfiJiYlJsPiJiYmJiYmIiIiJiYmJiYlIsfiIiIhJsfiIiIhIsPdJsfeJiYlJsfiIiIiJiYlJsfiJiYlJsPhIsPhJsPhIsfhIsPeIiIhrJmkrAAAAWHRSTlMAAQQICQoLDA0NDxYXHyElKCksLC05Ojo9Q0RJTU5SU1VXWVtcXWBiY2RpfX+CjZCXm5ydnqOjpaqttLm7vcLN0NHS09TX2Nrb293d5ujp7vP09fb5+v3+6Nd4AQAAAdVJREFUWMPtV2dTwzAMFVBaNmWUUVLKhrL3Xt2UXShU+v9/BDtOajtx6MHxofTy7mo/S4osK7IuBWgCgiob0WbsRyTIT2A/Ei2yEUcJ0sINQQp+CRKAiphEQDhrsxg5O3YJsUXQSnAib8zghjtCkm8gZ9USxW3BE6KjIiedZ6ALXGdAF9DeSJAEKyhIymUZlJRISrTqrA41g3ncdegBnzONBxmZysER4gwoMqI91W8dcUDdzSLfxjpNqQZF5RSudJgqEKItob7uBFuX5TKpNjTZFCQqxoo6dASrrsJXclX7ekSJRnSDGsqukeHDvl6piHWXxoliJXpV/OamOxHfpLM98pQ9Mjyq4TB9WjVYQ7wFj4GlhT6zBd8beKnHwH+zGOswGhQbsv6wSEOE+BcdlAxX+MGsfTD3BUOTWDYrlzUH5s85h3YXGH8fczVj72xZ6IZgBxOn2z261A7iWPBjfXu/g/VP1muvPNJIngcxDjDOt89HgoKFjh3eqj8W/HEtcsHJCR8Xjae9R6zNnfPHXyaMB4tkRfKyEXO6lupo424oKLWWcGAF5nuFHf66L/jdNHXQTJr6IweTQX9eAitRO8JNr+ETOOAyFBMew83ny8GwdYRoSXwBsFjrELomfA0AAAAASUVORK5CYII=</icon>
     <properties>
@@ -13,6 +13,11 @@
             <caption>Default checked</caption>
             <category>General</category>
             <description>Checks the check box on initial loading of the page</description>
+        </property>
+        <property key="group" type="string" required="false">
+            <caption>Group</caption>
+            <category>General</category>
+            <description>All filters withing the same group are combined, return if any of items the group are matching</description>
         </property>
         <property key="filterBy" type="enumeration" defaultValue="none">
             <caption>Filter by</caption>
