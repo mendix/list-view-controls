@@ -88,18 +88,37 @@ export class DataSourceHelper {
     }
 
     private updateDataSource(callback: () => void) {
-        let constraints: OfflineConstraint[] | string;
+        let constraints: OfflineConstraint[] | string | any;
         const sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
 
         if (window.mx.isOffline()) {
-            // TODO implement OR groups for offline
-            constraints = Object.keys(this.store.constraints)
-                .map(key => this.store.constraints[key].constraint as OfflineConstraint)
-                .filter(mobileConstraint => mobileConstraint.value);
+            const unGroupedConstraints = Object.keys(this.store.constraints._none)
+                .map(key => this.store.constraints._none[key] as OfflineConstraint)
+                .filter(constraint => constraint.value);
+
+            const groupedConstraints: OfflineConstraint[] | any = [];
+            const groups = Object.keys(this.store.constraints).filter(group => group !== "_none");
+            for (const group of groups) {
+                const groupWidgets = Object.keys(this.store.constraints[group]);
+                const groupConstraintsReturn: OfflineConstraint[] = [];
+                for (const groupWidget of groupWidgets) {
+                    const widgetConstraints = this.store.constraints[group][groupWidget] as OfflineConstraint;
+                    if (widgetConstraints.value) {
+                        groupConstraintsReturn.push(widgetConstraints);
+                    }
+                }
+                groupedConstraints.push({
+                    constraints: groupConstraintsReturn as any,
+                    operator: "or"
+                });
+            }
+
+            constraints = unGroupedConstraints.concat(groupedConstraints);
+
         } else {
-            const noneGroupedConstraints = Object.keys(this.store.constraints._none)
+            const unGroupedConstraints = Object.keys(this.store.constraints._none)
             .map(key => this.store.constraints._none[key])
             .join("");
 
@@ -113,7 +132,7 @@ export class DataSourceHelper {
                 .join("")
                 .replace(/\[]/g, ""); // Remove empty string "[]"
 
-            constraints = noneGroupedConstraints + groupedConstraints;
+            constraints = unGroupedConstraints + groupedConstraints;
         }
 
         this.widget._datasource._constraints = constraints;
