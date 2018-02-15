@@ -15,9 +15,9 @@
             <description>Checks the check box on initial loading of the page</description>
         </property>
         <property key="group" type="string" required="false">
-            <caption>Group</caption>
+            <caption>Group name</caption>
             <category>General</category>
-            <description>All filters withing the same group are combined, return if any of items the group are matching</description>
+            <description>By default all checkbox filters should match. When a group name is specified only one of the filters in the group has to match</description>
         </property>
         <property key="filterBy" type="enumeration" defaultValue="none">
             <caption>Filter by</caption>
