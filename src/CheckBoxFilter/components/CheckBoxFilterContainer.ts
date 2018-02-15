@@ -109,13 +109,11 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             const constraint = isChecked ? this.props.constraint : this.props.unCheckedConstraint;
             const attributeValue = (isChecked ? this.props.attributeValue : this.props.unCheckedAttributeValue);
             const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
+            const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
 
-            if (filterBy === "XPath" && constraint.indexOf(`[%CurrentObject%]'`) !== -1) {
-                if (mxObjectId) {
-                    return constraint.replace(`'[%CurrentObject%]'`, mxObjectId);
-                }
-                return "";
-            } else if (filterBy === "XPath") {
+            if (filterBy === "XPath" && hasContext && mxObjectId) {
+                return constraint.replace(/\'\[%CurrentObject%\]\'/g, mxObjectId);
+            } else if (filterBy === "XPath" && !hasContext) {
                 return constraint;
             } else if (filterBy === "attribute" && attributeValue) {
                 return this.getAttributeConstraint(attribute, attributeValue);

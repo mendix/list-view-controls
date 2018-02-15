@@ -87,7 +87,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         if (!this.state.alertMessage) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
-            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(`'[%CurrentObject%]'`,
+            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\'\[%CurrentObject%\]\'/g,
                     this.props.mxObject.getGuid()
                 ));
             }
@@ -112,9 +112,14 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         const { targetListView } = this.state;
         if (targetListView && targetListView._datasource) {
             const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
-            if (filterBy === "XPath") {
+            const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
+            const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
+
+            if (filterBy === "XPath" && hasContext && mxObjectId) {
+                return constraint.replace(/\'\[%CurrentObject%\]\'/g, mxObjectId);
+            } else if (filterBy === "XPath" && !hasContext) {
                 return constraint;
-            } else if (filterBy === "attribute") {
+            } else if (filterBy === "attribute" && attributeValue) {
                 return `[contains(${attribute},'${attributeValue}')]`;
             } else {
                 return "";
