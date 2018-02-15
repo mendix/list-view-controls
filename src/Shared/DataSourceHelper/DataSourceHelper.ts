@@ -1,8 +1,8 @@
-import { ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
+import { Constraints, GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
-    constraints: { [group: string]: { [widgetId: string]: string | OfflineConstraint; } };
+    constraints: { [group: string]: { [widgetId: string]: string | OfflineConstraint | GroupedOfflineConstraint } };
     sorting: { [widgetId: string]: string[] };
 }
 
@@ -46,7 +46,7 @@ export class DataSourceHelper {
         this.registerUpdate();
     }
 
-    setConstraint(widgetId: string, constraint: string | OfflineConstraint, groupName = "_none") {
+    setConstraint(widgetId: string, constraint: string | OfflineConstraint | GroupedOfflineConstraint, groupName = "_none") {
         const group = groupName.trim() || "_none";
         if (this.store.constraints[group]) {
             this.store.constraints[group][widgetId] = constraint;
@@ -88,34 +88,38 @@ export class DataSourceHelper {
     }
 
     private updateDataSource(callback: () => void) {
-        let constraints: OfflineConstraint[] | string | any;
+        let constraints: Constraints = [];
         const sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
 
         if (window.mx.isOffline()) {
-            const unGroupedConstraints = Object.keys(this.store.constraints._none)
-                .map(key => this.store.constraints._none[key] as OfflineConstraint)
-                .filter(constraint => constraint.value);
+            const _noneGroupedConstraints = Object.keys(this.store.constraints._none)
+            .map(key => this.store.constraints._none[key]);
 
-            const groupedConstraints: OfflineConstraint[] | any = [];
+            const unGroupedConstraints = (_noneGroupedConstraints as OfflineConstraint[]).filter(constraint => constraint.value);
+            const unGroupedOrConstraints = (_noneGroupedConstraints as GroupedOfflineConstraint[]).filter(constraint => constraint.operator); // Coming from text box search
+
             const groups = Object.keys(this.store.constraints).filter(group => group !== "_none");
-            for (const group of groups) {
+            const groupedConstraints: GroupedOfflineConstraint[] = [];
+            for (const group of groups) { // Dealing with multiple widgets which have single constraints
                 const groupWidgets = Object.keys(this.store.constraints[group]);
-                const groupConstraintsReturn: OfflineConstraint[] = [];
+                const groupOfflineConstraints: OfflineConstraint [] = [];
                 for (const groupWidget of groupWidgets) {
-                    const widgetConstraints = this.store.constraints[group][groupWidget] as OfflineConstraint;
-                    if (widgetConstraints.value) {
-                        groupConstraintsReturn.push(widgetConstraints);
+                    const widgetConstraint = this.store.constraints[group][groupWidget] as OfflineConstraint;
+                    if (widgetConstraint && widgetConstraint.value) {
+                        groupOfflineConstraints.push(widgetConstraint);
                     }
                 }
-                groupedConstraints.push({
-                    constraints: groupConstraintsReturn as any,
-                    operator: "or"
-                });
+                if (groupOfflineConstraints.length) {
+                    groupedConstraints.push({
+                        constraints: groupOfflineConstraints,
+                        operator: "or"
+                    });
+                }
             }
 
-            constraints = unGroupedConstraints.concat(groupedConstraints);
+            constraints = [ ...unGroupedConstraints, ...unGroupedOrConstraints, ...groupedConstraints ];
 
         } else {
             const unGroupedConstraints = Object.keys(this.store.constraints._none)
@@ -136,7 +140,7 @@ export class DataSourceHelper {
         }
 
         this.widget._datasource._constraints = constraints;
-        this.widget._datasource._sorting = sorting;
+        this.widget._datasource[window.mx.isOffline() ? "_sort" : "_sorting"] = sorting;
 
         if (!this.initialLoad) {
             this.showLoader();

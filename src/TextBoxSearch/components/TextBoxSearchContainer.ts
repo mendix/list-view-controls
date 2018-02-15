@@ -4,7 +4,7 @@ import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
 
@@ -86,7 +86,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private applySearch(searchQuery: string) {
-        // construct constraint based on search query
+        // Construct constraint based on search query
         const constraint = this.getConstraint(searchQuery);
 
         if (this.dataSourceHelper) {
@@ -94,12 +94,35 @@ export default class SearchContainer extends Component<ContainerProps, Container
         }
     }
 
-    private getConstraint(searchQuery: string) {
+    private getConstraint(searchQuery: string): string | GroupedOfflineConstraint {
         const { targetListView } = this.state;
-        const constraints: string[] = [];
+
         searchQuery = searchQuery.trim();
 
+        if (!searchQuery) {
+            return "";
+
+        }
+
+        if (window.mx.isOffline()) {
+            const offlineConstraints: OfflineConstraint[] = [];
+            this.props.attributeList.forEach(search => {
+                offlineConstraints.push({
+                    attribute: search.attribute,
+                    operator: "contains",
+                    path: this.props.entity,
+                    value: searchQuery
+                });
+            });
+
+            return {
+                constraints: offlineConstraints,
+                operator: "or"
+            };
+        }
+
         if (targetListView && targetListView._datasource && searchQuery) {
+            const constraints: string[] = [];
             this.props.attributeList.forEach(searchAttribute => {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
             });

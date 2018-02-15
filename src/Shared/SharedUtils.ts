@@ -11,7 +11,7 @@ export interface WrapperProps {
 export interface ListView extends mxui.widget._WidgetBase {
     _datasource: {
         setOffset: (offSet: number) => void;
-        _constraints: OfflineConstraint[] | string;
+        _constraints: Constraints;
         _entity: string;
         _pageSize: number;
         _setSize: number;
@@ -35,6 +35,13 @@ export interface OfflineConstraint {
     value: string;
     path?: string;
 }
+
+export interface GroupedOfflineConstraint {
+    constraints: OfflineConstraint[];
+    operator: "or" | "and";
+}
+
+export type Constraints = (GroupedOfflineConstraint | OfflineConstraint)[] | string;
 
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {
