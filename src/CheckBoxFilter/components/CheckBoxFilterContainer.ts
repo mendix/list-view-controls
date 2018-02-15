@@ -4,7 +4,7 @@ import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
 import { Validate } from "../Validate";
 
@@ -23,13 +23,6 @@ export interface ContainerProps extends WrapperProps {
 }
 
 type FilterOptions = "attribute" | "XPath" | "None";
-
-interface OfflineConstraint {
-    attribute: string;
-    operator: string;
-    value: string;
-    path?: string;
-}
 
 export interface ContainerState {
     alertMessage: ReactChild;

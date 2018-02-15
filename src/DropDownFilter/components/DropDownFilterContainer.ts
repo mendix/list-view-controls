@@ -4,7 +4,7 @@ import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { Validate } from "../Validate";
 
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
@@ -104,14 +104,16 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private applyFilter(selectedFilter: FilterProps) {
         const constraint = this.getConstraint(selectedFilter);
-        if (this.dataSourceHelper)
+        if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
+        }
     }
 
     private getConstraint(selectedFilter: FilterProps) {
         const { targetListView } = this.state;
+        const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
+
         if (targetListView && targetListView._datasource) {
-            const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
             const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
             const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
 
@@ -120,11 +122,26 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             } else if (filterBy === "XPath" && !hasContext) {
                 return constraint;
             } else if (filterBy === "attribute" && attributeValue) {
-                return `[contains(${attribute},'${attributeValue}')]`;
+                return this.getAttributeConstraint(attribute, attributeValue);
             } else {
                 return "";
             }
         }
+    }
+
+    private getAttributeConstraint(attribute: string, attributeValue: string): string | OfflineConstraint {
+        if (window.mx.isOffline()) {
+            const constraints: OfflineConstraint = {
+                attribute,
+                operator: "contains",
+                path: this.props.entity,
+                value: attributeValue
+            };
+
+            return constraints;
+        }
+
+        return `[contains(${attribute},'${attributeValue}')]`;
     }
 
     private connectToListView() {
