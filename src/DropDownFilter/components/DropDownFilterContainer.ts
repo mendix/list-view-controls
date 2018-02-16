@@ -87,7 +87,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         if (!this.state.alertMessage) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
-            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\'\[%CurrentObject%\]\'/g,
+            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
                     this.props.mxObject.getGuid()
                 ));
             }

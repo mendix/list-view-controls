@@ -105,7 +105,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
 
             if (filterBy === "XPath" && hasContext && mxObjectId) {
-                return constraint.replace(/\'\[%CurrentObject%\]\'/g, mxObjectId);
+                return constraint.replace(/\[%CurrentObject%\]/g, mxObjectId);
             } else if (filterBy === "XPath" && !hasContext) {
                 return constraint;
             } else if (filterBy === "attribute" && attributeValue) {
