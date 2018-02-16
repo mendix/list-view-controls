@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <widget id="com.mendix.widget.custom.listviewcontrols.CheckBoxFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
-    <name>Check box filter</name>
+    <name>Check-box filter</name>
     <description>Filter Mendix list views using a checkbox</description>
-    <icon>iVBORw0KGgoAAAANSUhEUgAAAA4AAAAOCAMAAAAolt3jAAAAV1BMVEUAAAB+fn4sLCwAAAB+fn52dnZqampaWlpKSkomJiYAAAACAgIBAQEAAAAAAABycnKEhISioqKkpKSysrK/v7/Kysrq6urs7Ozt7e3x8fH29vb4+Pj+/v52ANGvAAAAD3RSTlMATVZXZ2hqbG5zdYKsr+pcwTBcAAAAVUlEQVR42o3NORKAIBBE0QFlccWVde5/TocAikCr/B119ID1FIOSQMRb1CuvuJ+yXnUYExTMXd4E2m/WayjxgeLwqzcXGzfFmBo3OEfuOuYt5Npv9wG6DgRaVjOGtQAAAABJRU5ErkJggg==</icon>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAAHqsLF6AAABEVBMVEUAAACA//////+/v7+qqqpJtv+Ojo6Li4uJiYmIiIhQv/+Pj4+UlJSKiopPuf+NjY2Ojo6MjIxKtfmIiIhJsfpIsvqMjIyLi4uKiopLsfeJiYlLsPiLi4uJiYlJsviKiopJs/iLi4uJiYlLsfmJiYmKiopIsflJsfeKiopIsvhKsPhJsfhJsviKioqJiYmIiIiKiopJsfiJiYmJiYmIiIhIsfiJiYmIiIiIiIhIsfhIsPhJsfeJiYmIiIiJiYlJsfhJsPiIiIiJiYmIiIiJiYmIiIhIsPeJiYlJsPdJsfeIiIiIiIhIsPeIiIhIsPhJsfhJsfhJsfhJsPiIiIiIiIhJsPiIiIhIsfiJiYlIsPeIiIhN8ixWAAAAWXRSTlMAAgIEBgcJCw0PEBATGB0dJCgtLTE1NTk7QUNEREVJSk1NTlJSU1ViZGpuc3R+gIeLkJGZo6qqtLu+v8HL0NTV1tfY29zd4uLj5Obo7Ozw8fX4+fn7/f3+/mSGoLUAAAHxSURBVFjD7VeHUsMwDBWz7A1lQwpl71U2FAql7N1K//8hKHbd2olNgYOD4/Lac56UZ1VWLF8KUAHEH4CcYCXX50Diu8wjIsF+TdGTgC+CJCAjLzKhVaRStjxM56Xbk8mmSWk7DuEXoVInPXV/TBKo1AFQFGiM1oTjeAjbhJuUGIu6kgMCjkD4/4M4aUgDjJSt0+LS9WKLoVsYT5QyBVO5Is9SBiBG1Ai6YA9xQPE+oi161sLOIqNOi+aR9sOhHMICHdKXIFqBCP8Raf1pxwFOy9awdT9oRsa6o1L0JHi3umHZ9suSJwOC81HJm4liwEdo1tyoVYiqL9b4MlYOLFkT4m1J/MxtQX2aAO+7EI/K0Wp4Bft6Yn7fbOr5sMAzMn/BBXhXEOSfFYRbj8xZ5gkjfQ3RLo4Q4U+coBRu0TP7vTNH24cPgRn7rRkjgOuFTpDWG2YHtcpfe8DmTSt8PADABtPXfsn7X9nYcAgl5vOI56Z/sMDGus/WmRQGwR2gbtM/ix/HA/76E7YuW1ou+XJSb0u1Z3enF6DtyJ+e67JktqSqt2Rf6zVPfLjzp+812ZeWlPMnXcWay/uzcbXKVRtPBvDc1Z7IXUy9U9zKASr4E98ToNDp+gvh3MrGElLVlndoZzel44Zw8Wq7PTp7IvwE3gB7yv8Sr2ey7AAAAABJRU5ErkJggg==</icon>
     <properties>
         <property key="listViewEntity" type="entity">
             <caption>List view with entity</caption>
@@ -13,6 +13,11 @@
             <caption>Default checked</caption>
             <category>General</category>
             <description>Checks the check box on initial loading of the page</description>
+        </property>
+        <property key="group" type="string" required="false">
+            <caption>Group name</caption>
+            <category>General</category>
+            <description>By default all checkbox filters should match. When a group name is specified only one of the filters in the group has to match</description>
         </property>
         <property key="filterBy" type="enumeration" defaultValue="none">
             <caption>Filter by</caption>

@@ -1,7 +1,8 @@
 import { ReactChild, createElement } from "react";
-import { PaginationListView as ListView, WrapperProps } from "./Pagination";
+import { ListView } from "../Shared/SharedUtils";
+import { ModelerProps } from "./Pagination";
 
-export interface ValidateConfigProps extends WrapperProps {
+export interface ValidateConfigProps extends ModelerProps {
     inWebModeler?: boolean;
     queryNode?: HTMLElement | null;
     targetListView?: ListView | null;

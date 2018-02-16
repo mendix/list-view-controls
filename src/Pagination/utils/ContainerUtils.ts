@@ -1,4 +1,4 @@
-import { PaginationListView as ListView } from "../Pagination";
+import { ListView } from "../../Shared/SharedUtils";
 
 export const hideLoadMoreButton = (targetNode?: HTMLElement | null) => {
     if (targetNode) {

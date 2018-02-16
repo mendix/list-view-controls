@@ -1,25 +1,15 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
 import * as classNames from "classnames";
-import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { Validate } from "../Validate";
 
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 
 import "../ui/DropDownFilter.scss";
-
-interface WrapperProps {
-    class: string;
-    style: string;
-    friendlyId: string;
-    mxform?: mxui.lib.form._FormBase;
-    mxObject: mendix.lib.MxObject;
-}
 
 export interface ContainerProps extends WrapperProps {
     entity: string;
@@ -47,6 +37,7 @@ export interface ContainerState {
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private navigationHandler: object;
+    private widgetDOM: HTMLElement;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -65,6 +56,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return createElement("div",
             {
                 className: classNames("widget-drop-down-filter", this.props.class),
+                ref: (widgetDOM: HTMLElement) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(),
@@ -95,7 +87,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         if (!this.state.alertMessage) {
             const defaultFilterIndex = this.props.filters.indexOf(this.props.filters.filter(value => value.isDefault)[0]);
             if (this.props.mxObject) {
-            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(`'[%CurrentObject%]'`,
+            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
                     this.props.mxObject.getGuid()
                 ));
             }
@@ -112,52 +104,65 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private applyFilter(selectedFilter: FilterProps) {
         const constraint = this.getConstraint(selectedFilter);
-        if (this.dataSourceHelper)
+        if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
+        }
     }
 
     private getConstraint(selectedFilter: FilterProps) {
         const { targetListView } = this.state;
+        const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
+
         if (targetListView && targetListView._datasource) {
-            const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
-            if (filterBy === "XPath") {
+            const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
+            const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
+
+            if (filterBy === "XPath" && hasContext && mxObjectId) {
+                return constraint.replace(/\'\[%CurrentObject%\]\'/g, mxObjectId);
+            } else if (filterBy === "XPath" && !hasContext) {
                 return constraint;
-            } else if (filterBy === "attribute") {
-                return `[contains(${attribute},'${attributeValue}')]`;
+            } else if (filterBy === "attribute" && attributeValue) {
+                return this.getAttributeConstraint(attribute, attributeValue);
             } else {
                 return "";
             }
         }
     }
 
-    private connectToListView() {
-        const filterNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(filterNode);
-        let targetListView: ListView | null = null;
-        let errorMessage = "";
+    private getAttributeConstraint(attribute: string, attributeValue: string): string | OfflineConstraint {
+        if (window.mx.isOffline()) {
+            const constraints: OfflineConstraint = {
+                attribute,
+                operator: "contains",
+                path: this.props.entity,
+                value: attributeValue
+            };
 
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-            targetListView = dijitRegistry.byNode(targetNode);
-            if (targetListView) {
-                try {
-                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
-                } catch (error) {
-                    errorMessage = error.message;
-                }
-            }
+            return constraints;
         }
 
-        const validationMessage = SharedUtils.validateCompatibility({
-            listViewEntity: this.props.entity,
-            targetListView
-        });
+        return `[contains(${attribute},'${attributeValue}')]`;
+    }
+
+    private connectToListView() {
+        let errorMessage = "";
+        let targetListView: ListView | undefined;
+
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            errorMessage = error.message;
+        }
+
+        if (errorMessage && targetListView) {
+            DataSourceHelper.showContent(targetListView.domNode);
+        }
 
         this.setState({
-            alertMessage: validationMessage || errorMessage,
+            alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            targetNode
+            targetListView
         });
     }
 }

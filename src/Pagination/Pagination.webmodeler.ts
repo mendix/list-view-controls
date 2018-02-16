@@ -5,7 +5,7 @@ import { Alert } from "../Shared/components/Alert";
 import { SharedUtils } from "../Shared/SharedUtils";
 import { Validate } from "./Validate";
 
-import { ModelerProps, WrapperProps } from "./Pagination";
+import { ModelerProps } from "./Pagination";
 import { Pagination } from "./components/Pagination";
 
 interface PaginationWebModelerState {
@@ -15,9 +15,9 @@ interface PaginationWebModelerState {
 }
 
 // tslint:disable-next-line class-name
-export class preview extends Component<WrapperProps, PaginationWebModelerState> {
+export class preview extends Component<ModelerProps, PaginationWebModelerState> {
 
-    constructor(props: WrapperProps) {
+    constructor(props: ModelerProps) {
         super(props);
 
         this.state = {
@@ -52,15 +52,15 @@ export class preview extends Component<WrapperProps, PaginationWebModelerState> 
         this.validateConfigs(this.props);
     }
 
-    componentWillReceiveProps(nextProps: WrapperProps) {
+    componentWillReceiveProps(nextProps: ModelerProps) {
         this.validateConfigs(nextProps);
     }
 
-    private validateConfigs(props: WrapperProps) {
+    private validateConfigs(props: ModelerProps) {
         const queryNode = findDOMNode(this) as HTMLElement;
         const targetNode = SharedUtils.findTargetNode(queryNode);
         const message = Validate.validate({
-            ...props as WrapperProps,
+            ...props as ModelerProps,
             inWebModeler: true
         });
 

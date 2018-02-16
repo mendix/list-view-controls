@@ -1,15 +1,9 @@
-import { ListView, OfflineConstraint } from "../SharedUtils";
+import { Constraints, GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
-    constraints: { [widgetId: string]: string | OfflineConstraint; };
+    constraints: { [group: string]: { [widgetId: string]: string | OfflineConstraint | GroupedOfflineConstraint } };
     sorting: { [widgetId: string]: string[] };
-}
-
-export interface Version {
-    major: number;
-    minor: number;
-    patch: number;
 }
 
 interface DataSourceHelperListView extends ListView {
@@ -17,45 +11,53 @@ interface DataSourceHelperListView extends ListView {
 }
 
 export class DataSourceHelper {
-    // The version of a Datasource is static, it never changes.
-    static VERSION: Version = { major: 1, minor: 0, patch: 0 };
-    // Expose the version dataSourceHelper instances.
-    public version: Version = DataSourceHelper.VERSION;
-
     private initialLoad = true;
     private delay = 50;
     private timeoutHandle?: number;
-    private store: ConstraintStore = { constraints: {}, sorting: {} };
+    private store: ConstraintStore = { constraints: { _none: {} }, sorting: {} };
     private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
-    private widgetVersionRegister: {
-        [version: string]: string[];
-    } = {};
 
     constructor(widget: DataSourceHelperListView) {
-        this.compatibilityCheck(widget);
         this.widget = widget;
     }
 
-    static getInstance(widget: DataSourceHelperListView, widgetId: string, version: Version) {
-        if (!widget.__customWidgetDataSourceHelper) {
-            widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
-        }
-        widget.__customWidgetDataSourceHelper.versionCompatibility(version, widgetId);
-        widget.__customWidgetDataSourceHelper.initialLoad = true;
+    static getInstance(widgetParent: HTMLElement, widgetEntity?: string) {
+        const widget = SharedUtils.findTargetListView(widgetParent, widgetEntity) as DataSourceHelperListView;
+        const compatibilityMessage = SharedUtils.validateCompatibility({ listViewEntity: widgetEntity, targetListView: widget });
 
-        return widget.__customWidgetDataSourceHelper;
+        if (!compatibilityMessage) {
+            if (!widget.__customWidgetDataSourceHelper) {
+                widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
+            }
+            widget.__customWidgetDataSourceHelper.initialLoad = true;
+            this.hideContent(widget.domNode);
+
+            return widget.__customWidgetDataSourceHelper;
+        }
+
+        throw new Error(compatibilityMessage);
     }
 
     setSorting(widgetId: string, sortConstraint: string[]) {
+        this.store.sorting = {} ;
         this.store.sorting[widgetId] = sortConstraint;
         this.registerUpdate();
     }
 
-    setConstraint(widgetId: string, constraint: string | OfflineConstraint) {
-        this.store.constraints[widgetId] = constraint as string | OfflineConstraint;
+    setConstraint(widgetId: string, constraint: string | OfflineConstraint | GroupedOfflineConstraint, groupName = "_none") {
+        const group = groupName.trim() || "_none";
+        if (this.store.constraints[group]) {
+            this.store.constraints[group][widgetId] = constraint;
+        } else {
+            this.store.constraints[group] = { [widgetId] : constraint };
+        }
         this.registerUpdate();
+    }
+
+    getListView(): ListView {
+        return this.widget as ListView;
     }
 
     private registerUpdate() {
@@ -85,47 +87,60 @@ export class DataSourceHelper {
         });
     }
 
-    private versionCompatibility(version: Version, widgetId: string) {
-        this.widgetVersionRegister[`${version.major}`] = this.widgetVersionRegister[`${version.major}`] || [];
-        if (this.widgetVersionRegister[`${version.major}`].indexOf(widgetId) === -1) {
-            this.widgetVersionRegister[`${version.major}`].push(widgetId);
-        }
-        const maxVersion = Math.max(...Object.keys(this.widgetVersionRegister).map(value => Number(value)));
-
-        if (maxVersion !== version.major) {
-            const widgetsToUpdate = { ...this.widgetVersionRegister };
-            delete widgetsToUpdate[`${maxVersion}`];
-            const widgetsToUpdateList = Object.keys(widgetsToUpdate).map(key => widgetsToUpdate[key]).join(", ");
-
-            logger.error(`Update version to '${maxVersion}' for widgets: ${widgetsToUpdateList}`);
-            throw new Error(`This widget is not compatible with: ${widgetsToUpdateList}, please update them from the App Store`);
-        }
-    }
-
-    private compatibilityCheck(widget: ListView) {
-        if (!(widget._datasource && (widget._datasource._constraints !== undefined) && widget._entity
-                && widget.update && widget.datasource.type)) {
-            throw new Error("Mendix version is incompatible");
-        }
-    }
-
     private updateDataSource(callback: () => void) {
-        let constraints: OfflineConstraint[] | string;
+        let constraints: Constraints = [];
         const sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
 
         if (window.mx.isOffline()) {
-            constraints = Object.keys(this.store.constraints)
-                .map(key => this.store.constraints[key] as OfflineConstraint)
-                .filter(mobileConstraint => mobileConstraint.value);
+            const _noneGroupedConstraints = Object.keys(this.store.constraints._none)
+            .map(key => this.store.constraints._none[key]);
+
+            const unGroupedConstraints = (_noneGroupedConstraints as OfflineConstraint[]).filter(constraint => constraint.value);
+            const unGroupedOrConstraints = (_noneGroupedConstraints as GroupedOfflineConstraint[]).filter(constraint => constraint.operator); // Coming from text box search
+
+            const groups = Object.keys(this.store.constraints).filter(group => group !== "_none");
+            const groupedConstraints: GroupedOfflineConstraint[] = [];
+            for (const group of groups) { // Dealing with multiple widgets which have single constraints
+                const groupWidgets = Object.keys(this.store.constraints[group]);
+                const groupOfflineConstraints: OfflineConstraint [] = [];
+                for (const groupWidget of groupWidgets) {
+                    const widgetConstraint = this.store.constraints[group][groupWidget] as OfflineConstraint;
+                    if (widgetConstraint && widgetConstraint.value) {
+                        groupOfflineConstraints.push(widgetConstraint);
+                    }
+                }
+                if (groupOfflineConstraints.length) {
+                    groupedConstraints.push({
+                        constraints: groupOfflineConstraints,
+                        operator: "or"
+                    });
+                }
+            }
+
+            constraints = [ ...unGroupedConstraints, ...unGroupedOrConstraints, ...groupedConstraints ];
+
         } else {
-            constraints = Object.keys(this.store.constraints)
-                .map(key => this.store.constraints[key]).join("");
+            const unGroupedConstraints = Object.keys(this.store.constraints._none)
+            .map(key => this.store.constraints._none[key])
+            .join("");
+
+            const groupedConstraints = Object.keys(this.store.constraints)
+                .filter(c => c !== "_none")
+                .map(group => "[" + Object.keys(this.store.constraints[group])
+                    .map(key => this.store.constraints[group][key] as string)
+                    .filter(c => c) // Remove empty
+                    .map(c => c.trim().substr(1, c.trim().length - 2)) // Strip []
+                    .join(" or ") + "]")
+                .join("")
+                .replace(/\[]/g, ""); // Remove empty string "[]"
+
+            constraints = unGroupedConstraints + groupedConstraints;
         }
 
         this.widget._datasource._constraints = constraints;
-        this.widget._datasource._sorting = sorting;
+        this.widget._datasource[window.mx.isOffline() ? "_sort" : "_sorting"] = sorting;
 
         if (!this.initialLoad) {
             this.showLoader();

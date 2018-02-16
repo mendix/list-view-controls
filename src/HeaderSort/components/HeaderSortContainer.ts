@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 import * as dojoTopic from "dojo/topic";
@@ -7,33 +7,28 @@ import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
 import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
-import { DropDown, DropDownProps } from "./DropDownSort";
+import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 
-import "../ui/DropDownSort.scss";
+import "../ui/HeaderSort.scss";
 
 export interface ContainerProps extends WrapperProps {
     entity: string;
-    sortAttributes: AttributeType[];
-}
-
-export interface AttributeType {
-    name: string;
     caption: string;
-    defaultSelected: boolean;
-    sort: string;
+    initialSorted: boolean;
+    sortAttribute: string;
+    sortOrder: "asc" | "desc";
 }
 
 export interface ContainerState {
-    alertMessage?: string;
+    alertMessage?: ReactChild;
     listViewAvailable: boolean;
     publishedSortAttribute?: string;
-    publishedSortOrder?: string;
+    publishedSortOrder?: SortOrder;
     publishedSortWidgetFriendlyId?: string;
-    targetListView?: ListView | null;
-    defaultOption?: AttributeType;
+    targetListView?: ListView;
 }
 
-export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
+export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
@@ -41,10 +36,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = {
-            defaultOption: this.getDefaultOption(),
-            listViewAvailable: false
-        };
+        this.state = { listViewAvailable: false };
+
         this.updateSort = this.updateSort.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
@@ -53,25 +46,23 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     render() {
         return createElement("div", {
-                className: classNames("widget-drop-down-sort", this.props.class),
-                ref: (widgetDOM: HTMLElement) => this.widgetDOM = widgetDOM,
+                className: classNames("widget-header-sort", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
                 bootstrapStyle: "danger",
-                className: "widget-drop-down-sort-alert"
+                className: "widget-header-sort-alert"
             }, this.state.alertMessage),
-            this.renderDropDown()
+            this.renderSort()
         );
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
-
-            if (selectedSort) {
-                this.updateSort(selectedSort.name, selectedSort.sort);
-            }
+        if (this.state.listViewAvailable
+                && !prevState.listViewAvailable
+                && this.props.initialSorted) {
+            this.updateSort(this.props.sortAttribute, this.props.sortOrder);
         }
     }
 
@@ -79,46 +70,44 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         dojoConnect.disconnect(this.navigationHandler);
     }
 
-    private renderDropDown(): ReactElement<DropDownProps> | null {
+    private renderSort(): ReactElement<HeaderSortProps> | null {
         if (!this.state.alertMessage) {
-            return createElement(DropDown, {
+            return createElement(HeaderSort, {
+                caption: this.props.caption,
                 friendlyId: this.props.friendlyId,
-                onDropDownChangeAction: this.updateSort,
+                initialSorted: this.props.initialSorted,
+                onClickAction: this.updateSort,
                 publishedSortAttribute: this.state.publishedSortAttribute,
                 publishedSortOrder: this.state.publishedSortOrder,
                 publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
-                sortAttributes: this.props.sortAttributes,
-                style: SharedUtils.parseStyle(this.props.style)
+                sortAttribute: this.props.sortAttribute,
+                sortOrder: this.initialSortOrder(this.props.initialSorted, this.props.sortOrder)
             });
         }
 
         return null;
     }
 
-    private getDefaultOption() {
-        return this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
-    }
-
     private connectToListView() {
-        let alertMessage = "";
+        let errorMessage = "";
         let targetListView: ListView | undefined;
 
         try {
             this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
-            alertMessage = error.message;
+            errorMessage = error.message;
         }
 
-        if (targetListView && !alertMessage) {
+        if (targetListView) {
             this.subScribeToWidgetChanges(targetListView);
-            if (!this.state.defaultOption) {
+            if (!this.props.initialSorted || errorMessage) {
                 DataSourceHelper.showContent(targetListView.domNode);
             }
         }
 
         this.setState({
-            alertMessage,
+            alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
             targetListView
         });
@@ -137,13 +126,23 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
             this.setState({
                 publishedSortAttribute: message[0],
-                publishedSortOrder: message[1],
+                publishedSortOrder: message[1] as SortOrder,
                 publishedSortWidgetFriendlyId: message[2]
             });
         });
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
-        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+        if (this.state.targetListView) {
+            dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+        }
+    }
+
+    private initialSortOrder(initialSorted: boolean, sortOrder: SortOrder): SortOrder {
+        if (initialSorted) {
+            return sortOrder;
+        }
+
+        return "";
     }
 }

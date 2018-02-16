@@ -1,12 +1,10 @@
 import { Component, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
-import * as dijitRegistry from "dijit/registry";
 import * as dojoConnect from "dojo/_base/connect";
 import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
 
@@ -40,6 +38,7 @@ export interface ContainerState {
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private navigationHandler: object;
+    private widgetDOM: HTMLElement;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -59,6 +58,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -86,7 +86,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private applySearch(searchQuery: string) {
-        // construct constraint based on search query
+        // Construct constraint based on search query
         const constraint = this.getConstraint(searchQuery);
 
         if (this.dataSourceHelper) {
@@ -94,11 +94,35 @@ export default class SearchContainer extends Component<ContainerProps, Container
         }
     }
 
-    private getConstraint(searchQuery: string) {
+    private getConstraint(searchQuery: string): string | GroupedOfflineConstraint {
         const { targetListView } = this.state;
-        const constraints: string[] = [];
 
-        if (targetListView && targetListView._datasource) {
+        searchQuery = searchQuery.trim();
+
+        if (!searchQuery) {
+            return "";
+
+        }
+
+        if (window.mx.isOffline()) {
+            const offlineConstraints: OfflineConstraint[] = [];
+            this.props.attributeList.forEach(search => {
+                offlineConstraints.push({
+                    attribute: search.attribute,
+                    operator: "contains",
+                    path: this.props.entity,
+                    value: searchQuery
+                });
+            });
+
+            return {
+                constraints: offlineConstraints,
+                operator: "or"
+            };
+        }
+
+        if (targetListView && targetListView._datasource && searchQuery) {
+            const constraints: string[] = [];
             this.props.attributeList.forEach(searchAttribute => {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
             });
@@ -109,34 +133,20 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private connectToListView() {
-        const queryNode = findDOMNode(this).parentNode as HTMLElement;
-        const targetNode = SharedUtils.findTargetNode(queryNode) as HTMLElement;
-        let targetListView: ListView | undefined;
         let errorMessage = "";
+        let targetListView: ListView | undefined;
 
-        if (targetNode) {
-            DataSourceHelper.hideContent(targetNode);
-            targetListView = dijitRegistry.byNode(targetNode);
-            if (targetListView) {
-                try {
-                    this.dataSourceHelper = DataSourceHelper.getInstance(targetListView, this.props.friendlyId, DataSourceHelper.VERSION);
-                } catch (error) {
-                    errorMessage = error.message;
-                }
-            }
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            errorMessage = error.message;
         }
-        targetListView = targetListView || undefined;
-
-        const validationMessage = SharedUtils.validateCompatibility({
-            listViewEntity: this.props.entity,
-            targetListView
-        });
 
         this.setState({
-            alertMessage: validationMessage || errorMessage,
+            alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            targetNode
+            targetListView
         });
     }
 }

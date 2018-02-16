@@ -8,7 +8,7 @@ configure({ adapter: new Adapter() });
 
 configure({ adapter: new Adapter() });
 
-describe("Dropdown", () => {
+describe("DropDownSort", () => {
 
     const renderDropdown = (props: DropDownProps) => shallow(createElement(DropDown, props));
 

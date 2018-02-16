@@ -1,16 +1,13 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
-import { findDOMNode } from "react-dom";
-import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 import * as dojoConnect from "dojo/_base/connect";
 import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils } from "../../Shared/SharedUtils";
 
-import {
-    PaginationListView as ListView, UpdateSourceType, WrapperProps } from "../Pagination";
+import { ModelerProps, UpdateSourceType } from "../Pagination";
 import {
     getListNode, hideLoadMoreButton, hideLoader, resetListViewStructure,
     setListNodeToEmpty, showLoadMoreButton, showLoader
@@ -48,10 +45,11 @@ interface ValidateProps {
     targetNode?: HTMLElement | null;
 }
 
-export default class PaginationContainer extends Component<WrapperProps, PaginationContainerState> {
+export default class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
     private navigationHandler: object;
+    private widgetDOM: HTMLElement;
 
-    constructor(props: WrapperProps) {
+    constructor(props: ModelerProps) {
         super(props);
 
         this.state = {
@@ -77,6 +75,7 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
         return createElement("div",
             {
                 className: classNames("widget-pagination", this.props.class),
+                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -87,15 +86,10 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
     }
 
     componentWillUnmount() {
-        const targetNode = this.getTargetNode();
+        const targetNode = this.state.targetNode;
 
         dojoConnect.disconnect(this.navigationHandler);
         showLoadMoreButton(targetNode);
-    }
-
-    private getTargetNode(): HTMLElement {
-        const queryNode = findDOMNode(this) as HTMLElement;
-        return SharedUtils.findTargetNode(queryNode) as HTMLElement;
     }
 
     private renderPageButton(): ReactElement<PaginationProps> | null {
@@ -119,30 +113,25 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
 
     private findListView() {
         if (this.state.findingListViewWidget) {
-            const queryNode = findDOMNode(this) as HTMLElement;
-            const targetNode = SharedUtils.findTargetNode(queryNode);
+            const targetListView = SharedUtils.findTargetListView(this.widgetDOM.parentElement);
+            const targetNode = targetListView && targetListView.domNode;
             let hideUnusedPaging = false;
-            let targetListView: ListView | null = null;
             let listViewSize = 0;
             let offset = 0;
             let dataSource: ListView["_datasource"];
 
-            if (targetNode) {
-                targetListView = dijitRegistry.byNode(targetNode);
+            if (targetListView) {
+                hideLoadMoreButton(targetNode);
 
-                if (targetListView) {
-                    hideLoadMoreButton(targetNode);
+                dataSource = targetListView._datasource;
+                listViewSize = dataSource._setSize;
+                offset = dataSource._pageSize;
+                hideUnusedPaging = this.isHideUnUsed(targetListView);
 
-                    dataSource = targetListView._datasource;
-                    listViewSize = dataSource._setSize;
-                    offset = dataSource._pageSize;
-                    hideUnusedPaging = this.isHideUnUsed(targetListView);
-
-                    this.afterListViewLoad(targetListView, targetNode);
-                    this.afterListViewDataRender(targetListView);
-                    this.beforeListViewDataRender(targetListView);
-                    this.subScribeToListViewChanges(targetListView);
-                }
+                this.afterListViewLoad(targetListView, targetNode);
+                this.afterListViewDataRender(targetListView);
+                this.beforeListViewDataRender(targetListView);
+                this.subScribeToListViewChanges(targetListView);
             }
 
             this.validateListView({ targetNode, targetListView, hideUnusedPaging, listViewSize, offset });
@@ -216,7 +205,7 @@ export default class PaginationContainer extends Component<WrapperProps, Paginat
 
     private validateListView(props: ValidateProps) {
         const message = Validate.validate({
-            ...this.props as WrapperProps,
+            ...this.props as ModelerProps,
             queryNode: props.targetNode,
             targetListView: props.targetListView
         });

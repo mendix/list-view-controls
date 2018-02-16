@@ -6,7 +6,11 @@ export interface DropDownOptionType extends AttributeType {
 }
 
 export interface DropDownProps {
+    friendlyId?: string;
     onDropDownChangeAction?: (attribute: string, order: string) => void;
+    publishedSortAttribute?: string;
+    publishedSortOrder?: string;
+    publishedSortWidgetFriendlyId?: string;
     sortAttributes: AttributeType[];
     style: object;
 }
@@ -15,10 +19,14 @@ export interface DropdownState {
     value: string;
 }
 
-export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptionElement> { key: string; }
+export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptionElement> {
+    key: string;
+}
 
 export class DropDown extends Component<DropDownProps, DropdownState> {
     private options: DropDownOptionType[] = [];
+    private selectorDomNode: HTMLSelectElement;
+
     constructor(props: DropDownProps) {
         super(props);
 
@@ -35,16 +43,30 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
         if (this.state.value !== value) {
             this.setState({ value });
         }
+
+        // Received update from one of the widgets
+        if (newProps.publishedSortAttribute
+            && newProps.publishedSortOrder
+            && !(this.props.friendlyId === newProps.publishedSortWidgetFriendlyId)) {
+            this.setState({ value: "" });
+        }
     }
 
     render() {
         return createElement("select", {
                 className: "form-control",
                 onChange: this.handleChange,
+                ref: (selector: HTMLSelectElement) => this.selectorDomNode = selector,
                 value: this.state.value
             },
             this.renderOptions()
         );
+    }
+
+    componentDidUpdate(_previousProps: DropDownProps, _previousState: DropdownState) {
+        if (this.state.value === "") {
+            this.selectorDomNode.selectedIndex = -1;
+        }
     }
 
     private getDefaultValue(props: DropDownProps): string {
@@ -55,7 +77,7 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
             return defaultOption.value;
         }
 
-        return this.options.length > 0 ? this.options[0].value : "";
+        return "";
     }
 
     private renderOptions(): Array<ReactElement<{}>> {

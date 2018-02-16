@@ -1,5 +1,5 @@
 import { createElement } from "react";
-import { configure, mount, shallow } from "enzyme";
+import { configure, shallow } from "enzyme";
 import Adapter = require("enzyme-adapter-react-16");
 
 configure({ adapter: new Adapter() });
@@ -8,8 +8,6 @@ import { TextBoxSearch, TextBoxSearchProps } from "../TextBoxSearch";
 
 describe("TextBoxSearch", () => {
     const renderSearchBar = (props: TextBoxSearchProps) => shallow(createElement(TextBoxSearch, props));
-    // Use mount, inorder to have an element from which to get the currentTarget as per TextBoxSearch:L42
-    const mountSearchBar = (props: TextBoxSearchProps) => mount(createElement(TextBoxSearch, props));
     const textSearchProps: TextBoxSearchProps = {
         defaultQuery: "",
         onTextChange:  jasmine.any(Function) as any,
@@ -114,19 +112,20 @@ describe("TextBoxSearch", () => {
             }, 1000);
         });
 
-        xit("is cleared when the remove button is clicked", () => {
-            const wrapper = mountSearchBar(textSearchProps);
-            const input: any = wrapper.find("input");
-            const button: any = wrapper.find("button");
+        it("is cleared when the remove button is clicked", () => {
+            const textSearch = renderSearchBar(textSearchProps);
+            const input: any = textSearch.find("input");
 
-            input.getElement.value = "Change";
-            input.simulate("change");
+            input.simulate("change", { currentTarget: { value: "as" } });
+            setTimeout(() => {
+                const button: any = textSearch.find("button");
 
-            expect(input.get(0).value).toBe("Change");
+                button.simulate("click", { currentTarget: { } });
 
-            button.simulate("click");
-
-            expect(input.get(0).value).toBe("");
+                setTimeout(() => {
+                    expect(input.get(0).value).toBe("");
+                }, 1000);
+            }, 1000);
         });
     });
 });

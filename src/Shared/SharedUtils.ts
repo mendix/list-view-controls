@@ -1,8 +1,17 @@
+import * as dijitRegistry from "dijit/registry";
+
+export interface WrapperProps {
+    class: string;
+    style: string;
+    friendlyId: string;
+    mxform: mxui.lib.form._FormBase;
+    mxObject: mendix.lib.MxObject;
+}
 
 export interface ListView extends mxui.widget._WidgetBase {
     _datasource: {
         setOffset: (offSet: number) => void;
-        _constraints: OfflineConstraint[] | string;
+        _constraints: Constraints;
         _entity: string;
         _pageSize: number;
         _setSize: number;
@@ -12,6 +21,7 @@ export interface ListView extends mxui.widget._WidgetBase {
     _renderData: () => void;
     _showLoadingIcon: () => void;
     _sourceReload: () => void;
+    friendlyId: string;
     datasource: {
         type: "microflow" | "entityPath" | "database" | "xpath";
     };
@@ -25,6 +35,13 @@ export interface OfflineConstraint {
     value: string;
     path?: string;
 }
+
+export interface GroupedOfflineConstraint {
+    constraints: OfflineConstraint[];
+    operator: "or" | "and";
+}
+
+export type Constraints = (GroupedOfflineConstraint | OfflineConstraint)[] | string;
 
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {
@@ -46,11 +63,14 @@ export class SharedUtils {
     }
 
     static validateCompatibility(props: { listViewEntity?: string, targetListView?: ListView; }): string {
-        const { targetListView } = props;
+        const { listViewEntity, targetListView } = props;
         const type = targetListView && targetListView.datasource && targetListView.datasource.type;
 
         if (!targetListView) {
-            return "This widget is unable to find a list view to connect";
+            let errorMessage = "This widget is unable to find a list view ";
+            errorMessage += listViewEntity ? `with the supplied entity '${listViewEntity}'` : "to connect";
+
+            return errorMessage;
         }
         if (type && type !== "database" && type !== "xpath") {
             return "This widget is only compatible with list view data source type 'Database' and 'XPath'";
@@ -58,7 +78,7 @@ export class SharedUtils {
         if (!(targetListView && targetListView._datasource && targetListView._entity && targetListView.update)) {
             return "This widget version is not compatible with this Mendix version";
         }
-        if (targetListView._entity && props.listViewEntity !== targetListView._entity) {
+        if (targetListView._entity && listViewEntity !== targetListView._entity) {
             return `The supplied entity "${props.listViewEntity}" does not belong to list view data source`;
         }
 
@@ -78,5 +98,33 @@ export class SharedUtils {
         }
 
         return targetNode;
+    }
+
+    static findTargetListView(filterNode: HTMLElement, listViewEntity?: string): ListView | undefined {
+        let targetListView: ListView | undefined;
+
+        while (filterNode) {
+            const targetNodes = filterNode.querySelectorAll(`.mx-listview`);
+
+            if (filterNode.isEqualNode(document) || !filterNode.classList || filterNode.classList.contains("mx-incubator")
+                || filterNode.classList.contains("mx-offscreen")) {
+                break;
+            }
+
+            for (let count = 0; count < targetNodes.length; count++) { //tslint:disable-line
+                targetListView = dijitRegistry.byNode(targetNodes.item(count) as HTMLElement);
+
+                if (targetListView && !listViewEntity) { // returns the first found list view
+                    return targetListView;
+                }
+
+                if (targetListView && (targetListView._entity === listViewEntity)) {
+                    return targetListView;
+                }
+            }
+            filterNode = filterNode.parentNode as HTMLElement;
+        }
+
+        return targetListView;
     }
 }
