@@ -1,4 +1,5 @@
 import { Constraints, GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
+import { SharedContainerUtils } from "../SharedContainerUtils";
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
@@ -24,7 +25,7 @@ export class DataSourceHelper {
     }
 
     static getInstance(widgetParent: HTMLElement, widgetEntity?: string) {
-        const widget = SharedUtils.findTargetListView(widgetParent, widgetEntity) as DataSourceHelperListView;
+        const widget = SharedContainerUtils.findTargetListView(widgetParent, widgetEntity) as DataSourceHelperListView;
         const compatibilityMessage = SharedUtils.validateCompatibility({ listViewEntity: widgetEntity, targetListView: widget });
 
         if (!compatibilityMessage) {

@@ -90,7 +90,7 @@ const previewConfig = {
         ]
     },
     devtool: "inline-source-map",
-    externals: [ "react", "react-dom", /^mxui\/|^mendix\/|^dojo\/|^dijit\// ],
+    externals: [ "react", "react-dom" ],
     plugins: [
         new webpack.LoaderOptionsPlugin({ debug: true })
     ]

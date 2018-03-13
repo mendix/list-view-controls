@@ -6,6 +6,7 @@ import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
 import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import { ModelerProps, UpdateSourceType } from "../Pagination";
 import {
@@ -113,7 +114,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
     private findListView() {
         if (this.state.findingListViewWidget) {
-            const targetListView = SharedUtils.findTargetListView(this.widgetDOM.parentElement);
+            const targetListView = SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement);
             const targetNode = targetListView && targetListView.domNode;
             let hideUnusedPaging = false;
             let listViewSize = 0;
