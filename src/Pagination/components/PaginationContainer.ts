@@ -196,7 +196,8 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             }
 
             if (this.state.targetListView) {
-                this.setState({ isLoadingItems: false });
+                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
+                this.setState({ isLoadingItems: false, hideUnusedPaging });
             }
 
             resetListViewStructure(this.state.targetNode as HTMLElement);

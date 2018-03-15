@@ -78,6 +78,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         if (nextProps.updateSource === "other") {
             this.setState({
                 currentOffset: 0,
+                isVisible: !nextProps.hideUnusedPaging,
                 nextIsDisabled: (currentOffset + offset) >= listViewSize,
                 pageCount,
                 previousIsDisabled: currentOffset <= 0,
@@ -86,6 +87,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         } else {
             this.setState({
                 currentOffset,
+                isVisible: !nextProps.hideUnusedPaging,
                 nextIsDisabled: (currentOffset + offset) >= listViewSize,
                 pageCount,
                 previousIsDisabled: currentOffset <= 0,
