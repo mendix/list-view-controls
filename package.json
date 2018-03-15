@@ -1,7 +1,7 @@
 {
   "name": "list-view-controls",
   "widgetName": "ListViewControls",
-  "version": "1.1.1",
+  "version": "1.1.2-beta1",
   "description": "Search and filter Mendix list views",
   "copyright": "Mendix BV",
   "scripts": {
