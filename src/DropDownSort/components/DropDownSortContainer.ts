@@ -37,6 +37,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
+    private subscriptionTopic: string;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -111,7 +112,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
 
         if (targetListView && !alertMessage) {
-            this.subScribeToWidgetChanges(targetListView);
+            this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
+            this.subScribeToWidgetChanges();
             if (!this.state.defaultOption) {
                 DataSourceHelper.showContent(targetListView.domNode);
             }
@@ -133,8 +135,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
     }
 
-    private subScribeToWidgetChanges(targetListView: ListView) {
-        dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
+    private subScribeToWidgetChanges() {
+        dojoTopic.subscribe(this.subscriptionTopic, (message: string[]) => {
             this.setState({
                 publishedSortAttribute: message[0],
                 publishedSortOrder: message[1],
@@ -144,6 +146,6 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
-        dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+        dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.friendlyId ]);
     }
 }

@@ -2,7 +2,7 @@
 <widget id="com.mendix.widget.custom.listviewcontrols.Pagination" needsEntityContext="false" offlineCapable="true" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Pagination</name>
     <description>Add custom pagination to a list view</description>
-    <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAAHqsLF6AAAAOVBMVEUAAACfn5+NjY2IiIiKioqMjIyMjIyLi4uJiYmKioqIiIiJiYmIiIiJiYmJiYmIiIiIiIiIiIiIiIgXcvJlAAAAEnRSTlMACB0eMjM+QG5voaK5x8nM6vtvnaOeAAABYklEQVRYw+2Wy5LCIBBFT0TzJsD9/4+dBU2ejmaqXEyVOYvjpUBs2xQCLxHygAQkQQMM/BVVQIAaoMc2TOJTxIAAKiFndXf5o9s8QwQBYnL8JyohwNs3ABEDgFylPK7nmT4B6palavNrY0uHNG8CTA7xfTx8EXCfipbHUa3Jhp0pMyiZCo1kAhgVTOtfUSYbuaz5AVUwGb2SCaCWTBcXz5nuRYB/FM0EeVN+qCtToZNMALSSyXBSlTVvGE1ly8ZUSOpNx1F5T216WhMEjaZnNR2q3td0rHpfxbHqTU3PqnaaTACKRRcXF1+Ni7JzYUnlfJai26UDg6RUb1OhTpKGbdrRJCkfVUta00tKzTatbylBUrxt0o5blBSqTVofxnZtWtKRdp5rd6vGecfxsPehznGbzrboXZvftOhEm1+26Fybf2/R2TZXQcr/9Usq+Lkq/6rNj8nf98nuzH567NPFxQf5AfAZHoHP4C/MAAAAAElFTkSuQmCC</icon>
+    <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAOVBMVEUAAABgYGBYWFhVVVVXV1dVVVVWVlZYWFhWVlZVVVVWVlZVVVVVVVVWVlZVVVVVVVVVVVVVVVVVVVUQ/paoAAAAEnRSTlMACB0eMjM+QG5voaK5x8nM6vtvnaOeAAAAxUlEQVR4Ae2UuarDMBREn/fF1qL5/499hoQbRiqmUJEU91QHDCKaHPTnOI7j/CpLDDOZMYe41NYyZSCSGRHIE1vLkAAEMiMASANbwwWgrGTGWgBcbDUHHna2DzseDjZmKwBOMuIEUDa2ekCkgaxdKE9kzeeRrGK0g83qATc2fUk9ILO/v5nxn3SSETTkSvbitjuZEbTUzdZ/gO5Mt6o701OrzmSrojPdquhMtKp/oGpVdKZbFZ3pVvuftP5Htf9ZdxzH+T7/ehwegcrwKQ4AAAAASUVORK5CYII=</icon>
     <properties>
         <property key="hideUnusedPaging" type="boolean" defaultValue="false">
             <caption>Hide unused paging</caption>

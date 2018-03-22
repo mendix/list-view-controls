@@ -49,6 +49,7 @@ interface ValidateProps {
 export default class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
     private navigationHandler: object;
     private widgetDOM: HTMLElement;
+    private subscriptionTopic: string;
 
     constructor(props: ModelerProps) {
         super(props);
@@ -128,19 +129,20 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 listViewSize = dataSource._setSize;
                 offset = dataSource._pageSize;
                 hideUnusedPaging = this.isHideUnUsed(targetListView);
+                this.subscriptionTopic = `${targetListView.friendlyId}_paginationUpdate`;
 
                 this.afterListViewLoad(targetListView, targetNode);
                 this.afterListViewDataRender(targetListView);
                 this.beforeListViewDataRender(targetListView);
-                this.subScribeToListViewChanges(targetListView);
+                this.subScribeToListViewChanges();
             }
 
             this.validateListView({ targetNode, targetListView, hideUnusedPaging, listViewSize, offset });
         }
     }
 
-    private subScribeToListViewChanges(targetListView: ListView) {
-        dojoTopic.subscribe(targetListView.friendlyId, (message: number[]) => {
+    private subScribeToListViewChanges() {
+        dojoTopic.subscribe(this.subscriptionTopic, (message: number[]) => {
             if (this.state.targetListView) {
                 this.setState({
                     publishedOffset: message[0],
@@ -196,7 +198,8 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             }
 
             if (this.state.targetListView) {
-                this.setState({ isLoadingItems: false });
+                const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
+                this.setState({ isLoadingItems: false, hideUnusedPaging });
             }
 
             resetListViewStructure(this.state.targetNode as HTMLElement);
@@ -247,7 +250,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
     private publishListViewUpdate(offSet: number, pageNumber: number) {
         if (this.state.targetListView) {
-            dojoTopic.publish(this.state.targetListView.friendlyId, [ offSet, pageNumber ]);
+            dojoTopic.publish(this.subscriptionTopic, [ offSet, pageNumber ]);
         }
     }
 
