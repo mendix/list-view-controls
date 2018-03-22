@@ -6,7 +6,7 @@ exports.config = {
     specs: [ "./dist/e2e/**/*.spec.js" ],
     maxInstances: debug ? 1 : 5,
     capabilities: [ {
-        maxInstances: debug ? 1 : 5,
+        maxInstances: 1,
         browserName: "chrome"
     } ],
     sync: true,
