@@ -5,13 +5,13 @@ import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, TopicMessage, paginationTopicSuffix } from "../../Shared/SharedUtils";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import { ModelerProps, UpdateSourceType } from "../Pagination";
 import {
-    getListNode, hideLoadMoreButton, hideLoader, resetListViewStructure,
-    setListNodeToEmpty, showLoadMoreButton, showLoader
+    getListNode, hideLoadMoreButton, hideLoader,
+    resetListViewStructure, setListNodeToEmpty, showLoadMoreButton, showLoader
 } from "../utils/ContainerUtils";
 
 import { Pagination, PaginationProps } from "./Pagination";
@@ -129,7 +129,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 listViewSize = dataSource._setSize;
                 offset = dataSource._pageSize;
                 hideUnusedPaging = this.isHideUnUsed(targetListView);
-                this.subscriptionTopic = `${targetListView.friendlyId}_paginationUpdate`;
+                this.subscriptionTopic = `${targetListView.friendlyId}_${paginationTopicSuffix}`;
 
                 this.afterListViewLoad(targetListView, targetNode);
                 this.afterListViewDataRender(targetListView);
@@ -142,11 +142,12 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     }
 
     private subScribeToListViewChanges() {
-        dojoTopic.subscribe(this.subscriptionTopic, (message: number[]) => {
+        dojoTopic.subscribe(this.subscriptionTopic, (message: TopicMessage) => {
             if (this.state.targetListView) {
                 this.setState({
-                    publishedOffset: message[0],
-                    publishedPageNumber: message[1],
+                    offset: message.newPageSize || this.state.offset,
+                    publishedOffset: message.newOffSet,
+                    publishedPageNumber: message.newPageNumber,
                     updateSource: "multiple"
                 });
             }
@@ -248,9 +249,9 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         }
     }
 
-    private publishListViewUpdate(offSet: number, pageNumber: number) {
+    private publishListViewUpdate(newOffSet: number, newPageNumber: number) {
         if (this.state.targetListView) {
-            dojoTopic.publish(this.subscriptionTopic, [ offSet, pageNumber ]);
+            dojoTopic.publish(this.subscriptionTopic, { newOffSet, newPageNumber });
         }
     }
 
