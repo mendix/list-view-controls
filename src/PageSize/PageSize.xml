@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<widget id="com.mendix.widget.custom.listviewcontrols.PageSize" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+    <name>Page size</name>
+    <description>Set number of items on a list view per page</description>
+    <icon />
+    <properties>
+        <property key="entity" type="entity">
+            <caption>List view with entity</caption>
+            <category>General</category>
+            <description>Select the same entity as the list view that this widget should interact with. If multiple list views with this entity are found, the closest is used</description>
+        </property>
+        <property key="labelText" type="translatableString" required="false">
+            <caption>Text label for this widget</caption>
+            <category>General</category>
+            <description/>
+            <translations>
+                <translation lang="en_US">Items per page</translation>
+                <translation lang="nl_NL">Artikelen per pagina</translation>
+            </translations>
+        </property>
+        <property key="options" type="object" isList="true">
+            <caption>Page size options</caption>
+            <category>General</category>
+            <description/>
+            <properties>
+                <property key="size" type="integer" defaultValue="10">
+                    <caption>Page size</caption>
+                    <category>Option</category>
+                    <description/>
+                </property>
+                <property key="caption" type="translatableString">
+                    <caption>Label</caption>
+                    <category>Option</category>
+                    <description>The label to show for this option in the drop down</description>
+                    <translations>
+                        <translation lang="en_US">Page size label</translation>
+                        <translation lang="nl_NL">pagina grootte label</translation>
+                    </translations>
+                </property>
+                <property key="isDefault" type="boolean" defaultValue="false">
+                    <caption>Default selected</caption>
+                    <category>Option</category>
+                    <description>Only one option can be set as default. When there is no default option provided, the first size option will be selected by default</description>
+                </property>
+            </properties>
+        </property>
+    </properties>
+</widget>
