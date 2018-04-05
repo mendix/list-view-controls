@@ -37,7 +37,7 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 hideUnusedPaging: false,
                 items: this.props.items,
                 listViewSize: 20,
-                offset: 2,
+                pageSize: 2,
                 onClickAction: () => {
                     return;
                 },

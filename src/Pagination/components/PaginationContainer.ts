@@ -9,6 +9,7 @@ import { ListView, SharedUtils, TopicMessage, paginationTopicSuffix } from "../.
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import { ModelerProps, UpdateSourceType } from "../Pagination";
+import { OnChangeProps } from "./PageSize";
 import {
     getListNode, hideLoadMoreButton, hideLoader,
     resetListViewStructure, setListNodeToEmpty, showLoadMoreButton, showLoader
@@ -23,7 +24,7 @@ interface PaginationContainerState {
     findingListViewWidget: boolean;
     listViewSize: number;
     message: ReactChild;
-    offset: number;
+    pageSize: number;
     hideUnusedPaging: boolean;
     isLoadingItems: boolean;
     publishedOffset?: number;
@@ -36,11 +37,12 @@ interface PaginationContainerState {
     targetNode?: HTMLElement | null;
     updateSource?: UpdateSourceType;
     validationPassed?: boolean;
+    initialPageSize?: number;
 }
 
 interface ValidateProps {
     listViewSize: number;
-    offset: number;
+    pageSize: number;
     hideUnusedPaging: boolean;
     targetListView?: ListView | null;
     targetNode?: HTMLElement | null;
@@ -50,6 +52,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     private navigationHandler: object;
     private widgetDOM: HTMLElement;
     private subscriptionTopic: string;
+    private pageSizeHandler: number;
 
     constructor(props: ModelerProps) {
         super(props);
@@ -60,12 +63,9 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             isLoadingItems: false,
             listViewSize: 0,
             message: "",
-            offset: 1
+            pageSize: 1
         };
 
-        this.updateListView = this.updateListView.bind(this);
-        this.publishListViewUpdate = this.publishListViewUpdate.bind(this);
-        this.findListView = this.findListView.bind(this);
         this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this , this.findListView);
     }
 
@@ -101,25 +101,27 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 hideUnusedPaging: this.state.hideUnusedPaging,
                 items: this.props.items,
                 listViewSize: this.state.listViewSize,
-                offset: this.state.offset,
+                pageSize: this.state.pageSize,
                 onClickAction: this.updateListView,
                 pagingStyle: this.props.pagingStyle,
                 publishedOffset: this.state.publishedOffset,
                 publishedPageNumber: this.state.publishedPageNumber,
-                updateSource: this.state.updateSource
+                updateSource: this.state.updateSource,
+                initialPageSize: this.state.initialPageSize,
+                pageSizeOnChange: this.applyPageSize
             });
         }
 
         return null;
     }
 
-    private findListView() {
+    private findListView = () => {
         if (this.state.findingListViewWidget) {
             const targetListView = SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement);
             const targetNode = targetListView && targetListView.domNode;
             let hideUnusedPaging = false;
             let listViewSize = 0;
-            let offset = 0;
+            let pageSize = 0;
             let dataSource: ListView["_datasource"];
 
             if (targetListView) {
@@ -127,7 +129,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
                 dataSource = targetListView._datasource;
                 listViewSize = dataSource._setSize;
-                offset = dataSource._pageSize;
+                pageSize = dataSource._pageSize;
                 hideUnusedPaging = this.isHideUnUsed(targetListView);
                 this.subscriptionTopic = `${targetListView.friendlyId}_${paginationTopicSuffix}`;
 
@@ -137,7 +139,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 this.subScribeToListViewChanges();
             }
 
-            this.validateListView({ targetNode, targetListView, hideUnusedPaging, listViewSize, offset });
+            this.validateListView({ targetNode, targetListView, hideUnusedPaging, listViewSize, pageSize });
         }
     }
 
@@ -145,7 +147,8 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         dojoTopic.subscribe(this.subscriptionTopic, (message: TopicMessage) => {
             if (this.state.targetListView) {
                 this.setState({
-                    offset: message.newPageSize || this.state.offset,
+                    pageSize: message.newPageSize || this.state.pageSize,
+                    initialPageSize: message.newPageSize || this.state.pageSize,
                     publishedOffset: message.newOffSet,
                     publishedPageNumber: message.newPageNumber,
                     updateSource: "multiple"
@@ -162,14 +165,14 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 targetNode = this.state.targetNode;
                 const dataSource = this.state.targetListView._datasource;
                 const listViewSize = dataSource._setSize;
-                const offset = dataSource._pageSize;
+                const pageSize = dataSource._pageSize;
                 const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
 
                 this.setState({
                     findingListViewWidget: false,
                     hideUnusedPaging,
                     listViewSize,
-                    offset,
+                    pageSize,
                     publishedOffset: 0,
                     publishedPageNumber: 1,
                     targetListView,
@@ -220,14 +223,15 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             hideUnusedPaging: props.hideUnusedPaging,
             listViewSize: props.listViewSize,
             message,
-            offset: props.offset,
+            pageSize: props.pageSize,
             targetListView: props.targetListView,
             targetNode: props.targetNode,
-            validationPassed: message === ""
+            validationPassed: message === "",
+            initialPageSize: props.targetListView._datasource._pageSize
         });
     }
 
-    private updateListView(offSet: number, pageNumber: number) {
+    private updateListView = (offSet: number, pageNumber: number, pageSize?: number) => {
         const { targetListView, targetNode, validationPassed, isLoadingItems } = this.state;
 
         if (targetListView && targetNode && validationPassed) {
@@ -237,6 +241,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 showLoader(targetListView);
 
                 this.setState({
+                    pageSize: pageSize || this.state.pageSize,
                     currentOffset: offSet,
                     currentPageNumber: pageNumber,
                     isLoadingItems: true
@@ -244,20 +249,44 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
                 targetListView._datasource.setOffset(offSet);
                 targetListView.sequence([ "_sourceReload", "_renderData" ]);
-                this.publishListViewUpdate(offSet, pageNumber);
+                this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber });
             }
         }
     }
 
-    private publishListViewUpdate(newOffSet: number, newPageNumber: number) {
+    private publishListViewUpdate = (topicMessage: TopicMessage) => {
         if (this.state.targetListView) {
-            dojoTopic.publish(this.subscriptionTopic, { newOffSet, newPageNumber });
+            dojoTopic.publish(this.subscriptionTopic, topicMessage);
         }
     }
 
     private isHideUnUsed(targetListView: ListView): boolean {
-        const offset = targetListView._datasource._pageSize;
+        const pageSize = targetListView._datasource._pageSize;
 
-        return ((offset >= targetListView._datasource._setSize) || (offset === 0)) && this.props.hideUnusedPaging;
+        return ((pageSize >= targetListView._datasource._setSize) || (pageSize === 0)) && this.props.hideUnusedPaging;
+    }
+
+    private applyPageSize = (onChangeProps: OnChangeProps) => {
+        const { newPageSize, newOffSet } = onChangeProps;
+        const { targetListView } = this.state;
+
+        if (targetListView && targetListView._datasource
+                && targetListView._datasource._pageSize !== newPageSize) {
+            if (this.pageSizeHandler) {
+                window.clearTimeout(this.pageSizeHandler);
+                this.pageSizeHandler = 0;
+            }
+            this.pageSizeHandler = window.setTimeout(() => {
+                this.setState({
+                    pageSize: newPageSize,
+                    publishedOffset: newOffSet,
+                    initialPageSize: newPageSize
+                });
+                targetListView._datasource._pageSize = newPageSize;
+                targetListView._datasource.setOffset(newOffSet);
+                targetListView.sequence([ "_sourceReload", "_renderData" ]);
+                this.publishListViewUpdate({ ...onChangeProps });
+            }, 500);
+        }
     }
 }

@@ -35,6 +35,7 @@
                         <enumerationValue key="previousButton">Previous button</enumerationValue>
                         <enumerationValue key="text">Text</enumerationValue>
                         <enumerationValue key="pageNumberButtons">Page number buttons</enumerationValue>
+                        <enumerationValue key="pageSize">Page size</enumerationValue>
                     </enumerationValues>
                 </property>
                 <property key="text" type="translatableString" required="false">
@@ -64,6 +65,15 @@
                     <caption>Maximum number of page buttons</caption>
                     <category>General</category>
                     <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
+                </property>
+                <property key="pageSizeLabel" type="translatableString" required="false">
+                    <caption>Page size label</caption>
+                    <category>General</category>
+                    <description/>
+                    <translations>
+                        <translation lang="en_US">{pageSize}</translation>
+                        <translation lang="nl_NL">{pageSize}</translation>
+                    </translations>
                 </property>
             </properties>
         </property>

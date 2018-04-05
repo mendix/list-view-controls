@@ -14,6 +14,7 @@ export interface ItemType {
     maxPageButtons: number;
     showIcon: IconType;
     text: string;
+    pageSizeLabel: string;
 }
 
 export interface ModelerProps extends WrapperProps {

@@ -4,18 +4,28 @@ import * as classNames from "classnames";
 import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType, UpdateSourceType } from "../Pagination";
 import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
+import { PageSize } from "./PageSize";
 
 export interface PaginationProps {
     hideUnusedPaging: boolean;
     items: ItemType[];
     listViewSize: number;
-    offset: number;
+    pageSize: number;
     publishedOffset?: number;
     publishedPageNumber?: number;
     onClickAction: (offset: number, pageNumber: number) => void;
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
     updateSource?: UpdateSourceType;
+    initialPageSize?: number;
+    pageSizeLabel?: string;
+    pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
+}
+
+export interface OnChangeProps {
+    newOffSet: number;
+    newPageSize: number;
+    newPageNumber: number;
 }
 
 export interface PaginationState {
@@ -54,32 +64,33 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     render() {
         return createElement("div",
             { className: classNames("pagination", `${this.state.isVisible ? "visible" : "hidden"}`) },
-            this.renderPagination()
+            this.renderPagination(),
+            this.createPageSize()
         );
     }
 
     componentDidMount() {
-        const { listViewSize, offset } = this.props;
+        const { listViewSize, pageSize } = this.props;
 
         this.setState({
-            pageCount: offset !== 0 ? Math.ceil(listViewSize / offset) : listViewSize
+            pageCount: pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize
         });
 
-        if (listViewSize === 0 || offset >= listViewSize || offset === 0) {
+        if (listViewSize === 0 || pageSize >= listViewSize || pageSize === 0) {
             this.setState({ nextIsDisabled: true });
         }
     }
 
     componentWillReceiveProps(nextProps: PaginationProps) {
-        const { publishedOffset, listViewSize, offset, publishedPageNumber } = nextProps;
-        const pageCount = offset !== 0 ? Math.ceil(listViewSize / offset) : listViewSize;
+        const { publishedOffset, listViewSize, pageSize, publishedPageNumber } = nextProps;
+        const pageCount = pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize;
         const currentOffset = publishedOffset as number;
 
         if (nextProps.updateSource === "other") {
             this.setState({
                 currentOffset: 0,
                 isVisible: !nextProps.hideUnusedPaging,
-                nextIsDisabled: (currentOffset + offset) >= listViewSize,
+                nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
                 pageCount,
                 previousIsDisabled: currentOffset <= 0,
                 selectedPageNumber: 1
@@ -88,7 +99,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             this.setState({
                 currentOffset,
                 isVisible: !nextProps.hideUnusedPaging,
-                nextIsDisabled: (currentOffset + offset) >= listViewSize,
+                nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
                 pageCount,
                 previousIsDisabled: currentOffset <= 0,
                 selectedPageNumber: publishedPageNumber as number
@@ -229,13 +240,13 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private nextPageClickAction() {
-        const { listViewSize, offset } = this.props;
-        const currentOffset = this.state.currentOffset + offset;
+        const { listViewSize, pageSize } = this.props;
+        const currentOffset = this.state.currentOffset + pageSize;
         const selectedPageNumber = this.state.selectedPageNumber + 1;
 
         this.setState({
             currentOffset,
-            nextIsDisabled: (listViewSize - currentOffset) <= offset,
+            nextIsDisabled: (listViewSize - currentOffset) <= pageSize,
             previousIsDisabled: currentOffset > listViewSize,
             selectedPageNumber
         });
@@ -244,7 +255,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private previousPageClickAction() {
-        const currentOffset = this.state.currentOffset - this.props.offset;
+        const currentOffset = this.state.currentOffset - this.props.pageSize;
         let selectedPageNumber = 0;
 
         if (currentOffset > 0) {
@@ -270,11 +281,11 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private lastPageClickAction() {
-        const { offset, listViewSize } = this.props;
-        const currentOffset = (listViewSize % offset) === 0
-            ? listViewSize - offset
-            : listViewSize - (listViewSize % offset);
-        const selectedPageNumber = Math.ceil(this.props.listViewSize / offset);
+        const { pageSize, listViewSize } = this.props;
+        const currentOffset = (listViewSize % pageSize) === 0
+            ? listViewSize - pageSize
+            : listViewSize - (listViewSize % pageSize);
+        const selectedPageNumber = Math.ceil(this.props.listViewSize / pageSize);
 
         if (currentOffset > 0) {
             this.setState({
@@ -290,20 +301,20 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
     private getMessageStatus(message?: string): string {
         const currentOffset = this.state.currentOffset || 0;
-        const { listViewSize, offset } = this.props;
+        const { listViewSize, pageSize } = this.props;
         let fromValue = currentOffset + 1;
         let toValue = 0;
 
         if (listViewSize === 0) {
             fromValue = 0;
-        } else if (listViewSize < offset || (currentOffset + offset) > listViewSize) {
+        } else if (listViewSize < pageSize || (currentOffset + pageSize) > listViewSize) {
             toValue = listViewSize;
         } else {
-            toValue = currentOffset + offset;
+            toValue = currentOffset + pageSize;
         }
 
         if (message) {
-            const totalPages = offset && offset !== 0 ? Math.ceil(listViewSize / offset) : listViewSize;
+            const totalPages = pageSize && pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize;
 
             return message.replace("{firstItem}", fromValue.toString())
                 .replace("{lastItem}", toValue.toString())
@@ -320,7 +331,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private updatePagination(pageNumber: number) {
-        const currentOffset = (pageNumber - 1) * this.props.offset;
+        const currentOffset = (pageNumber - 1) * this.props.pageSize;
 
         if (this.state.selectedPageNumber === pageNumber) {
             return;
@@ -328,11 +339,27 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
         this.setState({
             currentOffset,
-            nextIsDisabled: (currentOffset + this.props.offset) >= this.props.listViewSize,
+            nextIsDisabled: (currentOffset + this.props.pageSize) >= this.props.listViewSize,
             previousIsDisabled: currentOffset <= 0,
             selectedPageNumber: pageNumber
         });
 
         this.props.onClickAction(currentOffset, pageNumber);
     }
+
+    private createPageSize = () => {
+        const pageSizeItem = this.props.items.filter(item => item.pageSizeLabel)[0];
+        if (pageSizeItem) {
+            return createElement(PageSize,
+                {
+                    labelText: pageSizeItem.pageSizeLabel === `{pageSize}` ? "Page size" : pageSizeItem.pageSizeLabel,
+                    handleChange: this.props.pageSizeOnChange,
+                    initialPageSize: this.props.initialPageSize,
+                    listViewSize: this.props.listViewSize,
+                    currentOffSet: this.state.currentOffset
+                }
+            );
+        }
+    }
+
 }

@@ -85,7 +85,7 @@ describe("Pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
                 listViewSize: 0,
-                offset: 0
+                pageSize: 0
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -332,7 +332,7 @@ describe("Pagination", () => {
         hideUnusedPaging: false,
         items: [],
         listViewSize: 32,
-        offset: 2,
+        pageSize: 2,
         onClickAction: jasmine.any(Function),
         pagingStyle: "default"
     };

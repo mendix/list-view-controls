@@ -31,7 +31,6 @@ export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
     targetListView?: ListView;
-    targetNode?: HTMLElement;
     currentOffSet?: number;
     listViewSize?: number;
     pageSize?: number;
