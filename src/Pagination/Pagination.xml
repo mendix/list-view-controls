@@ -19,6 +19,11 @@
                 <enumerationValue key="custom">Custom</enumerationValue>
             </enumerationValues>
         </property>
+        <property key="enablePageSize" type="boolean" defaultValue="false">
+            <caption>Include page size</caption>
+            <category>Appearance</category>
+            <description>Allow adjustment of list view page size</description>
+        </property>
         <property key="items" type="object" isList="true" required="false">
             <caption>Items</caption>
             <category>Custom</category>
@@ -66,14 +71,40 @@
                     <category>General</category>
                     <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
                 </property>
-                <property key="pageSizeLabel" type="translatableString" required="false">
-                    <caption>Page size label</caption>
-                    <category>General</category>
+            </properties>
+        </property>
+        <property key="pageSizeLabel" type="translatableString">
+            <caption>Label text</caption>
+            <category>Page size</category>
+            <description/>
+            <translations>
+                <translation lang="en_US">Page size</translation>
+                <translation lang="nl_NL">Pagina grootte</translation>
+            </translations>
+        </property>
+        <property key="pageSizeOptions" type="object" isList="true">
+            <caption>Options</caption>
+            <category>Page size</category>
+            <description/>
+            <properties>
+                <property key="size" type="integer" defaultValue="10">
+                    <caption>Page size</caption>
+                    <category>Option</category>
                     <description/>
+                </property>
+                <property key="caption" type="translatableString">
+                    <caption>Caption</caption>
+                    <category>Option</category>
+                    <description>The caption to show for this option in the drop down</description>
                     <translations>
-                        <translation lang="en_US">{pageSize}</translation>
-                        <translation lang="nl_NL">{pageSize}</translation>
+                        <translation lang="en_US">Page size label</translation>
+                        <translation lang="nl_NL">pagina grootte label</translation>
                     </translations>
+                </property>
+                <property key="isDefault" type="boolean" defaultValue="false">
+                    <caption>Default selected</caption>
+                    <category>Option</category>
+                    <description>Only one option can be set as default. When there is no default option provided, the first size option will be selected by default</description>
                 </property>
             </properties>
         </property>
