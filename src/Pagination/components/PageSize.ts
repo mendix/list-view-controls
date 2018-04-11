@@ -1,16 +1,12 @@
 import { ChangeEvent, Component, createElement } from "react";
-
+import { OptionProps } from "./PageSizeSelect";
 export interface PageSizeProps {
     labelText: string;
     currentOffSet?: number;
     initialPageSize?: number;
     listViewSize: number;
+    sizeOptions?: OptionProps[];
     handleChange: (OptionProps: OnChangeProps) => void;
-}
-export interface OptionProps {
-    caption: string;
-    size: number;
-    isDefault: boolean;
 }
 
 interface PageSizeState {
@@ -24,7 +20,10 @@ export interface OnChangeProps {
     newPageNumber: number;
 }
 
+// type Display = Partial<OptionProps> & PageSizeState;
 export class PageSize extends Component<PageSizeProps, PageSizeState> {
+    // private selectorDomNode: HTMLSelectElement;
+    // private filters: Display[];
 
     constructor(props: PageSizeProps) {
         super(props);
@@ -35,7 +34,7 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
     }
 
     render() {
-        return [
+        return createElement("div", { className: "page-size" },
             this.props.labelText ? createElement("label", { style: { padding: `0.6em 1em` } }, this.props.labelText) : null,
             createElement("input", {
                 style: { width: `60px`, display: "inline" },
@@ -43,7 +42,7 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
                 onChange: this.handleOnChange,
                 value: this.state.currentPageSize
             })
-        ];
+        );
     }
 
     componentWillReceiveProps(nextProps: PageSizeProps) {

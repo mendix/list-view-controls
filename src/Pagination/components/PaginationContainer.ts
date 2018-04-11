@@ -108,7 +108,8 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 publishedPageNumber: this.state.publishedPageNumber,
                 updateSource: this.state.updateSource,
                 initialPageSize: this.state.initialPageSize,
-                pageSizeOnChange: this.applyPageSize
+                pageSizeOnChange: this.applyPageSize,
+                pageSizeOptions: this.props.pageSizeOptions
             });
         }
 

@@ -4,6 +4,7 @@ import * as classNames from "classnames";
 import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType, UpdateSourceType } from "../Pagination";
 import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
+import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
 import { PageSize } from "./PageSize";
 
 export interface PaginationProps {
@@ -20,6 +21,7 @@ export interface PaginationProps {
     initialPageSize?: number;
     pageSizeLabel?: string;
     pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
+    pageSizeOptions?: OptionProps[];
 }
 
 export interface OnChangeProps {
@@ -64,8 +66,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     render() {
         return createElement("div",
             { className: classNames("pagination", `${this.state.isVisible ? "visible" : "hidden"}`) },
-            this.renderPagination(),
-            this.createPageSize()
+            this.renderPagination()
         );
     }
 
@@ -175,6 +176,23 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     pageCount: this.state.pageCount,
                     selectedPageNumber: this.state.selectedPageNumber
                 });
+            }
+
+            if (buttonProps.buttonType === "pageSize") {
+                if (!this.props.pageSizeOptions || !this.props.pageSizeOptions.length) {
+                    return this.createPageSize(option);
+                } else {
+                    const defaultFilterIndex = this.props.pageSizeOptions.indexOf(this.props.pageSizeOptions.filter(value => value.isDefault)[0]);
+
+                    return createElement(PageSizeSelect, {
+                        labelText: buttonProps.text === `{pageSize}` ? "Page size" : buttonProps.text,
+                        handleChange: this.props.pageSizeOnChange,
+                        defaultFilterIndex,
+                        sizeOptions: this.props.pageSizeOptions,
+                        listViewSize: this.props.listViewSize,
+                        currentOffSet: this.state.currentOffset
+                    });
+                }
             }
         }) as Array<ReactElement<{}>>;
     }
@@ -347,18 +365,16 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onClickAction(currentOffset, pageNumber);
     }
 
-    private createPageSize = () => {
-        const pageSizeItem = this.props.items.filter(item => item.pageSizeLabel)[0];
+    private createPageSize = (pageSizeItem: ItemType) => {
+        // const pageSizeItem = this.props.items.filter(item => item.item === "pageSize")[0];
         if (pageSizeItem) {
-            return createElement(PageSize,
-                {
-                    labelText: pageSizeItem.pageSizeLabel === `{pageSize}` ? "Page size" : pageSizeItem.pageSizeLabel,
-                    handleChange: this.props.pageSizeOnChange,
-                    initialPageSize: this.props.initialPageSize,
-                    listViewSize: this.props.listViewSize,
-                    currentOffSet: this.state.currentOffset
-                }
-            );
+            return createElement(PageSize, {
+                labelText: pageSizeItem.text === `{pageSize}` ? "Page size" : pageSizeItem.text,
+                handleChange: this.props.pageSizeOnChange,
+                initialPageSize: 5,
+                listViewSize: this.props.listViewSize,
+                currentOffSet: this.state.currentOffset
+            });
         }
     }
 
