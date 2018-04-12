@@ -35,9 +35,8 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
 
     render() {
         return createElement("div", { className: "page-size" },
-            this.props.labelText ? createElement("label", { style: { padding: `0.6em 1em` } }, this.props.labelText) : null,
+            this.props.labelText ? createElement("label", { }, this.props.labelText) : null,
             createElement("input", {
-                style: { width: `60px`, display: "inline" },
                 className: "form-control",
                 onChange: this.handleOnChange,
                 value: this.state.currentPageSize

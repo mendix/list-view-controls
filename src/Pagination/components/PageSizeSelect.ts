@@ -47,7 +47,7 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
 
     render() {
         return createElement("div",
-            {},
+            { className: "page-size" },
             createElement("label", {}, `${this.props.labelText}`),
             this.renderDropDown()
         );

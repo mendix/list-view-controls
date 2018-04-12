@@ -19,7 +19,6 @@ export interface PaginationProps {
     pagingStyle: PageStyleType;
     updateSource?: UpdateSourceType;
     initialPageSize?: number;
-    pageSizeLabel?: string;
     pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
     pageSizeOptions?: OptionProps[];
 }
@@ -179,7 +178,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             }
 
             if (buttonProps.buttonType === "pageSize") {
-                if (!this.props.pageSizeOptions || !this.props.pageSizeOptions.length) {
+                if (option.renderPageSizeAs === "input") {
                     return this.createPageSize(option);
                 } else {
                     const defaultFilterIndex = this.props.pageSizeOptions.indexOf(this.props.pageSizeOptions.filter(value => value.isDefault)[0]);
@@ -371,7 +370,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             return createElement(PageSize, {
                 labelText: pageSizeItem.text === `{pageSize}` ? "Page size" : pageSizeItem.text,
                 handleChange: this.props.pageSizeOnChange,
-                initialPageSize: 5,
+                initialPageSize: this.state.selectedPageNumber,
                 listViewSize: this.props.listViewSize,
                 currentOffSet: this.state.currentOffset
             });

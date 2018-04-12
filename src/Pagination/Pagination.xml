@@ -66,17 +66,18 @@
                     <category>General</category>
                     <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
                 </property>
+                <property key="renderPageSizeAs" type="enumeration" defaultValue="dropdown">
+                    <caption>Render page size</caption>
+                    <category>General</category>
+                    <description/>
+                    <enumerationValues>
+                        <enumerationValue key="input">Input</enumerationValue>
+                        <enumerationValue key="dropdown">Drop down</enumerationValue>
+                    </enumerationValues>
+                </property>
             </properties>
         </property>
-        <property key="pageSizeLabel" type="translatableString">
-            <caption>Label text</caption>
-            <category>Page size</category>
-            <description/>
-            <translations>
-                <translation lang="en_US">Page size</translation>
-                <translation lang="nl_NL">Pagina grootte</translation>
-            </translations>
-        </property>
+
         <property key="pageSizeOptions" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Page size</category>

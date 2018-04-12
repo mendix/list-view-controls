@@ -287,7 +287,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 targetListView._datasource.setOffset(newOffSet);
                 targetListView.sequence([ "_sourceReload", "_renderData" ]);
                 this.publishListViewUpdate({ ...onChangeProps });
-            }, 500);
+            }, 1000);
         }
     }
 }

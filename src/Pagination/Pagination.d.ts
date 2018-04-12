@@ -7,6 +7,7 @@ export type ButtonType = "firstButton" | "lastButton" | "nextButton" | "previous
 export type IconType = "default" | "none";
 
 export type UpdateSourceType = "multiple" | "other";
+export type RenderPageSizeAs = "input" | "dropdown";
 
 export interface ItemType {
     buttonCaption: string;
@@ -14,6 +15,7 @@ export interface ItemType {
     maxPageButtons: number;
     showIcon: IconType;
     text: string;
+    renderPageSizeAs: RenderPageSizeAs;
 }
 
 export interface PageSizeOption {
