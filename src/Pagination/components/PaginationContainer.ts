@@ -52,7 +52,6 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     private navigationHandler: object;
     private widgetDOM: HTMLElement;
     private subscriptionTopic: string;
-    private pageSizeHandler: number;
 
     constructor(props: ModelerProps) {
         super(props);
@@ -273,21 +272,15 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
         if (targetListView && targetListView._datasource
                 && targetListView._datasource._pageSize !== newPageSize) {
-            if (this.pageSizeHandler) {
-                window.clearTimeout(this.pageSizeHandler);
-                this.pageSizeHandler = 0;
-            }
-            this.pageSizeHandler = window.setTimeout(() => {
-                this.setState({
-                    pageSize: newPageSize,
-                    publishedOffset: newOffSet,
-                    initialPageSize: newPageSize
-                });
-                targetListView._datasource._pageSize = newPageSize;
-                targetListView._datasource.setOffset(newOffSet);
-                targetListView.sequence([ "_sourceReload", "_renderData" ]);
-                this.publishListViewUpdate({ ...onChangeProps });
-            }, 1000);
+            this.setState({
+                pageSize: newPageSize,
+                publishedOffset: newOffSet,
+                initialPageSize: newPageSize
+            });
+            targetListView._datasource._pageSize = newPageSize;
+            targetListView._datasource.setOffset(newOffSet);
+            targetListView.sequence([ "_sourceReload", "_renderData" ]);
+            this.publishListViewUpdate({ ...onChangeProps });
         }
     }
 }

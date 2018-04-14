@@ -22,8 +22,8 @@ export interface OnChangeProps {
 
 // type Display = Partial<OptionProps> & PageSizeState;
 export class PageSize extends Component<PageSizeProps, PageSizeState> {
-    // private selectorDomNode: HTMLSelectElement;
-    // private filters: Display[];
+    private inputTimeout = 500;
+    private timeoutHandler?: number;
 
     constructor(props: PageSizeProps) {
         super(props);
@@ -52,20 +52,21 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
         }
     }
 
-    shouldComponentUpdate(_nextProps: PageSizeProps, nextState: PageSizeState) {
-        return (nextState.currentPageSize !== this.state.currentPageSize);
-    }
-
     private handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { listViewSize, currentOffSet } = this.props;
         const currentPageSize = event.currentTarget.value;
         if (this.state.currentPageSize !== currentPageSize) {
-            this.setState({
-                currentPageSize
-            });
-            const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, Number(currentPageSize));
-            this.props.handleChange(newOffSet);
+            if (this.timeoutHandler) {
+                window.clearTimeout(this.timeoutHandler);
+            }
+            this.timeoutHandler = window.setTimeout(() => {
+                const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, Number(currentPageSize));
+                this.props.handleChange(newOffSet);
+            }, this.inputTimeout);
         }
+        this.setState({
+            currentPageSize
+        });
     }
 
     private calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {

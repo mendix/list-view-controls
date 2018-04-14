@@ -51,15 +51,6 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             previousIsDisabled: true,
             selectedPageNumber: 1
         };
-
-        this.firstPageClickAction = this.firstPageClickAction.bind(this);
-        this.lastPageClickAction = this.lastPageClickAction.bind(this);
-        this.nextPageClickAction = this.nextPageClickAction.bind(this);
-        this.previousPageClickAction = this.previousPageClickAction.bind(this);
-        this.getMessageStatus = this.getMessageStatus.bind(this);
-        this.renderPagination = this.renderPagination.bind(this);
-        this.renderDefault = this.renderDefault.bind(this);
-        this.updatePagination = this.updatePagination.bind(this);
     }
 
     render() {
@@ -107,7 +98,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         }
     }
 
-    private renderPagination(): SFCElement<PageNumberViewProps>[] | ReactElement<{}>[] {
+    private renderPagination = (): SFCElement<PageNumberViewProps>[] | ReactElement<{}>[] => {
         if (this.props.pagingStyle === "default") {
 
             return this.renderDefault();
@@ -129,7 +120,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         }
     }
 
-    private renderDefault(): Array<ReactElement<{}>> {
+    private renderDefault = (): Array<ReactElement<{}>> => {
         return [
             this.createFirstButton(),
             this.createPreviousButton(),
@@ -139,7 +130,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         ];
     }
 
-    private renderCustom(): Array<ReactElement<{}>> {
+    private renderCustom = (): Array<ReactElement<{}>> => {
         return this.props.items.map(option => {
             const buttonProps = {
                 buttonCaption: option.buttonCaption,
@@ -181,12 +172,12 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                 if (option.renderPageSizeAs === "input") {
                     return this.createPageSize(option);
                 } else {
-                    const defaultFilterIndex = this.props.pageSizeOptions.indexOf(this.props.pageSizeOptions.filter(value => value.isDefault)[0]);
+                    // const defaultFilterIndex = this.props.pageSizeOptions.indexOf(this.props.pageSizeOptions.filter(value => value.size === this.props.pageSize)[0]);
 
                     return createElement(PageSizeSelect, {
                         labelText: buttonProps.text === `{pageSize}` ? "Page size" : buttonProps.text,
                         handleChange: this.props.pageSizeOnChange,
-                        defaultFilterIndex,
+                        pageSize: this.props.pageSize,
                         sizeOptions: this.props.pageSizeOptions,
                         listViewSize: this.props.listViewSize,
                         currentOffSet: this.state.currentOffset
@@ -196,7 +187,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         }) as Array<ReactElement<{}>>;
     }
 
-    private createFirstButton(buttonProps?: PageButtonProps): ReactElement<{}> {
+    private createFirstButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
         return createElement(PageButton, {
             ...buttonProps,
             buttonType: "firstButton",
@@ -206,7 +197,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createPreviousButton(buttonProps?: PageButtonProps): ReactElement<{}> {
+    private createPreviousButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
         return createElement(PageButton, {
             ...buttonProps,
             buttonType: "previousButton",
@@ -216,7 +207,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createNextButton(buttonProps?: PageButtonProps): ReactElement<{}> {
+    private createNextButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
         return createElement(PageButton, {
             ...buttonProps,
             buttonType: "nextButton",
@@ -226,7 +217,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createLastButton(buttonProps?: PageButtonProps): ReactElement<{}> {
+    private createLastButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
         return createElement(PageButton, {
             ...buttonProps,
             buttonType: "lastButton",
@@ -242,7 +233,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         return createElement("button", { className: "paging-status" }, message);
     }
 
-    private firstPageClickAction() {
+    private firstPageClickAction = () => {
         const currentOffset = 0;
         const selectedPageNumber = currentOffset + 1;
 
@@ -256,7 +247,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onClickAction(currentOffset, selectedPageNumber);
     }
 
-    private nextPageClickAction() {
+    private nextPageClickAction = () => {
         const { listViewSize, pageSize } = this.props;
         const currentOffset = this.state.currentOffset + pageSize;
         const selectedPageNumber = this.state.selectedPageNumber + 1;
@@ -271,7 +262,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onClickAction(currentOffset, selectedPageNumber);
     }
 
-    private previousPageClickAction() {
+    private previousPageClickAction = () => {
         const currentOffset = this.state.currentOffset - this.props.pageSize;
         let selectedPageNumber = 0;
 
@@ -297,7 +288,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onClickAction(currentOffset, selectedPageNumber);
     }
 
-    private lastPageClickAction() {
+    private lastPageClickAction = () => {
         const { pageSize, listViewSize } = this.props;
         const currentOffset = (listViewSize % pageSize) === 0
             ? listViewSize - pageSize
@@ -316,7 +307,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onClickAction(currentOffset, selectedPageNumber);
     }
 
-    private getMessageStatus(message?: string): string {
+    private getMessageStatus = (message?: string): string => {
         const currentOffset = this.state.currentOffset || 0;
         const { listViewSize, pageSize } = this.props;
         let fromValue = currentOffset + 1;
@@ -347,7 +338,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         return buttonProps ? buttonProps.showIcon as IconType : "default";
     }
 
-    private updatePagination(pageNumber: number) {
+    private updatePagination = (pageNumber: number) => {
         const currentOffset = (pageNumber - 1) * this.props.pageSize;
 
         if (this.state.selectedPageNumber === pageNumber) {
@@ -370,7 +361,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             return createElement(PageSize, {
                 labelText: pageSizeItem.text === `{pageSize}` ? "Page size" : pageSizeItem.text,
                 handleChange: this.props.pageSizeOnChange,
-                initialPageSize: this.state.selectedPageNumber,
+                initialPageSize: this.props.pageSize,
                 listViewSize: this.props.listViewSize,
                 currentOffSet: this.state.currentOffset
             });

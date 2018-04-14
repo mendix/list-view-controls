@@ -3,9 +3,9 @@ import { ChangeEvent, Component, ReactElement, createElement } from "react";
 export interface PageSizeProps {
     labelText: string;
     currentOffSet: number;
-    // pageSize: number;
+    pageSize: number;
     listViewSize: number;
-    defaultFilterIndex: number;
+
     sizeOptions: OptionProps[];
     handleChange: (OptionProps: OnChangeProps) => void;
 }
@@ -30,12 +30,13 @@ export interface OnChangeProps {
 export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     // Remap prop filters to dropdownfilters
     private filters: Display[];
+    private pageSizeSelectDom: HTMLSelectElement;
 
     constructor(props: PageSizeProps) {
         super(props);
 
         this.state = {
-            selectedValue : props.defaultFilterIndex < 0 ? "10" : `${props.defaultFilterIndex}`
+            selectedValue : this.getSelectedValue(props.sizeOptions, props.pageSize)
         };
         this.handleOnChange = this.handleOnChange.bind(this);
 
@@ -54,9 +55,18 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     }
 
     componentWillReceiveProps(newProps: PageSizeProps) {
-        const selectedValue = newProps.defaultFilterIndex < 0 ? "20" : `${newProps.defaultFilterIndex}`;
-        if (this.state.selectedValue !== selectedValue) {
-            this.setState({ selectedValue });
+        if (newProps.pageSize !== this.props.pageSize) {
+            const selectedValue = this.getSelectedValue(newProps.sizeOptions, newProps.pageSize);
+
+            if (selectedValue !== this.state.selectedValue) {
+                this.setState({ selectedValue });
+            }
+        }
+    }
+
+    componentDidUpdate(_previousProps: PageSizeProps, _previousState: PageSizeState) {
+        if (this.state.selectedValue === "-1") {
+            this.pageSizeSelectDom.selectedIndex = -1;
         }
     }
 
@@ -65,7 +75,8 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
             {
                 className: "form-control",
                 onChange: this.handleOnChange,
-                value: this.state.selectedValue
+                value: this.state.selectedValue,
+                ref: (node: HTMLSelectElement) => this.pageSizeSelectDom = node
             },
             this.createOptions()
         );
@@ -85,8 +96,8 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
         this.setState({
             selectedValue: event.currentTarget.value
         });
-        const selectedFilter = this.filters.find(filter => filter.selectedValue === event.currentTarget.value);
-        const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, selectedFilter.size);
+        const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
+        const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, selectedPageSize);
         this.props.handleChange(newOffSet);
     }
     private calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {
@@ -101,5 +112,9 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
                 };
             }
         }
+    }
+
+    private getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
+        return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
     }
 }
