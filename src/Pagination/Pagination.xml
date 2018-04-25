@@ -41,7 +41,7 @@
                 <property key="text" type="translatableString" required="false">
                     <caption>Text with placeholder</caption>
                     <category>General</category>
-                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages}</description>
+                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages} {pageSize}</description>
                     <translations>
                         <translation lang="en_US">{firstItem} to {lastItem} of {totalItems}</translation>
                         <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
@@ -71,8 +71,8 @@
                     <category>General</category>
                     <description/>
                     <enumerationValues>
-                        <enumerationValue key="input">Input</enumerationValue>
                         <enumerationValue key="dropdown">Drop down</enumerationValue>
+                        <enumerationValue key="input">Input</enumerationValue>
                     </enumerationValues>
                 </property>
             </properties>
@@ -81,7 +81,7 @@
         <property key="pageSizeOptions" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Page size</category>
-            <description/>
+            <description>Dropdown options for 'Paging style' 'Custom'. The options are used the for the item 'Page size' when 'Render page size' is 'Drop down'</description>
             <properties>
                 <property key="size" type="integer" defaultValue="10">
                     <caption>Page size</caption>
@@ -96,11 +96,6 @@
                         <translation lang="en_US">Ten</translation>
                         <translation lang="nl_NL">Tien</translation>
                     </translations>
-                </property>
-                <property key="isDefault" type="boolean" defaultValue="false">
-                    <caption>Default selected</caption>
-                    <category>Option</category>
-                    <description>Only one option can be set as default. When there is no default option provided, the first size option will be selected by default</description>
                 </property>
             </properties>
         </property>
