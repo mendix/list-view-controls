@@ -31,6 +31,7 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     // Remap prop filters to dropdownfilters
     private filters: Display[];
     private pageSizeSelectDom: HTMLSelectElement;
+    private defaultPageSize?: number;
 
     constructor(props: PageSizeProps) {
         super(props);
@@ -55,6 +56,10 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     }
 
     componentWillReceiveProps(newProps: PageSizeProps) {
+        if (!this.defaultPageSize) {
+            this.defaultPageSize = newProps.pageSize;
+        }
+
         if (newProps.pageSize !== this.props.pageSize) {
             const selectedValue = this.getSelectedValue(newProps.sizeOptions, newProps.pageSize);
 

@@ -36,6 +36,7 @@ export interface PaginationState {
     nextIsDisabled: boolean;
     pageCount: number;
     selectedPageNumber: number;
+    defaultPageSize?: number;
 }
 
 export class Pagination extends Component<PaginationProps, PaginationState> {
@@ -361,9 +362,10 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             return createElement(PageSize, {
                 labelText: pageSizeItem.text === `{pageSize}` ? "Page size" : pageSizeItem.text,
                 handleChange: this.props.pageSizeOnChange,
-                initialPageSize: this.props.pageSize,
+                pageSize: this.props.pageSize,
                 listViewSize: this.props.listViewSize,
-                currentOffSet: this.state.currentOffset
+                currentOffSet: this.state.currentOffset,
+                initialPageSize: this.props.initialPageSize
             });
         }
     }

@@ -3,9 +3,10 @@ import { OptionProps } from "./PageSizeSelect";
 export interface PageSizeProps {
     labelText: string;
     currentOffSet?: number;
-    initialPageSize?: number;
+    pageSize?: number;
     listViewSize: number;
     sizeOptions?: OptionProps[];
+    initialPageSize?: number;
     handleChange: (OptionProps: OnChangeProps) => void;
 }
 
@@ -29,13 +30,13 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
         super(props);
 
         this.state = {
-            currentPageSize : props.initialPageSize <= 0 ? "10" : `${props.initialPageSize}`
+            currentPageSize : `${props.pageSize}`
         };
     }
 
     render() {
         return createElement("div", { className: "page-size" },
-            this.props.labelText ? createElement("label", { }, this.props.labelText) : null,
+        this.props.labelText ? createElement("label", { }, this.props.labelText) : null,
             createElement("input", {
                 className: "form-control",
                 onChange: this.handleOnChange,
@@ -45,17 +46,20 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
     }
 
     componentWillReceiveProps(nextProps: PageSizeProps) {
-        if (nextProps.initialPageSize !== this.props.initialPageSize && nextProps.initialPageSize !== Number(this.state.currentPageSize)) {
+        if (nextProps.pageSize !== this.props.pageSize && nextProps.pageSize !== Number(this.state.currentPageSize)) {
             this.setState({
-                currentPageSize: `${nextProps.initialPageSize}`
+                currentPageSize: `${nextProps.pageSize}`
             });
         }
     }
 
     private handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { listViewSize, currentOffSet } = this.props;
-        const currentPageSize = event.currentTarget.value;
-        if (this.state.currentPageSize !== currentPageSize) {
+        const eventValue = event.currentTarget.value;
+
+        if (this.state.currentPageSize !== eventValue) {
+            const currentPageSize = this.verifiedPageSize(event.currentTarget.value);
+
             if (this.timeoutHandler) {
                 window.clearTimeout(this.timeoutHandler);
             }
@@ -63,10 +67,18 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
                 const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, Number(currentPageSize));
                 this.props.handleChange(newOffSet);
             }, this.inputTimeout);
+            this.setState({
+                currentPageSize
+            });
         }
-        this.setState({
-            currentPageSize
-        });
+    }
+
+    private verifiedPageSize = (currentValue: string): string => {
+        if (currentValue && !isNaN(currentValue as any)) { // isNaN("") is false
+            return `${parseInt(currentValue, 10)}`;
+        }
+
+        return `${this.props.initialPageSize}`;
     }
 
     private calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {

@@ -148,7 +148,6 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             if (this.state.targetListView) {
                 this.setState({
                     pageSize: message.newPageSize || this.state.pageSize,
-                    initialPageSize: message.newPageSize || this.state.pageSize,
                     publishedOffset: message.newOffSet,
                     publishedPageNumber: message.newPageNumber,
                     updateSource: "multiple"
@@ -227,7 +226,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             targetListView: props.targetListView,
             targetNode: props.targetNode,
             validationPassed: message === "",
-            initialPageSize: props.targetListView._datasource._pageSize
+            initialPageSize: props.pageSize
         });
     }
 
@@ -274,8 +273,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 && targetListView._datasource._pageSize !== newPageSize) {
             this.setState({
                 pageSize: newPageSize,
-                publishedOffset: newOffSet,
-                initialPageSize: newPageSize
+                publishedOffset: newOffSet
             });
             targetListView._datasource._pageSize = newPageSize;
             targetListView._datasource.setOffset(newOffSet);
