@@ -43,7 +43,12 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 },
                 pagingStyle: this.props.pagingStyle,
                 publishedOffset: 0,
-                publishedPageNumber: 1
+                publishedPageNumber: 1,
+                initialPageSize: 2,
+                pageSizeOnChange: () => {
+                    return;
+                },
+                pageSizeOptions: this.props.pageSizeOptions
             })
         );
     }
