@@ -11,7 +11,7 @@ export interface PageSizeProps {
 }
 
 interface PageSizeState {
-    selectedValue?: string;
+    previousValidPageSize?: string;
     currentPageSize: string;
 }
 
@@ -30,7 +30,8 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
         super(props);
 
         this.state = {
-            currentPageSize : `${props.pageSize}`
+            currentPageSize : `${props.pageSize}`,
+            previousValidPageSize: `${props.pageSize}`
         };
     }
 
@@ -56,29 +57,38 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
     private handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { listViewSize, currentOffSet } = this.props;
         const eventValue = event.currentTarget.value;
+        const verifiedPageSize = this.verifiedPageSize(event.currentTarget.value);
 
-        if (this.state.currentPageSize !== eventValue) {
-            const currentPageSize = this.verifiedPageSize(event.currentTarget.value);
-
+        if (this.state.currentPageSize !== eventValue || eventValue !== verifiedPageSize) { // handle situation when eventValue is empty
             if (this.timeoutHandler) {
                 window.clearTimeout(this.timeoutHandler);
             }
             this.timeoutHandler = window.setTimeout(() => {
-                const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, Number(currentPageSize));
+                this.setState({
+                    previousValidPageSize: verifiedPageSize,
+                    currentPageSize: verifiedPageSize
+                });
+                const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, Number(verifiedPageSize));
                 this.props.handleChange(newOffSet);
             }, this.inputTimeout);
-            this.setState({
-                currentPageSize
-            });
         }
+
+        this.setState({
+            previousValidPageSize: this.isValidPageSize(eventValue) ? eventValue : this.state.previousValidPageSize,
+            currentPageSize: eventValue
+        });
+    }
+
+    private isValidPageSize = (currentValue: string): boolean => {
+        return !isNaN(currentValue as any) && Number(currentValue) > 0;
     }
 
     private verifiedPageSize = (currentValue: string): string => {
-        if (currentValue && !isNaN(currentValue as any)) { // isNaN("") is false
+        if (this.isValidPageSize(currentValue)) {
             return `${parseInt(currentValue, 10)}`;
         }
 
-        return `${this.props.initialPageSize}`;
+        return `${this.state.previousValidPageSize}`;
     }
 
     private calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {
