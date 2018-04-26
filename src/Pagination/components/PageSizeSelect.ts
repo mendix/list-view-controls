@@ -50,7 +50,7 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     render() {
         return createElement("div",
             { className: "page-size" },
-            createElement("label", {}, `${this.props.labelText}`),
+            this.props.labelText ? createElement("label", {}, `${this.props.labelText}`) : null,
             this.renderDropDown()
         );
     }
@@ -59,10 +59,8 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
         if (!this.defaultPageSize) {
             this.defaultPageSize = newProps.pageSize;
         }
-
         if (newProps.pageSize !== this.props.pageSize) {
             const selectedValue = this.getSelectedValue(newProps.sizeOptions, newProps.pageSize);
-
             if (selectedValue !== this.state.selectedValue) {
                 this.setState({ selectedValue });
             }
