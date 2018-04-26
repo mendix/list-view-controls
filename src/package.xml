@@ -8,7 +8,6 @@
             <widgetFile path="TextBoxSearch/TextBoxSearch.xml"/>
             <widgetFile path="Pagination/Pagination.xml"/>
             <widgetFile path="HeaderSort/HeaderSort.xml"/>
-            <widgetFile path="PageSize/PageSize.xml"/>
         </widgetFiles>
         <files>
             <file path="com/mendix/widget/custom/listviewcontrols/CheckBoxFilter"/>
@@ -17,7 +16,6 @@
             <file path="com/mendix/widget/custom/listviewcontrols/TextBoxSearch"/>
             <file path="com/mendix/widget/custom/listviewcontrols/Pagination"/>
             <file path="com/mendix/widget/custom/listviewcontrols/HeaderSort"/>
-            <file path="com/mendix/widget/custom/listviewcontrols/PageSize"/>
         </files>
     </clientModule>
 </package>
