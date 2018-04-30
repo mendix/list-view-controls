@@ -21,6 +21,7 @@
                 <attributeType name="DateTime"/>
                 <attributeType name="Enum"/>
                 <attributeType name="Long"/>
+                <attributeType name="AutoNumber"/>
             </attributeTypes>
         </property>
         <property key="caption" type="translatableString">

@@ -26,6 +26,7 @@
                         <attributeType name="DateTime"/>
                         <attributeType name="Enum"/>
                         <attributeType name="Long"/>
+                        <attributeType name="AutoNumber"/>
                     </attributeTypes>
                 </property>
             </properties>
