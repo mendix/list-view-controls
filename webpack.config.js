@@ -48,6 +48,7 @@ const widgetConfig = {
             }
         ]
     },
+    mode: "development",
     devtool: "source-map",
     externals: [ "react", "react-dom", /^mxui\/|^mendix\/|^dojo\/|^dijit\// ],
     plugins: [
@@ -88,6 +89,7 @@ const previewConfig = {
             ] }
         ]
     },
+    mode: "development",
     devtool: "inline-source-map",
     externals: [ "react", "react-dom" ],
     plugins: [
