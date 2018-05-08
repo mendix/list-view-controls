@@ -77,7 +77,6 @@
                 </property>
             </properties>
         </property>
-
         <property key="pageSizeOptions" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Page size</category>

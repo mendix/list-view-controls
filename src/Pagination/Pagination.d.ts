@@ -7,7 +7,7 @@ export type ButtonType = "firstButton" | "lastButton" | "nextButton" | "previous
 export type IconType = "default" | "none";
 
 export type UpdateSourceType = "multiple" | "other";
-export type RenderPageSizeAs = "input" | "dropdown";
+export type RenderPageSizeAs = "dropdown" | "input";
 
 export interface ItemType {
     buttonCaption: string;
