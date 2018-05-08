@@ -88,13 +88,14 @@ $widget-pagination-color-disabled: #999;
                 }
             }
         }
+
         .page-size {
             display: inline-flex;
             label {
                 padding: 0.6em 1em;
             }
             input.form-control {
-                width: 60px;
+                width: 70px;
             }
         }
     }
