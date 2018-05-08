@@ -1,7 +1,8 @@
 import { ChangeEvent, Component, ReactElement, createElement } from "react";
+import { calculateOffSet } from "./PageSize";
 
-export interface PageSizeProps {
-    labelText: string;
+export interface PageSizeSelectProps {
+    text: string;
     currentOffSet: number;
     pageSize: number;
     listViewSize: number;
@@ -17,29 +18,27 @@ interface PageSizeState {
 export interface OptionProps {
     caption: string;
     size: number;
-    isDefault: boolean;
 }
 
-type Display = Partial<OptionProps> & PageSizeState;
+export type Display = Partial<OptionProps> & PageSizeState;
+
 export interface OnChangeProps {
     newOffSet: number;
     newPageSize: number;
     newPageNumber: number;
 }
 
-export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
-    // Remap prop filters to dropdownfilters
+export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
     private pageSizeSelectDom: HTMLSelectElement;
     private defaultPageSize?: number;
 
-    constructor(props: PageSizeProps) {
+    constructor(props: PageSizeSelectProps) {
         super(props);
 
         this.state = {
-            selectedValue : this.getSelectedValue(props.sizeOptions, props.pageSize)
+            selectedValue : PageSizeSelect.getSelectedValue(props.sizeOptions, props.pageSize)
         };
-        this.handleOnChange = this.handleOnChange.bind(this);
 
         this.filters = this.props.sizeOptions.map((filter, index) => ({
             ...filter,
@@ -50,24 +49,24 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
     render() {
         return createElement("div",
             { className: "page-size" },
-            this.props.labelText ? createElement("label", {}, `${this.props.labelText}`) : null,
+            this.props.text ? createElement("label", {}, `${this.props.text}`) : null,
             this.renderDropDown()
         );
     }
 
-    componentWillReceiveProps(newProps: PageSizeProps) {
+    componentWillReceiveProps(newProps: PageSizeSelectProps) {
         if (!this.defaultPageSize) {
             this.defaultPageSize = newProps.pageSize;
         }
         if (newProps.pageSize !== this.props.pageSize) {
-            const selectedValue = this.getSelectedValue(newProps.sizeOptions, newProps.pageSize);
+            const selectedValue = PageSizeSelect.getSelectedValue(newProps.sizeOptions, newProps.pageSize);
             if (selectedValue !== this.state.selectedValue) {
                 this.setState({ selectedValue });
             }
         }
     }
 
-    componentDidUpdate(_previousProps: PageSizeProps, _previousState: PageSizeState) {
+    componentDidUpdate(_previousProps: PageSizeSelectProps, _previousState: PageSizeState) {
         if (this.state.selectedValue === "-1") {
             this.pageSizeSelectDom.selectedIndex = -1;
         }
@@ -81,43 +80,29 @@ export class PageSizeSelect extends Component<PageSizeProps, PageSizeState> {
                 value: this.state.selectedValue,
                 ref: (node: HTMLSelectElement) => this.pageSizeSelectDom = node
             },
-            this.createOptions()
+            PageSizeSelect.createOptions(this.filters)
         );
     }
 
-    private createOptions(): ReactElement<{}>[] {
-        return this.filters.map((option, index) => createElement("option", {
-            className: "",
-            key: index,
-            label: option.caption,
-            value: option.selectedValue
-        }, option.caption));
-    }
-
-    private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
+    private handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const { listViewSize, currentOffSet } = this.props;
         this.setState({
             selectedValue: event.currentTarget.value
         });
         const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
-        const newOffSet = this.calculateOffSet(listViewSize, currentOffSet, selectedPageSize);
+        const newOffSet = calculateOffSet(listViewSize, currentOffSet, selectedPageSize);
         this.props.handleChange(newOffSet);
     }
-    private calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {
-        const numberOfPages = Math.ceil(listViewSize / newPageSize);
-        for (let newPageNumber = 0; newPageNumber < numberOfPages; newPageNumber++) {
-            const pageOffSet = (newPageNumber * newPageSize);
-            if (currentOffSet <= pageOffSet) {
-                return {
-                    newOffSet: pageOffSet,
-                    newPageNumber: ++newPageNumber,
-                    newPageSize
-                };
-            }
-        }
-    }
 
-    private getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
+    static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
         return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
+    }
+    static createOptions = (options: Display[]): ReactElement<{}>[] => {
+        return options.map((option, index) => createElement("option", {
+            className: "",
+            key: index,
+            label: option.caption,
+            value: option.selectedValue
+        }, option.caption));
     }
 }

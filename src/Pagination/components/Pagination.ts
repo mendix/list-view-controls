@@ -18,7 +18,6 @@ export interface PaginationProps {
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
     updateSource?: UpdateSourceType;
-    initialPageSize?: number;
     pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
     pageSizeOptions?: OptionProps[];
 }
@@ -173,10 +172,8 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                 if (option.renderPageSizeAs === "input") {
                     return this.createPageSize(option);
                 } else {
-                    // const defaultFilterIndex = this.props.pageSizeOptions.indexOf(this.props.pageSizeOptions.filter(value => value.size === this.props.pageSize)[0]);
-
                     return createElement(PageSizeSelect, {
-                        labelText: buttonProps.text === `{pageSize}` ? "Page size" : buttonProps.text,
+                        text: buttonProps.text.replace(/{pageSize}/g, "Page size"),
                         handleChange: this.props.pageSizeOnChange,
                         pageSize: this.props.pageSize,
                         sizeOptions: this.props.pageSizeOptions,
@@ -357,15 +354,13 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private createPageSize = (pageSizeItem: ItemType) => {
-        // const pageSizeItem = this.props.items.filter(item => item.item === "pageSize")[0];
         if (pageSizeItem) {
             return createElement(PageSize, {
-                labelText: pageSizeItem.text === `{pageSize}` ? "Page size" : pageSizeItem.text,
+                text: pageSizeItem.text.replace(/{pageSize}/g, "Page size"),
                 handleChange: this.props.pageSizeOnChange,
                 pageSize: this.props.pageSize,
                 listViewSize: this.props.listViewSize,
-                currentOffSet: this.state.currentOffset,
-                initialPageSize: this.props.initialPageSize
+                currentOffSet: this.state.currentOffset
             });
         }
     }

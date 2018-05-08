@@ -106,7 +106,6 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 publishedOffset: this.state.publishedOffset,
                 publishedPageNumber: this.state.publishedPageNumber,
                 updateSource: this.state.updateSource,
-                initialPageSize: this.state.initialPageSize,
                 pageSizeOnChange: this.applyPageSize,
                 pageSizeOptions: this.props.pageSizeOptions
             });
@@ -225,8 +224,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             pageSize: props.pageSize,
             targetListView: props.targetListView,
             targetNode: props.targetNode,
-            validationPassed: message === "",
-            initialPageSize: props.pageSize
+            validationPassed: message === ""
         });
     }
 
