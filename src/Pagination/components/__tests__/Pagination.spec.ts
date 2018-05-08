@@ -6,6 +6,8 @@ import { Pagination, PaginationProps } from "../Pagination";
 import { PageButton, PageButtonProps } from "../PageButton";
 import { ButtonType, IconType } from "../../Pagination";
 import { PageNumberView, PageNumberViewProps } from "../PageNumberView";
+import { PageSize } from "../PageSize";
+import { PageSizeSelect } from "../PageSizeSelect";
 
 configure({ adapter: new Adapter() });
 
@@ -72,6 +74,7 @@ describe("Pagination", () => {
     describe("when custom", () => {
 
         it("renders the entire structure when the page count is less then maximum number of buttons ", () => {
+            window.console.log("custon", customStylePaginationProps);
             const pagination = shallowRenderPagination(customStylePaginationProps);
 
             expect(pagination).toBeElement(
@@ -105,6 +108,7 @@ describe("Pagination", () => {
                 ...defaultStylePaginationProps,
                 onClickAction: jasmine.createSpy("onClick")
             };
+            // window.console.log(defaultStylePaginationProps);
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ selectedPageNumber: 8 });
@@ -282,6 +286,75 @@ describe("Pagination", () => {
         });
     });
 
+    describe("with page size", () => {
+        const customPageSizeProps: any = {
+            pagingStyle: "custom",
+            items: [
+                {
+                    ...itemProps,
+                    item: "pageSize",
+                    renderPageSizeAs: "dropdown",
+                    text: ""
+                }
+            ],
+            pageSizeOptions: [
+                {
+                    size: 2,
+                    caption: "Two"
+                },
+                {
+                    size: 5,
+                    caption: "Five"
+                },
+                {
+                    size: 10,
+                    caption: "Ten"
+                }
+            ]
+        };
+
+        const customPageSizeInputProps: any = {
+            items: [
+                {
+                    ...itemProps,
+                    item: "pageSize",
+                    renderPageSizeAs: "input",
+                    text: ""
+                }
+            ]
+        };
+
+        it("dropdown renders expected structure", () => {
+            const props: any = {
+                ...defaultStylePaginationProps,
+                ...customPageSizeProps
+            };
+            const pagination = shallowRenderPagination(props);
+
+            expect(pagination).toBeElement(
+                createElement("div", { className: "pagination visible" },
+                    getCustomPageSizeSelect(props)
+                )
+            );
+        });
+
+        it("input renders expected structure", () => {
+            const props: any = {
+                ...defaultStylePaginationProps,
+                ...customPageSizeProps,
+                ...customPageSizeInputProps
+            };
+
+            const pagination = shallowRenderPagination(props);
+
+            expect(pagination).toBeElement(
+                createElement("div", { className: "pagination visible" },
+                    getCustomPageSize(props)
+                )
+            );
+        });
+    });
+
     const defaultPageButtonProps = {
         buttonType: "firstButton" as ButtonType,
         isDisabled: true,
@@ -322,6 +395,31 @@ describe("Pagination", () => {
             createButton({ ...props, buttonType: "nextButton" }),
             createButton({ ...props, buttonType: "lastButton" }),
             createElement(PageNumberView, defaultPageNumberViewProps)
+        ];
+    };
+
+    const getCustomPageSizeSelect = (props: PaginationProps) => {
+        return [
+            createElement(PageSizeSelect, {
+                text: "",
+                handleChange: props.pageSizeOnChange,
+                pageSize: props.pageSize,
+                sizeOptions: props.pageSizeOptions,
+                listViewSize: props.listViewSize,
+                currentOffSet: 0
+            })
+        ];
+    };
+
+    const getCustomPageSize = (props: PaginationProps) => {
+        return [
+            createElement(PageSize, {
+                text: "",
+                handleChange: props.pageSizeOnChange,
+                pageSize: props.pageSize,
+                listViewSize: props.listViewSize,
+                currentOffSet: 0
+            })
         ];
     };
 
