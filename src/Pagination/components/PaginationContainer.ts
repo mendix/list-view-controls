@@ -11,7 +11,7 @@ import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 import { ModelerProps, UpdateSourceType } from "../Pagination";
 import { OnChangeProps } from "./PageSize";
 import {
-    getListNode, hideLoadMoreButton, hideLoader,
+    getListNode, hideLoadMoreButton, hideLoader, mxTranslation,
     resetListViewStructure, setListNodeToEmpty, showLoadMoreButton, showLoader
 } from "../utils/ContainerUtils";
 
@@ -69,7 +69,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     }
 
     public static translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
-        return window.mx.ui.translate("mxui.lib.MxDataSource", "status", [ fromValue, toValue, maxPageSize ]);
+        return mxTranslation("mxui.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
     }
 
     render() {
