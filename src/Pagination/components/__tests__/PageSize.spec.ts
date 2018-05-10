@@ -27,7 +27,7 @@ describe("PageSize", () => {
                     type: "number",
                     className: "form-control",
                     onChange: jasmine.any(Function) as any,
-                    value: "3"
+                    value: 3
                 })
             )
         );
@@ -39,7 +39,7 @@ describe("PageSize", () => {
         const wrapper = shallowRenderPageSize(props);
         const input = wrapper.find("input");
 
-        expect(input.props().value).toBe("5");
+        expect(input.props().value).toBe(5);
     });
 
     it("inputting a new value should call onchange prop function with new OnChangeProps", (done) => {

@@ -5,10 +5,10 @@ import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { ListView, SharedUtils, TopicMessage, paginationTopicSuffix } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, paginationTopicSuffix } from "../../Shared/SharedUtils";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
-import { ModelerProps, UpdateSourceType } from "../Pagination";
+import { ModelerProps, TopicMessage, UpdateSourceType } from "../Pagination";
 import { OnChangeProps } from "./PageSize";
 import {
     getListNode, hideLoadMoreButton, hideLoader, mxTranslation,

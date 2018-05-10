@@ -33,3 +33,9 @@ export interface ModelerProps extends WrapperProps {
     pageSizeLabel: string;
     pageSizeOptions: PageSizeOption[];
 }
+
+export interface TopicMessage {
+    newOffSet: number;
+    newPageNumber: number;
+    newPageSize?: number;
+}

@@ -1,12 +1,13 @@
 import { ChangeEvent, Component, createElement } from "react";
 import { OptionProps } from "./PageSizeSelect";
+
 export interface PageSizeProps {
     text: string;
     currentOffSet?: number;
     pageSize?: number;
     listViewSize: number;
     sizeOptions?: OptionProps[];
-    handleChange: (OptionProps: OnChangeProps) => void;
+    handleChange: (optionProps: OnChangeProps) => void;
 }
 
 interface PageSizeState {
@@ -35,12 +36,12 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
 
     render() {
         return createElement("div", { className: "page-size" },
-        this.props.text ? createElement("label", { }, this.props.text) : null,
+            this.props.text ? createElement("label", { }, this.props.text) : null,
             createElement("input", {
                 type: "number",
                 className: "form-control",
                 onChange: this.handleOnChange,
-                value: `${this.state.currentPageSize}`
+                value: this.state.currentPageSize
             })
         );
     }

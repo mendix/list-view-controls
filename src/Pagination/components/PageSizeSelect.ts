@@ -1,5 +1,5 @@
 import { ChangeEvent, Component, ReactElement, createElement } from "react";
-import { calculateOffSet } from "./PageSize";
+import { OnChangeProps, calculateOffSet } from "./PageSize";
 
 export interface PageSizeSelectProps {
     text: string;
@@ -21,12 +21,6 @@ export interface OptionProps {
 }
 
 export type Display = Partial<OptionProps> & PageSizeState;
-
-export interface OnChangeProps {
-    newOffSet: number;
-    newPageSize: number;
-    newPageNumber: number;
-}
 
 export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
@@ -86,9 +80,8 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
 
     private handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const { listViewSize, currentOffSet } = this.props;
-        this.setState({
-            selectedValue: event.currentTarget.value
-        });
+        this.setState({ selectedValue: event.currentTarget.value });
+
         const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
         const newOffSet = calculateOffSet(listViewSize, currentOffSet, selectedPageSize);
         this.props.handleChange(newOffSet);
@@ -97,6 +90,7 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
     static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
         return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
     }
+
     static createOptions = (options: Display[]): ReactElement<{}>[] => {
         return options.map((option, index) => createElement("option", {
             className: "",
