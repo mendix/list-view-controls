@@ -1,5 +1,5 @@
 import page from "./pages/home.page";
-import pagesize from "./pages/pagesize.page";
+import pagesize from "./pages/pageSize.page";
 
 const testValueOne = "Color 1";
 const testValueFive = "Color 5";
@@ -98,7 +98,7 @@ describe("Pagination", () => {
         expect(thirdItemValue).toContain("Color P 3");
     });
 
-    describe("Page size dropdown", () => {
+    fdescribe("Page size dropdown", () => {
         /*
             drop down indices:
                 0 is 2
@@ -122,21 +122,4 @@ describe("Pagination", () => {
         });
     });
 
-    describe("Page size input", () => {
-        beforeAll(() => {
-            pagesize.openPageSize();
-        });
-
-        it("to limit list view items depending on selection", () => {
-            pagesize.pageSizeDropdown.waitForVisible();
-            pagesize.listView.waitForVisible();
-
-            pagesize.pageSizeInput.setValue(3);
-            browser.pause(1000);
-            expect(pagesize.pageSizeInputListViewItems.value.length).toEqual(3);
-            pagesize.pageSizeInput.setValue(10);
-            browser.pause(1000);
-            expect(pagesize.pageSizeInputListViewItems.value.length).toEqual(10);
-        });
-    });
 });

@@ -6,7 +6,6 @@ import { Pagination, PaginationProps } from "../Pagination";
 import { PageButton, PageButtonProps } from "../PageButton";
 import { ButtonType, IconType } from "../../Pagination";
 import { PageNumberView, PageNumberViewProps } from "../PageNumberView";
-import { PageSize } from "../PageSize";
 import { PageSizeSelect } from "../PageSizeSelect";
 
 configure({ adapter: new Adapter() });
@@ -311,17 +310,6 @@ describe("Pagination", () => {
             ]
         };
 
-        const customPageSizeInputProps: any = {
-            items: [
-                {
-                    ...itemProps,
-                    item: "pageSize",
-                    renderPageSizeAs: "input",
-                    text: ""
-                }
-            ]
-        };
-
         it("dropdown renders expected structure", () => {
             const props: any = {
                 ...defaultStylePaginationProps,
@@ -336,21 +324,6 @@ describe("Pagination", () => {
             );
         });
 
-        it("input renders expected structure", () => {
-            const props: any = {
-                ...defaultStylePaginationProps,
-                ...customPageSizeProps,
-                ...customPageSizeInputProps
-            };
-
-            const pagination = shallowRenderPagination(props);
-
-            expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible" },
-                    getCustomPageSize(props)
-                )
-            );
-        });
     });
 
     const defaultPageButtonProps = {
@@ -403,18 +376,6 @@ describe("Pagination", () => {
                 handleChange: props.pageSizeOnChange,
                 pageSize: props.pageSize,
                 sizeOptions: props.pageSizeOptions,
-                listViewSize: props.listViewSize,
-                currentPage: 1
-            })
-        ];
-    };
-
-    const getCustomPageSize = (props: PaginationProps) => {
-        return [
-            createElement(PageSize, {
-                text: "",
-                handleChange: props.pageSizeOnChange,
-                pageSize: props.pageSize,
                 listViewSize: props.listViewSize,
                 currentPage: 1
             })

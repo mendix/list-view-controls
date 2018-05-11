@@ -5,7 +5,6 @@ import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType, UpdateSourceType } from "../Pagination";
 import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
-import { PageSize } from "./PageSize";
 
 export interface PaginationProps {
     hideUnusedPaging: boolean;
@@ -169,18 +168,14 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             }
 
             if (buttonProps.buttonType === "pageSize") {
-                if (option.renderPageSizeAs === "input") {
-                    return this.createPageSize(option);
-                } else {
-                    return createElement(PageSizeSelect, {
-                        text: buttonProps.text.replace(/{pageSize}/g, "Page size"),
-                        handleChange: this.props.pageSizeOnChange,
-                        pageSize: this.props.pageSize,
-                        sizeOptions: this.props.pageSizeOptions,
-                        listViewSize: this.props.listViewSize,
-                        currentPage: this.state.selectedPageNumber
-                    });
-                }
+                return createElement(PageSizeSelect, {
+                    text: buttonProps.text.replace(/{pageSize}/g, "Page size"),
+                    handleChange: this.props.pageSizeOnChange,
+                    pageSize: this.props.pageSize,
+                    sizeOptions: this.props.pageSizeOptions,
+                    listViewSize: this.props.listViewSize,
+                    currentPage: this.state.selectedPageNumber
+                });
             }
         }) as Array<ReactElement<{}>>;
     }
@@ -352,21 +347,6 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
 
         this.props.onClickAction(currentOffset, pageNumber);
-    }
-
-    private createPageSize = (pageSizeItem: ItemType) => {
-        if (pageSizeItem) {
-            // const currentOffSet = this.state.selectedPageNumber;
-            // const currentPage = Math.ceil(currentOffSet / this.props.pageSize) + 1;
-            window.console.log("page value is: ", this.state.selectedPageNumber);
-            return createElement(PageSize, {
-                text: pageSizeItem.text.replace(/{pageSize}/g, "Page size"),
-                handleChange: this.props.pageSizeOnChange,
-                pageSize: this.props.pageSize,
-                listViewSize: this.props.listViewSize,
-                currentPage: this.state.selectedPageNumber
-            });
-        }
     }
 
 }

@@ -1,5 +1,4 @@
 import { ChangeEvent, Component, ReactElement, createElement } from "react";
-import { OnChangeProps, calculateOffSet } from "./PageSize";
 
 export interface PageSizeSelectProps {
     text: string;
@@ -22,6 +21,12 @@ export interface OptionProps {
 }
 
 export type Display = Partial<OptionProps> & Partial<PageSizeState>;
+
+export interface OnChangeProps {
+    newOffSet: number;
+    newPageSize: number;
+    newPageNumber: number;
+}
 
 export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
@@ -88,8 +93,20 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
             pageSize: selectedPageSize
          });
 
-        const newOffSet = calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
+        const newOffSet = this.calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
         this.props.handleChange(newOffSet);
+    }
+
+    private calculateOffSet = (listViewSize: number, newPageSize: number, oldPageNumber: number): OnChangeProps => {
+        const numberOfPages = Math.ceil(listViewSize / newPageSize);
+        const newPageNumber = (oldPageNumber >= 1 && oldPageNumber <= numberOfPages) ? oldPageNumber : 1;
+        const newOffSet = (newPageNumber - 1) * newPageSize;
+
+        return {
+            newOffSet,
+            newPageNumber,
+            newPageSize
+        };
     }
 
     static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {

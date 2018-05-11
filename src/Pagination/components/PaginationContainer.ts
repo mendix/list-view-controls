@@ -8,13 +8,13 @@ import { Alert } from "../../Shared/components/Alert";
 import { ListView, SharedUtils, paginationTopicSuffix } from "../../Shared/SharedUtils";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
-import { ModelerProps, TopicMessage, UpdateSourceType } from "../Pagination";
-import { OnChangeProps } from "./PageSize";
 import {
     getListNode, hideLoadMoreButton, hideLoader, mxTranslation,
     resetListViewStructure, setListNodeToEmpty, showLoadMoreButton, showLoader
 } from "../utils/ContainerUtils";
 
+import { ModelerProps, TopicMessage, UpdateSourceType } from "../Pagination";
+import { OnChangeProps } from "./PageSizeSelect";
 import { Pagination, PaginationProps } from "./Pagination";
 import { Validate } from "../Validate";
 
