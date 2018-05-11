@@ -332,7 +332,6 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private updatePagination = (pageNumber: number) => {
-        window.console.log("Clicked sent PageNumber: ", pageNumber);
         const currentOffset = (pageNumber - 1) * this.props.pageSize;
 
         if (this.state.selectedPageNumber === pageNumber) {

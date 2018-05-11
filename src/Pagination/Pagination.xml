@@ -38,42 +38,33 @@
                         <enumerationValue key="pageSize">Page size</enumerationValue>
                     </enumerationValues>
                 </property>
-                <property key="text" type="translatableString" required="false">
-                    <caption>Text with placeholder</caption>
-                    <category>General</category>
-                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages} {pageSize}</description>
-                    <translations>
-                        <translation lang="en_US">{firstItem} to {lastItem} of {totalItems}</translation>
-                        <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
-                    </translations>
-                </property>
                 <property key="buttonCaption" type="translatableString" required="false">
-                    <caption>Button caption</caption>
-                    <category>General</category>
+                    <caption>Caption</caption>
+                    <category>Button</category>
                     <description/>
                 </property>
                 <property key="showIcon" type="enumeration" defaultValue="default">
                     <caption>Show icon</caption>
-                    <category>General</category>
+                    <category>Button</category>
                     <description/>
                     <enumerationValues>
                         <enumerationValue key="default">Default</enumerationValue>
                         <enumerationValue key="none">None</enumerationValue>
                     </enumerationValues>
                 </property>
-                <property key="maxPageButtons" type="integer" defaultValue="7">
-                    <caption>Maximum number of page buttons</caption>
-                    <category>General</category>
-                    <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
+                <property key="text" type="translatableString" required="false">
+                    <caption>Text with placeholder</caption>
+                    <category>Text</category>
+                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages} {pageSize}</description>
+                    <translations>
+                        <translation lang="en_US">{firstItem} to {lastItem} of {totalItems}</translation>
+                        <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
+                    </translations>
                 </property>
-                <property key="renderPageSizeAs" type="enumeration" defaultValue="dropdown">
-                    <caption>Render page size</caption>
-                    <category>General</category>
-                    <description/>
-                    <enumerationValues>
-                        <enumerationValue key="dropdown">Drop down</enumerationValue>
-                        <enumerationValue key="input">Input</enumerationValue>
-                    </enumerationValues>
+                <property key="maxPageButtons" type="integer" defaultValue="7">
+                <caption>Maximum</caption>
+                    <category>Page number buttons</category>
+                    <description>If there are more pages than the maximum, the exceeding buttons will be replaced by three dots. An uneven number is recommend larger then 7</description>
                 </property>
             </properties>
         </property>
