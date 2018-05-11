@@ -74,7 +74,6 @@ describe("Pagination", () => {
     describe("when custom", () => {
 
         it("renders the entire structure when the page count is less then maximum number of buttons ", () => {
-            window.console.log("custon", customStylePaginationProps);
             const pagination = shallowRenderPagination(customStylePaginationProps);
 
             expect(pagination).toBeElement(
@@ -108,7 +107,6 @@ describe("Pagination", () => {
                 ...defaultStylePaginationProps,
                 onClickAction: jasmine.createSpy("onClick")
             };
-            // window.console.log(defaultStylePaginationProps);
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ selectedPageNumber: 8 });
@@ -406,7 +404,7 @@ describe("Pagination", () => {
                 pageSize: props.pageSize,
                 sizeOptions: props.pageSizeOptions,
                 listViewSize: props.listViewSize,
-                currentOffSet: 0
+                currentPage: 1
             })
         ];
     };
@@ -418,7 +416,7 @@ describe("Pagination", () => {
                 handleChange: props.pageSizeOnChange,
                 pageSize: props.pageSize,
                 listViewSize: props.listViewSize,
-                currentOffSet: 0
+                currentPage: 1
             })
         ];
     };

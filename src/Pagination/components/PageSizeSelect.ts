@@ -3,16 +3,17 @@ import { OnChangeProps, calculateOffSet } from "./PageSize";
 
 export interface PageSizeSelectProps {
     text: string;
-    currentOffSet: number;
+    currentPage: number;
     pageSize: number;
     listViewSize: number;
 
     sizeOptions: OptionProps[];
-    handleChange: (OptionProps: OnChangeProps) => void;
+    handleChange: (optionProps: OnChangeProps) => void;
 }
 
 interface PageSizeState {
     selectedValue: string;
+    pageSize: number;
 }
 
 export interface OptionProps {
@@ -20,7 +21,7 @@ export interface OptionProps {
     size: number;
 }
 
-export type Display = Partial<OptionProps> & PageSizeState;
+export type Display = Partial<OptionProps> & Partial<PageSizeState>;
 
 export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
@@ -31,7 +32,8 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
         super(props);
 
         this.state = {
-            selectedValue : PageSizeSelect.getSelectedValue(props.sizeOptions, props.pageSize)
+            selectedValue : PageSizeSelect.getSelectedValue(props.sizeOptions, props.pageSize),
+            pageSize: props.pageSize
         };
 
         this.filters = this.props.sizeOptions.map((filter, index) => ({
@@ -79,11 +81,14 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
     }
 
     private handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
-        const { listViewSize, currentOffSet } = this.props;
-        this.setState({ selectedValue: event.currentTarget.value });
-
+        const { listViewSize } = this.props;
         const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
-        const newOffSet = calculateOffSet(listViewSize, currentOffSet, selectedPageSize);
+        this.setState({
+            selectedValue: event.currentTarget.value,
+            pageSize: selectedPageSize
+         });
+
+        const newOffSet = calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
         this.props.handleChange(newOffSet);
     }
 

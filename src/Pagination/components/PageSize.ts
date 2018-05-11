@@ -3,7 +3,7 @@ import { OptionProps } from "./PageSizeSelect";
 
 export interface PageSizeProps {
     text: string;
-    currentOffSet?: number;
+    currentPage?: number;
     pageSize?: number;
     listViewSize: number;
     sizeOptions?: OptionProps[];
@@ -55,16 +55,16 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
     }
 
     private handleOnChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { listViewSize, currentOffSet } = this.props;
+        const { listViewSize } = this.props;
         const eventValue = Number(event.currentTarget.value);
-        const verifiedPageSize = this.verifiedPageSize(eventValue);
+        const newPageSize = this.verifiedPageSize(eventValue);
 
-        if (this.state.currentPageSize !== eventValue || eventValue !== verifiedPageSize) { // handle situation when eventValue is empty
+        if (this.state.currentPageSize !== eventValue || eventValue !== newPageSize) { // handle situation when eventValue is empty
             if (this.timeoutHandler) {
                 window.clearTimeout(this.timeoutHandler);
             }
             this.timeoutHandler = window.setTimeout(() => {
-                const newOffSet = calculateOffSet(listViewSize, currentOffSet, Number(verifiedPageSize));
+                const newOffSet = calculateOffSet(listViewSize, Number(newPageSize), this.props.currentPage);
                 this.props.handleChange(newOffSet);
             }, this.inputTimeout);
         }
@@ -88,16 +88,14 @@ export class PageSize extends Component<PageSizeProps, PageSizeState> {
     }
 }
 
-export const calculateOffSet = (listViewSize: number, currentOffSet: number, newPageSize: number): OnChangeProps => {
+export const calculateOffSet = (listViewSize: number, newPageSize: number, oldPageNumber: number): OnChangeProps => {
     const numberOfPages = Math.ceil(listViewSize / newPageSize);
-    for (let newPageNumber = 0; newPageNumber < numberOfPages; newPageNumber++) {
-        const pageOffSet = (newPageNumber * newPageSize);
-        if (currentOffSet <= pageOffSet) {
-            return {
-                newOffSet: pageOffSet,
-                newPageNumber: ++newPageNumber,
-                newPageSize
-            };
-        }
-    }
+    const newPageNumber = (oldPageNumber >= 1 && oldPageNumber <= numberOfPages) ? oldPageNumber : 1;
+    const newOffSet = (newPageNumber - 1) * newPageSize;
+
+    return {
+        newOffSet,
+        newPageNumber,
+        newPageSize
+    };
 };

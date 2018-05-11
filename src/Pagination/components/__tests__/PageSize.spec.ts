@@ -14,7 +14,7 @@ describe("PageSize", () => {
         handleChange: () => jasmine.any(Function) as any,
         pageSize: 2,
         listViewSize: 4,
-        currentOffSet: 0
+        currentPage: 1
     };
 
     it("input-text renders expected structure", () => {

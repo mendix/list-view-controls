@@ -178,7 +178,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                         pageSize: this.props.pageSize,
                         sizeOptions: this.props.pageSizeOptions,
                         listViewSize: this.props.listViewSize,
-                        currentOffSet: this.state.currentOffset
+                        currentPage: this.state.selectedPageNumber
                     });
                 }
             }
@@ -337,6 +337,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     private updatePagination = (pageNumber: number) => {
+        window.console.log("Clicked sent PageNumber: ", pageNumber);
         const currentOffset = (pageNumber - 1) * this.props.pageSize;
 
         if (this.state.selectedPageNumber === pageNumber) {
@@ -355,12 +356,15 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
     private createPageSize = (pageSizeItem: ItemType) => {
         if (pageSizeItem) {
+            // const currentOffSet = this.state.selectedPageNumber;
+            // const currentPage = Math.ceil(currentOffSet / this.props.pageSize) + 1;
+            window.console.log("page value is: ", this.state.selectedPageNumber);
             return createElement(PageSize, {
                 text: pageSizeItem.text.replace(/{pageSize}/g, "Page size"),
                 handleChange: this.props.pageSizeOnChange,
                 pageSize: this.props.pageSize,
                 listViewSize: this.props.listViewSize,
-                currentOffSet: this.state.currentOffset
+                currentPage: this.state.selectedPageNumber
             });
         }
     }

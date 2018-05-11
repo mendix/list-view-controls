@@ -29,7 +29,7 @@ describe("PageSizeDropdown", () => {
         pageSize: 2,
         sizeOptions,
         listViewSize: 4,
-        currentOffSet: 0
+        currentPage: 1
     };
 
     const expectedDropDown = (props: PageSizeSelectProps) => {
