@@ -1,7 +1,7 @@
 import { ChangeEvent, Component, ReactElement, createElement } from "react";
 
 export interface PageSizeSelectProps {
-    text: string;
+    text?: string;
     currentPage: number;
     pageSize: number;
     listViewSize: number;
@@ -50,7 +50,6 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
     render() {
         return createElement("div",
             { className: "page-size" },
-            this.props.text ? createElement("label", {}, `${this.props.text}`) : null,
             this.renderDropDown()
         );
     }

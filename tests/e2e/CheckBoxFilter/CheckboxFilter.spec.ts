@@ -33,6 +33,7 @@ describe("Check box filter", () => {
         beforeAll(() => {
             defaultFilter.checkBoxFilter.waitForVisible();
             defaultFilter.checkBoxFilter.click();
+            browser.pause(1000);
         });
 
         it("the checkbox is checked", () => {

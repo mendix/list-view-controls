@@ -24,7 +24,6 @@ describe("PageSizeDropdown", () => {
     ];
 
     const pageSizeSelectProps: PageSizeSelectProps = {
-        text: "",
         handleChange: () => jasmine.any(Function) as any,
         pageSize: 2,
         sizeOptions,
@@ -55,7 +54,6 @@ describe("PageSizeDropdown", () => {
         expect(pageSize).toBeElement(
             createElement("div",
                 { className: "page-size" },
-                props.text ? createElement("label", {}, `${props.text}`) : null,
                 expectedDropDown(props)
             )
         );

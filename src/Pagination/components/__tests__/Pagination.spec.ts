@@ -372,7 +372,6 @@ describe("Pagination", () => {
     const getCustomPageSizeSelect = (props: PaginationProps) => {
         return [
             createElement(PageSizeSelect, {
-                text: "",
                 handleChange: props.pageSizeOnChange,
                 pageSize: props.pageSize,
                 sizeOptions: props.pageSizeOptions,

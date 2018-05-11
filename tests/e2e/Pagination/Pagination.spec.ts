@@ -98,7 +98,7 @@ describe("Pagination", () => {
         expect(thirdItemValue).toContain("Color P 3");
     });
 
-    fdescribe("Page size dropdown", () => {
+    describe("Page size dropdown", () => {
         /*
             drop down indices:
                 0 is 2

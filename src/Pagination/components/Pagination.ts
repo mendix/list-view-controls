@@ -169,7 +169,6 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
             if (buttonProps.buttonType === "pageSize") {
                 return createElement(PageSizeSelect, {
-                    text: buttonProps.text.replace(/{pageSize}/g, "Page size"),
                     handleChange: this.props.pageSizeOnChange,
                     pageSize: this.props.pageSize,
                     sizeOptions: this.props.pageSizeOptions,
