@@ -89,9 +89,7 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
 }
 
 export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any) {
-    if (valueMap.pagingStyle === "default") {
-        visibilityMap.items = false;
-    } else {
+    if (valueMap.pagingStyle === "custom") {
         valueMap.items.forEach((item, index) => {
             const isButton = item.item === "firstButton" || item.item === "lastButton" || item.item === "nextButton" || item.item === "previousButton";
             visibilityMap.items[index].text = item.item === "text";
@@ -99,6 +97,8 @@ export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any)
             visibilityMap.items[index].showIcon = isButton;
             visibilityMap.items[index].maxPageButtons = item.item === "pageNumberButtons";
         });
+    } else {
+        visibilityMap.items = false;
     }
 
     return visibilityMap;
