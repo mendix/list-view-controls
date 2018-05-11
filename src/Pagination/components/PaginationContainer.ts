@@ -69,7 +69,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     }
 
     public static translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
-        return mxTranslation("mxui.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
+        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
     }
 
     render() {
