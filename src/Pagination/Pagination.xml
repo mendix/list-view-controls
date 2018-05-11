@@ -35,35 +35,57 @@
                         <enumerationValue key="previousButton">Previous button</enumerationValue>
                         <enumerationValue key="text">Text</enumerationValue>
                         <enumerationValue key="pageNumberButtons">Page number buttons</enumerationValue>
+                        <enumerationValue key="pageSize">Page size</enumerationValue>
                     </enumerationValues>
                 </property>
-                <property key="text" type="translatableString" required="false">
-                    <caption>Text with placeholder</caption>
-                    <category>General</category>
-                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages}</description>
-                    <translations>
-                        <translation lang="en_US">{firstItem} to {lastItem} of {totalItems}</translation>
-                        <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
-                    </translations>
-                </property>
                 <property key="buttonCaption" type="translatableString" required="false">
-                    <caption>Button caption</caption>
-                    <category>General</category>
+                    <caption>Caption</caption>
+                    <category>Button</category>
                     <description/>
                 </property>
                 <property key="showIcon" type="enumeration" defaultValue="default">
                     <caption>Show icon</caption>
-                    <category>General</category>
+                    <category>Button</category>
                     <description/>
                     <enumerationValues>
                         <enumerationValue key="default">Default</enumerationValue>
                         <enumerationValue key="none">None</enumerationValue>
                     </enumerationValues>
                 </property>
+                <property key="text" type="translatableString" required="false">
+                    <caption>Text with placeholder</caption>
+                    <category>Text</category>
+                    <description>Use placeholder: {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages} {pageSize}</description>
+                    <translations>
+                        <translation lang="en_US">{firstItem} to {lastItem} of {totalItems}</translation>
+                        <translation lang="nl_NL">{firstItem} tot {lastItem} van {totalItems}</translation>
+                    </translations>
+                </property>
                 <property key="maxPageButtons" type="integer" defaultValue="7">
-                    <caption>Maximum number of page buttons</caption>
-                    <category>General</category>
-                    <description>Including the ... buttons, minimal value 7, recommend an uneven number</description>
+                <caption>Maximum</caption>
+                    <category>Page number buttons</category>
+                    <description>If there are more pages than the maximum, the exceeding buttons will be replaced by three dots. An uneven number is recommend larger then 7</description>
+                </property>
+            </properties>
+        </property>
+        <property key="pageSizeOptions" type="object" isList="true" required="false">
+            <caption>Options</caption>
+            <category>Page size</category>
+            <description>Dropdown options for 'Paging style' 'Custom'. The options are used for the item 'Page size' when 'Render page size' is 'Drop down'</description>
+            <properties>
+                <property key="size" type="integer" defaultValue="10">
+                    <caption>Page size</caption>
+                    <category>Option</category>
+                    <description/>
+                </property>
+                <property key="caption" type="translatableString">
+                    <caption>Caption</caption>
+                    <category>Option</category>
+                    <description>The caption to show for this option in the drop down</description>
+                    <translations>
+                        <translation lang="en_US">Ten</translation>
+                        <translation lang="nl_NL">Tien</translation>
+                    </translations>
                 </property>
             </properties>
         </property>

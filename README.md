@@ -38,6 +38,7 @@ ie:
   * Page numbers with text as buttons
   * Page text that can be added to pagination in combination with the follow place holders.
   {firstItem} {lastItem} {totalItems} {currentPageNumber} {totalPages}
+* Page size: This feature limits the number of items on the list view 
 
 ## Sample
 * Lower Pagination
@@ -46,6 +47,9 @@ ie:
 * Multiple Paginations
 
 ![Page buttons](assets/Pagination/demo2.gif)
+
+* Page size
+![Page size](assets/Pagination/pagesizedemo.gif)
 
 ## Usage
 
@@ -62,7 +66,9 @@ ie:
      show the pagination as numbers with default set to seven
     * `Custom`
      Allows the pagination to be configured to look the way one desires
-
+- ![Page size configuration](assets/Pagination/Pagesize_config1.png)
+- ![Page size configuration](assets/Pagination/Pagesize_config2.png)
+- ![Page size configuration](assets/Pagination/Pagesize_config3.png)
 ### Check Box Filter
 Enable users to filter a list view at run time, with various constraints when checked or unchecked
 

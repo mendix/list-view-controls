@@ -6,7 +6,10 @@ const widgetNames = [ "CheckBoxFilter", "DropDownFilter", "DropDownSort", "TextB
 
 const webpackConfigRelease = webpackConfig.map(config => merge(config, {
     devtool: false,
-    plugins: [ new webpack.optimize.UglifyJsPlugin() ]
+    mode: "production",
+    optimization: {
+        minimize: true
+    }
 }));
 
 module.exports = function(grunt) {

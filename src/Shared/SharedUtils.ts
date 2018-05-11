@@ -41,6 +41,8 @@ export interface GroupedOfflineConstraint {
 
 export type Constraints = (GroupedOfflineConstraint | OfflineConstraint)[] | string;
 
+export const paginationTopicSuffix = "_paginationUpdate";
+
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {
         try {

@@ -12,7 +12,7 @@
       "eofline": true,
       "indent": [
         true,
-        "tab"
+        "spaces"
       ],
       "member-ordering": [
         true,
@@ -138,7 +138,8 @@
       "max-line-length": false,
       "arrow-parens": false,
       "no-namespace": false,
-      "array-type": false
+      "array-type": false,
+      "object-literal-sort-keys": false
     },
     "jsRules": {
       "max-line-length": false,

@@ -45,3 +45,8 @@ export const showLoader = (targetListView: ListView) => {
 export const hideLoader = (targetListView: ListView) => {
     targetListView.domNode.classList.remove("widget-pagination-loading");
 };
+
+export const mxTranslation = (namespace: string, key: string, replacements: any[]) => {
+    const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`) || "[No translation]";
+    return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
+};

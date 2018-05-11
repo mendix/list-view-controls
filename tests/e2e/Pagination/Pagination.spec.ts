@@ -1,4 +1,5 @@
 import page from "./pages/home.page";
+import pagesize from "./pages/pageSize.page";
 
 const testValueOne = "Color 1";
 const testValueFive = "Color 5";
@@ -81,7 +82,7 @@ describe("Pagination", () => {
     });
 
     it("when custom button is clicked list view should show item on the custom page ", () => {
-        // Change page size
+        // Change window size
         browser.setViewportSize({
             height: 720,
             width: 1720
@@ -96,4 +97,29 @@ describe("Pagination", () => {
         const thirdItemValue = page.listView4ThirdItem.getHTML();
         expect(thirdItemValue).toContain("Color P 3");
     });
+
+    describe("Page size dropdown", () => {
+        /*
+            drop down indices:
+                0 is 2
+                1 is 5
+                2 is 10
+        */
+        beforeAll(() => {
+            pagesize.openPageSizeDropdown();
+        });
+
+        it("to limit list view items depending on selection", () => {
+            pagesize.pageSizeDropdown.waitForVisible();
+            pagesize.listView.waitForVisible();
+
+            pagesize.pageSizeDropdown.element("select").selectByIndex(1); // Index 1 is page size 5
+            browser.pause(1000);
+            expect(pagesize.listViewItems.value.length).toEqual(5);
+            pagesize.pageSizeDropdown.element("select").selectByIndex(2); // Index 2 is page size 10
+            browser.pause(1000);
+            expect(pagesize.listViewItems.value.length).toEqual(10);
+        });
+    });
+
 });

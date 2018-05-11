@@ -38,6 +38,7 @@
                         <attributeType name="Integer"/>
                         <attributeType name="Decimal"/>
                         <attributeType name="Boolean"/>
+                        <attributeType name="AutoNumber"/>
                     </attributeTypes>
                 </property>
                 <property key="attributeValue" type="string" required="false">

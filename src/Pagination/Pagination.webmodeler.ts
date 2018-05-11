@@ -37,13 +37,17 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 hideUnusedPaging: false,
                 items: this.props.items,
                 listViewSize: 20,
-                offset: 2,
+                pageSize: 2,
                 onClickAction: () => {
                     return;
                 },
                 pagingStyle: this.props.pagingStyle,
                 publishedOffset: 0,
-                publishedPageNumber: 1
+                publishedPageNumber: 1,
+                pageSizeOnChange: () => {
+                    return;
+                },
+                pageSizeOptions: this.props.pageSizeOptions
             })
         );
     }
@@ -85,9 +89,7 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
 }
 
 export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any) {
-    if (valueMap.pagingStyle === "default") {
-        visibilityMap.items = false;
-    } else {
+    if (valueMap.pagingStyle === "custom") {
         valueMap.items.forEach((item, index) => {
             const isButton = item.item === "firstButton" || item.item === "lastButton" || item.item === "nextButton" || item.item === "previousButton";
             visibilityMap.items[index].text = item.item === "text";
@@ -95,6 +97,8 @@ export function getVisibleProperties(valueMap: ModelerProps, visibilityMap: any)
             visibilityMap.items[index].showIcon = isButton;
             visibilityMap.items[index].maxPageButtons = item.item === "pageNumberButtons";
         });
+    } else {
+        visibilityMap.items = false;
     }
 
     return visibilityMap;

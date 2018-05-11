@@ -48,6 +48,7 @@ const widgetConfig = {
             }
         ]
     },
+    mode: "development",
     devtool: "source-map",
     externals: [ "react", "react-dom", /^mxui\/|^mendix\/|^dojo\/|^dijit\// ],
     plugins: [
@@ -70,7 +71,6 @@ const previewConfig = {
         TextBoxSearch: "./src/TextBoxSearch/TextBoxSearch.webmodeler.ts",
         Pagination: "./src/Pagination/Pagination.webmodeler.ts",
         HeaderSort: "./src/HeaderSort/HeaderSort.webmodeler.ts"
-
     },
     output: {
         path: path.resolve(__dirname, "dist/tmp"),
@@ -89,6 +89,7 @@ const previewConfig = {
             ] }
         ]
     },
+    mode: "development",
     devtool: "inline-source-map",
     externals: [ "react", "react-dom" ],
     plugins: [

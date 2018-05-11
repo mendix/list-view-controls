@@ -6,6 +6,7 @@ import { Pagination, PaginationProps } from "../Pagination";
 import { PageButton, PageButtonProps } from "../PageButton";
 import { ButtonType, IconType } from "../../Pagination";
 import { PageNumberView, PageNumberViewProps } from "../PageNumberView";
+import { PageSizeSelect } from "../PageSizeSelect";
 
 configure({ adapter: new Adapter() });
 
@@ -85,7 +86,7 @@ describe("Pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
                 listViewSize: 0,
-                offset: 0
+                pageSize: 0
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -282,6 +283,49 @@ describe("Pagination", () => {
         });
     });
 
+    describe("with page size", () => {
+        const customPageSizeProps: any = {
+            pagingStyle: "custom",
+            items: [
+                {
+                    ...itemProps,
+                    item: "pageSize",
+                    renderPageSizeAs: "dropdown",
+                    text: ""
+                }
+            ],
+            pageSizeOptions: [
+                {
+                    size: 2,
+                    caption: "Two"
+                },
+                {
+                    size: 5,
+                    caption: "Five"
+                },
+                {
+                    size: 10,
+                    caption: "Ten"
+                }
+            ]
+        };
+
+        it("dropdown renders expected structure", () => {
+            const props: any = {
+                ...defaultStylePaginationProps,
+                ...customPageSizeProps
+            };
+            const pagination = shallowRenderPagination(props);
+
+            expect(pagination).toBeElement(
+                createElement("div", { className: "pagination visible" },
+                    getCustomPageSizeSelect(props)
+                )
+            );
+        });
+
+    });
+
     const defaultPageButtonProps = {
         buttonType: "firstButton" as ButtonType,
         isDisabled: true,
@@ -325,6 +369,18 @@ describe("Pagination", () => {
         ];
     };
 
+    const getCustomPageSizeSelect = (props: PaginationProps) => {
+        return [
+            createElement(PageSizeSelect, {
+                handleChange: props.pageSizeOnChange,
+                pageSize: props.pageSize,
+                sizeOptions: props.pageSizeOptions,
+                listViewSize: props.listViewSize,
+                currentPage: 1
+            })
+        ];
+    };
+
     const defaultStylePaginationProps: PaginationProps = {
         getMessageStatus: (fromValue: number, toValue: number, maxPageSize: number) => {
             return getMessageStatus(fromValue, toValue, maxPageSize);
@@ -332,7 +388,7 @@ describe("Pagination", () => {
         hideUnusedPaging: false,
         items: [],
         listViewSize: 32,
-        offset: 2,
+        pageSize: 2,
         onClickAction: jasmine.any(Function),
         pagingStyle: "default"
     };
