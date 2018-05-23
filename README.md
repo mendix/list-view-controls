@@ -42,20 +42,20 @@ ie:
 
 ## Sample
 * Lower Pagination
-![Default buttons](assets/Pagination/demo.gif)
+![Default buttons](/assets/Pagination/demo.gif)
 
 * Multiple Paginations
 
-![Page buttons](assets/Pagination/demo2.gif)
+![Page buttons](/assets/Pagination/demo2.gif)
 
 * Page size
-![Page size](assets/Pagination/pagesizedemo.gif)
+![Page size](/assets/Pagination/pagesizedemo.gif)
 
 ## Usage
 
 ### Appearance configuration
 
-![Data source](assets/Pagination/Appearance.png)
+![Data source](/assets/Pagination/Appearance.png)
  - On the `Hide unused paging` option of the `Appearance` 
  tab, specify if the buttons should be hidden when they are not needed.For example when the records are few.
   * On the `Page style` option of the `Appearance` 
@@ -66,9 +66,9 @@ ie:
      show the pagination as numbers with default set to seven
     * `Custom`
      Allows the pagination to be configured to look the way one desires
-- ![Page size configuration](assets/Pagination/Pagesize_config1.png)
-- ![Page size configuration](assets/Pagination/Pagesize_config2.png)
-- ![Page size configuration](assets/Pagination/Pagesize_config3.png)
+- ![Page size configuration](/assets/Pagination/Pagesize_config1.png)
+- ![Page size configuration](/assets/Pagination/Pagesize_config2.png)
+- ![Page size configuration](/assets/Pagination/Pagesize_config3.png)
 ### Check Box Filter
 Enable users to filter a list view at run time, with various constraints when checked or unchecked
 
@@ -81,20 +81,20 @@ Enable users to filter a list view at run time, with various constraints when ch
 * Supports multiple filters on the same list view
 
 ## Sample
-![Sample](assets/CheckBoxFilter/demo.gif)
+![Sample](/assets/CheckBoxFilter/demo.gif)
 
 ## Usage
 
 Configure the widget as below.
 
 Provide the entity name for the target list view.
-![General](assets/CheckBoxFilter/configuration_general.jpg)
+![General](/assets/CheckBoxFilter/configuration_general.jpg)
 
 Set up filter actions to be applied when the widget is checked.
-![Checked](assets/CheckBoxFilter/configuration_checked.jpg)
+![Checked](/assets/CheckBoxFilter/configuration_checked.jpg)
 
 Set up filter actions to be applied when the widget is unchecked
-![Unchecked](assets/CheckBoxFilter/configuration_unchecked.jpg)
+![Unchecked](/assets/CheckBoxFilter/configuration_unchecked.jpg)
 
 When filtering by `Attribute`, select an attribute and input an attribute value to filter by.
 
@@ -116,17 +116,17 @@ Enable users to filter a list view at run time, with various options that can be
 * Set a default filter option
 
 ## Sample
-![Sample](assets/DropDownFilter/demo.gif)
+![Sample](/assets/DropDownFilter/demo.gif)
 
 ## Usage
 Place the Drop-down filter widget above a list view.
 Provide the entity name of the target list view in the `General` tab.
 
-![General](assets/DropDownFilter/General.png)
+![General](/assets/DropDownFilter/General.png)
 
 Add a new filter with a caption and choose comparison type.
 
-![Filters](assets/DropDownFilter/Filters.png)
+![Filters](/assets/DropDownFilter/Filters.png)
 
 When filtering by `Attribute`, select an attribute and input a value to filter by
 When filtering by `XPath`, input a constraint to filter by.
@@ -135,7 +135,7 @@ When filtering by `XPath`, input a constraint to filter by.
 **NB: The `None` filter option should always appear at the top of the list and it does not require a caption.** 
 **Also to note, only one empty filter option should be selected.**
 
-![XPathConstraint](assets/DropDownFilter/XPathConstraint.png)
+![XPathConstraint](/assets/DropDownFilter/XPathConstraint.png)
 
 ### Drop Down Sort
 Add an interactive sort to your list view.
@@ -146,24 +146,24 @@ It supports sorting on a single field similar to the built-in list view sort cap
 * Specify an option to sort list view items on load. If multiple defaults are selected, the widget will select the first one.
 
 ## Demo project
-![Demo](assets/DropDownSort/demo.gif)
+![Demo](/assets/DropDownSort/demo.gif)
 
 ## Usage
 
 ### Data source configuration
 
-![Data source](assets/DropDownSort/Datasource.png)
+![Data source](/assets/DropDownSort/Datasource.png)
  - On the `List view with entity` option of the `Data source` tab, browse and 
  select the "entity" property of the list widget you want to sort.
  This `entity` must be the one used on the list view.
  
- ![Data source](assets/DropDownSort/SortAttributes.png)
+ ![Data source](/assets/DropDownSort/SortAttributes.png)
  
  - On the `Sort attributes` option of the `Data source` tab, browse and 
  select the attribute on the list widget entity to be sorted. 
  
  
- ![Data source](assets/DropDownSort/SortAttributesItems.png)
+ ![Data source](/assets/DropDownSort/SortAttributesItems.png)
 
 
 ### Text Search
@@ -175,23 +175,23 @@ It supports searching on single field similar to the built-in list view search c
 * Open search in default
 
 ## Sample
-![Sample](assets/TextBoxSearch/demo.gif)
+![Sample](/assets/TextBoxSearch/demo.gif)
 
 ## Usage
 
 Configure the widget as below.
 
-![General](assets/TextBoxSearch/general.jpg)
+![General](/assets/TextBoxSearch/general.jpg)
 
 - On the `List view with entity` option of the `General` tab, select an entity that matches listview entity.
 
 - On the `Attributes` option of the `General` tab, create attributes to be used in the text search.
 
-![General](assets/TextBoxSearch/attribute.jpg)
+![General](/assets/TextBoxSearch/attribute.jpg)
 
 ### Header Sort
 Please follow [Header sort guide](docs/README.HeaderSort.md)
-![Demo header sort](assets/HeaderSort/demo.gif)
+![Demo header sort](/assets/HeaderSort/demo.gif)
 
 ## Issues, suggestions and feature requests
 Please report issues at [https://github.com/mendixlabs/list-view-controls/issues](https://github.com/mendixlabs/list-view-controls/issues).
