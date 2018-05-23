@@ -20,7 +20,8 @@
     "build": "grunt release",
     "updateProject": "node ./node_modules/mendix-widget-build-script/dist/UpdateMxProject.js",
     "deployApp": "node ./node_modules/mendix-widget-build-script/dist/DeployMxApp.js",
-    "deployAndTest": "npm run deploy && npm run test:e2e"
+    "deployAndTest": "npm run deploy && npm run test:e2e",
+    "docker": "sudo docker build -t listviewcontrols ."
   },
   "pre-commit": [
     "emit",

@@ -1,0 +1,29 @@
+dist/
+localSettings.js
+node_modules/
+
+# from global gitignore
+.history/*
+.vscode/*
+*.db
+
+# comment
+.DS_Store
+Desktop.ini
+.idea
+*~
+*.swp
+._*
+*.pyc
+Thumbs.db
+.Spotlight-V100
+.Trashes
+.env
+.svn
+.cvs
+.travis
+.git*
+.*.yml
+CODE_OF_CONDUCT.md
+app/vendor/**/test
+app/vendor/**/tests
