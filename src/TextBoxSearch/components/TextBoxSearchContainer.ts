@@ -123,11 +123,28 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         if (targetListView && targetListView._datasource && searchQuery) {
             const constraints: string[] = [];
+            const dayInMilliSeconds = 24 * 60 * 60 * 1000;
             this.props.attributeList.forEach(searchAttribute => {
-                constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+                const { attribute } = searchAttribute;
+                if (mx.meta.getEntity(this.props.entity).isDate(attribute)) {
+                    let finalDate = window.mx.parser.parseValue(searchQuery, "datetime", { selector: "date" });
+                    const isLocalized = mx.meta.getEntity(this.props.entity).isLocalizedDate(attribute);
+                    if (finalDate) {
+                        if (!isLocalized) {
+                            const delocalizedTime = window.mx.parser.delocalizeEpoch(finalDate);
+                            finalDate = new Date(delocalizedTime);
+                        }
+                        const currentDate = finalDate.getTime();
+                        const nextDate = finalDate.getTime() + dayInMilliSeconds;
+                        const constraint = `(${attribute}>=${currentDate} and ${attribute}<${nextDate})`;
+                        constraints.push(constraint);
+                    }
+                } else {
+                    constraints.push(`contains(${attribute},'${searchQuery}')`);
+                }
             });
 
-            return "[" + constraints.join(" or ") + "]";
+            return constraints.length ? "[" + constraints.join(" or ") + "]" : "";
         }
         return "";
     }
