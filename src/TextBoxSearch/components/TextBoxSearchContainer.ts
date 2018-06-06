@@ -80,7 +80,6 @@ export default class SearchContainer extends Component<ContainerProps, Container
         if (this.state.datePicker) {
             this.state.datePicker.uninitialize();
         }
-
     }
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
@@ -203,13 +202,14 @@ export default class SearchContainer extends Component<ContainerProps, Container
         if (datePicker) {
             if (datePicker.get("value")) {
                 this.props.attributeList.forEach(searchAttribute => {
-                    const { attribute } = searchAttribute;
-                    let finalDate = (datePicker.get("value") as Date).getTime();
-                    if (!mx.meta.getEntity(this.props.entity).isLocalizedDate(attribute)) {
-                        finalDate = window.mx.parser.delocalizeEpoch(datePicker.get("value") as Date);
-                    }
+                    const { entity, attribute, attributePath } = this.getEntityAttribute(searchAttribute.attribute);
+
+                    const finalDate = (mx.meta.getEntity(entity).isLocalizedDate(attribute))
+                        ? (datePicker.get("value") as Date).getTime()
+                        : window.mx.parser.delocalizeEpoch(datePicker.get("value") as Date);
+
                     const nextDate = finalDate + dayInMilliSeconds;
-                    constraints.push(`(${attribute}>=${finalDate} and ${attribute}<${nextDate})`);
+                    constraints.push(`(${attributePath}>=${finalDate} and ${attributePath}<${nextDate})`);
                 });
                 if (this.state.alertMessage) {
                     this.setState({ alertMessage: "" });
@@ -245,17 +245,36 @@ export default class SearchContainer extends Component<ContainerProps, Container
         });
     }
 
+    private getEntityAttribute = (attributePath) => {
+        if (attributePath.indexOf("/") === -1) {
+            return {
+                entity: this.props.entity,
+                attribute: attributePath,
+                attributePath
+            };
+        } else {
+            const referencePath = attributePath.split("/");
+            return {
+                entity: referencePath[referencePath.length - 2],
+                attribute: referencePath[referencePath.length - 1],
+                attributePath
+            };
+        }
+    }
+
     private validateSearchAttributes(): string {
         let isDate = false;
         let isString = false;
+
         this.props.attributeList.forEach(searchAttribute => {
-            if (mx.meta.getEntity(this.props.entity).isDate(searchAttribute.attribute)) {
+            const { entity, attribute } = this.getEntityAttribute(searchAttribute.attribute);
+            if (mx.meta.getEntity(entity).isDate(attribute)) {
                 isDate = true;
             } else {
                 isString = true;
             }
         });
-        if (isDate && !isString) this.searchByDate = true;
+        this.searchByDate = (isDate && !isString);
 
         return (isDate && isString) ? "Avoid mixing date and text attributes" : "";
     }
