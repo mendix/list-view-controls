@@ -76,9 +76,11 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     componentWillUnmount() {
+        const { datePicker } = this.state;
         this.connections.forEach(dojoConnect.disconnect);
-        if (this.state.datePicker) {
-            this.state.datePicker.uninitialize();
+        if (datePicker && datePicker.domNode) {
+            const widgets = dijitRegistry.findWidgets(datePicker.domNode, undefined) as dijit._Widget[];
+            widgets.forEach(widget => widget.destroyRecursive(true));
         }
     }
 
