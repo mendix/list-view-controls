@@ -1,5 +1,6 @@
 import { Component, ReactElement, createElement } from "react";
 import * as dojoConnect from "dojo/_base/connect";
+import * as dijitRegistry from "dijit/registry";
 import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -33,20 +34,25 @@ export interface ContainerState {
     targetListView?: ListView;
     targetNode?: HTMLElement;
     validationPassed?: boolean;
+    datePicker?: mxui.widget.DatePicker;
+    searchNode?: HTMLInputElement;
 }
 
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private navigationHandler: object;
+    private connections: object[];
     private widgetDOM: HTMLElement;
+    private searchByDate: boolean;
 
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listViewAvailable: false };
-
-        this.applySearch = this.applySearch.bind(this);
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
+        this.state = {
+            listViewAvailable: false,
+            alertMessage: this.validateSearchAttributes()
+        };
+        this.connections = [];
+        this.connections.push(dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView));
     }
 
     componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
@@ -70,11 +76,15 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
+        this.connections.forEach(dojoConnect.disconnect);
+        if (this.state.datePicker) {
+            this.state.datePicker.uninitialize();
+        }
+
     }
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
-        if (!this.state.alertMessage) {
+        if (!this.state.alertMessage && !this.searchByDate) {
             return createElement(TextBoxSearch, {
                 defaultQuery: this.props.defaultQuery,
                 onTextChange: this.applySearch,
@@ -85,8 +95,61 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return null;
     }
 
-    private applySearch(searchQuery: string) {
-        // Construct constraint based on search query
+    private renderCalendar = () => {
+        const format = this.findCalendarFormat();
+
+        const datePicker = new mxui.widget.DatePicker({
+            format: format.datePattern,
+            placeholder: format.datePattern
+        });
+        datePicker.buildRendering();
+        datePicker.startup();
+
+        const searchNode = datePicker.domNode.children[1].children[0] as HTMLInputElement;
+
+        this.connections.push(dojoConnect.connect(searchNode, "keyup", this, this.applySearch));
+        this.connections.push(dojoConnect.connect(searchNode, "click", this, this.killEvent));
+        this.connections.push(dojoConnect.connect(searchNode, "keypress", this, this.killEvent));
+        this.connections.push(dojoConnect.connect(searchNode, "keydown", this, this.killEvent));
+        this.connections.push(dojoConnect.connect(searchNode, "keypress", this, this.escapeReset));
+        this.connections.push(dojoConnect.connect(datePicker, "onChange", this, this.applySearch));
+        this.setState({ datePicker, searchNode });
+        return datePicker;
+    }
+
+    private killEvent = (event: Event) => event.stopPropagation();
+
+    private escapeReset = (event: KeyboardEvent) => {
+        if (event.keyCode === 27) { // escape key maps to keycode `27`
+            if (event.srcElement.tagName === "SELECT") {
+                (event.srcElement as HTMLSelectElement).selectedIndex = 0;
+            } else if (event.srcElement.tagName === "INPUT") {
+                (event.srcElement as HTMLInputElement).value = "";
+            }
+            this.applySearch("");
+        }
+    }
+
+    private findCalendarFormat(searchAttribute: string = this.props.attributeList[0].attribute) {
+        const { targetListView } = this.state;
+        if (targetListView) {
+            const datePicker = dijitRegistry.byNode(targetListView.domNode.querySelector(".mx-name-datePicker1"));
+            if (datePicker.attributePath.split("/")[1] === searchAttribute) {
+                return {
+                    ...datePicker._rdParams,
+                    placeholder: datePicker.placeholder
+                };
+            }
+        }
+        return {
+            format: "",
+            placeholder: "",
+            datePattern: "",
+            selector: "date"
+        };
+    }
+
+    private applySearch = (searchQuery: string) => {
         const constraint = this.getConstraint(searchQuery);
 
         if (this.dataSourceHelper) {
@@ -97,13 +160,13 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private getConstraint(searchQuery: string): string | GroupedOfflineConstraint {
         const { targetListView } = this.state;
 
-        searchQuery = searchQuery.trim();
-
+        searchQuery = this.state.datePicker ? searchQuery : searchQuery.trim();
+        if (this.state.datePicker) {
+            return this.getDateConstraints();
+        }
         if (!searchQuery) {
             return "";
-
         }
-
         if (window.mx.isOffline()) {
             const offlineConstraints: OfflineConstraint[] = [];
             this.props.attributeList.forEach(search => {
@@ -120,36 +183,46 @@ export default class SearchContainer extends Component<ContainerProps, Container
                 operator: "or"
             };
         }
-
         if (targetListView && targetListView._datasource && searchQuery) {
             const constraints: string[] = [];
-            const dayInMilliSeconds = 24 * 60 * 60 * 1000;
+
             this.props.attributeList.forEach(searchAttribute => {
-                const { attribute } = searchAttribute;
-                if (mx.meta.getEntity(this.props.entity).isDate(attribute)) {
-                    let finalDate = window.mx.parser.parseValue(searchQuery, "datetime", { selector: "date" });
-                    const isLocalized = mx.meta.getEntity(this.props.entity).isLocalizedDate(attribute);
-                    if (finalDate) {
-                        if (!isLocalized) {
-                            const delocalizedTime = window.mx.parser.delocalizeEpoch(finalDate);
-                            finalDate = new Date(delocalizedTime);
-                        }
-                        const currentDate = finalDate.getTime();
-                        const nextDate = finalDate.getTime() + dayInMilliSeconds;
-                        const constraint = `(${attribute}>=${currentDate} and ${attribute}<${nextDate})`;
-                        constraints.push(constraint);
-                    }
-                } else {
-                    constraints.push(`contains(${attribute},'${searchQuery}')`);
-                }
+                constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
             });
 
-            return constraints.length ? "[" + constraints.join(" or ") + "]" : "";
+            return "[" + constraints.join(" or ") + "]";
         }
         return "";
     }
 
-    private connectToListView() {
+    private getDateConstraints = () => {
+        const { datePicker, searchNode } = this.state;
+        const constraints: string[] = [];
+        const dayInMilliSeconds = 24 * 60 * 60 * 1000;
+
+        if (datePicker) {
+            if (datePicker.get("value")) {
+                this.props.attributeList.forEach(searchAttribute => {
+                    const { attribute } = searchAttribute;
+                    let finalDate = (datePicker.get("value") as Date).getTime();
+                    if (!mx.meta.getEntity(this.props.entity).isLocalizedDate(attribute)) {
+                        finalDate = window.mx.parser.delocalizeEpoch(datePicker.get("value") as Date);
+                    }
+                    const nextDate = finalDate + dayInMilliSeconds;
+                    constraints.push(`(${attribute}>=${finalDate} and ${attribute}<${nextDate})`);
+                });
+                if (this.state.alertMessage) {
+                    this.setState({ alertMessage: "" });
+                }
+            } else if (searchNode.value) {
+                this.setState({ alertMessage: "Invalid date" });
+            }
+        }
+
+        return constraints.length ? "[" + constraints.join(" or ") + "]" : "";
+    }
+
+    private connectToListView = () => {
         let errorMessage = "";
         let targetListView: ListView | undefined;
 
@@ -160,10 +233,30 @@ export default class SearchContainer extends Component<ContainerProps, Container
             errorMessage = error.message;
         }
 
+        if (this.searchByDate) {
+            const datePicker = this.renderCalendar();
+            this.widgetDOM.appendChild(datePicker.domNode);
+        }
+
         this.setState({
-            alertMessage: errorMessage,
+            alertMessage: errorMessage || this.validateSearchAttributes(),
             listViewAvailable: !!targetListView,
             targetListView
         });
+    }
+
+    private validateSearchAttributes(): string {
+        let isDate = false;
+        let isString = false;
+        this.props.attributeList.forEach(searchAttribute => {
+            if (mx.meta.getEntity(this.props.entity).isDate(searchAttribute.attribute)) {
+                isDate = true;
+            } else {
+                isString = true;
+            }
+        });
+        if (isDate && !isString) this.searchByDate = true;
+
+        return (isDate && isString) ? "Avoid mixing date and text attributes" : "";
     }
 }
