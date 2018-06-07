@@ -1,42 +1,37 @@
-import { Element } from "webdriverio";
 import page from "./pages/home.page";
 import { dates } from "./pages/datatype.page";
 
 const testValue = "Uganda";
 
 describe("Text box search", () => {
+    beforeAll(() => page.open());
+
     it("when query is entered in the search input the list view should be filtered", () => {
-        page.open();
         page.searchInput.waitForVisible();
         page.searchInput.click();
         page.searchInput.setValue(testValue);
+        browser.pause(1000);
 
-        const listviewItems: Element[] = page.listViewList.value;
-        expect(listviewItems.length).toBe(1);
+        expect(page.listViewList.value.length).toBe(1);
     });
 
     it("when query is entered in the search input and clear button clicked the list view should be filtered with new query", () => {
-        page.open();
         page.searchInput.waitForVisible();
         page.searchInput.click();
         page.searchInput.setValue(testValue);
+        browser.pause(1000);
 
-        let listviewItems: Element[] = page.listViewList.value;
-        expect(listviewItems.length).toBe(1);
+        expect(page.listViewList.value.length).toBe(1);
 
         page.searchButton.click();
+        browser.pause(1000);
 
-        setTimeout(() => {
-            listviewItems = page.listViewList.value;
-            expect(listviewItems.length).toBeGreaterThan(1);
-        }, 3000);
+        expect(page.listViewList.value.length).toBeGreaterThan(1);
 
         page.searchInput.setValue("e");
+        browser.pause(1000);
 
-        setTimeout(() => {
-            listviewItems = page.listViewList.value;
-            expect(listviewItems.length).toBeGreaterThan(2);
-        }, 3000);
+        expect(page.listViewList.value.length).toBeGreaterThan(2);
     });
 
     describe("dates", () => {
