@@ -1,5 +1,6 @@
-import page from "./pages/home.page";
 import { Element } from "webdriverio";
+import page from "./pages/home.page";
+import { dates } from "./pages/datatype.page";
 
 const testValue = "Uganda";
 
@@ -36,5 +37,22 @@ describe("Text box search", () => {
             listviewItems = page.listViewList.value;
             expect(listviewItems.length).toBeGreaterThan(2);
         }, 3000);
+    });
+
+    describe("dates", () => {
+        beforeAll(() => {
+            browser.url("/p/textsearch/datatypes");
+        });
+
+        it("on single attribute", () => {
+            dates.singleDateSearchInput.waitForVisible();
+            dates.singleDateSearchInput.setValue("1/1/2018");
+            browser.pause(1000);
+            dates.singleListViewDateInputs.waitForVisible();
+            for (const item of dates.singleListViewDateInputs.value as any) {
+                expect(item.getHTML()).toContain(dates.singleDateSearchInput.getValue());
+            }
+        });
+
     });
 });
