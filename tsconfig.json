@@ -17,6 +17,8 @@
       "forceConsistentCasingInFileNames": true,
       "noFallthroughCasesInSwitch": true,
       "alwaysStrict": true,
+      "strictFunctionTypes": false,
+      "strict": false,
       "skipLibCheck": false,
       "noUnusedLocals": true,
       "noUnusedParameters": true
