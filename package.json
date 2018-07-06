@@ -5,7 +5,7 @@
   "description": "Search and filter Mendix list views",
   "copyright": "Mendix BV",
   "scripts": {
-    "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec \"grunt",
+    "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec grunt",
     "emit": "tsc",
     "pretest": "tsc && npm run lint && npm run build",
     "test": "npm run test:unit && npm run test:conditional",
