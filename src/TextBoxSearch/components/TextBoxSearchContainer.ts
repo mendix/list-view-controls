@@ -1,5 +1,4 @@
 import { Component, ReactElement, createElement } from "react";
-import * as dojoConnect from "dojo/_base/connect";
 import * as mendixLang from "mendix/lang";
 import * as classNames from "classnames";
 
@@ -39,15 +38,14 @@ export interface ContainerState {
 
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private navigationHandler: object;
     private widgetDOM: HTMLElement;
 
+    readonly state: ContainerState = { listViewAvailable: false };
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listViewAvailable: false };
-
-        mendixLang.delay(this.connectToListView, this.checkListViewAvailable, 20);
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+        this.applySearch = this.applySearch.bind(this);
     }
 
     componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
@@ -70,12 +68,9 @@ export default class SearchContainer extends Component<ContainerProps, Container
         );
     }
 
-    componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
+    private checkListViewAvailable(): boolean {
+        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
     }
-
-    private checkListViewAvailable = (): boolean =>
-        !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity)
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
         if (!this.state.alertMessage) {
@@ -89,7 +84,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return null;
     }
 
-    private applySearch = (searchQuery: string) => {
+    private applySearch(searchQuery: string) {
         // Construct constraint based on search query
         const constraint = this.getConstraint(searchQuery);
 
@@ -136,7 +131,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return "";
     }
 
-    private connectToListView = () => {
+    private connectToListView() {
         let errorMessage = "";
         let targetListView: ListView | undefined;
 

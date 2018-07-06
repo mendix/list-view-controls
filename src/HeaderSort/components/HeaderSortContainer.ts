@@ -1,6 +1,6 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
-import * as dojoConnect from "dojo/_base/connect";
+import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -8,6 +8,7 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
+import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import "../ui/HeaderSort.scss";
 
@@ -29,17 +30,16 @@ export interface ContainerState {
 }
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
-    private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
+
+    readonly state: ContainerState = { listViewAvailable: false };
 
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listViewAvailable: false };
-
         this.updateSort = this.updateSort.bind(this);
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
     }
@@ -66,8 +66,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
     }
 
-    componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
+    private checkListViewAvailable(): boolean {
+        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
     }
 
     private renderSort(): ReactElement<HeaderSortProps> | null {
