@@ -1,5 +1,6 @@
 import { Component, ReactElement, createElement } from "react";
 import * as dojoConnect from "dojo/_base/connect";
+import * as mendixLang from "mendix/lang";
 import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -7,6 +8,7 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
+import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 interface WrapperProps {
     class: string;
@@ -45,8 +47,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         this.state = { listViewAvailable: false };
 
-        this.applySearch = this.applySearch.bind(this);
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
+        mendixLang.delay(this.connectToListView, this.checkListViewAvailable, 20);
     }
 
     componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
@@ -73,6 +74,9 @@ export default class SearchContainer extends Component<ContainerProps, Container
         dojoConnect.disconnect(this.navigationHandler);
     }
 
+    private checkListViewAvailable = (): boolean =>
+        !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity)
+
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
         if (!this.state.alertMessage) {
             return createElement(TextBoxSearch, {
@@ -85,7 +89,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return null;
     }
 
-    private applySearch(searchQuery: string) {
+    private applySearch = (searchQuery: string) => {
         // Construct constraint based on search query
         const constraint = this.getConstraint(searchQuery);
 
@@ -132,7 +136,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return "";
     }
 
-    private connectToListView() {
+    private connectToListView = () => {
         let errorMessage = "";
         let targetListView: ListView | undefined;
 

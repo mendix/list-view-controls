@@ -71,7 +71,7 @@ export class DataSourceHelper {
                 // TODO Check if there's currently no update happening on the listView coming from another
                 // Feature/functionality/widget which does not use DataSourceHelper
                 this.iterativeUpdateDataSource();
-          }, this.delay);
+            }, this.delay);
         } else {
             this.requiresUpdate = true;
         }
@@ -148,9 +148,9 @@ export class DataSourceHelper {
         }
 
         this.widget.update(null, () => {
-           this.hideLoader();
-           this.initialLoad = false;
-           callback();
+            this.hideLoader();
+            this.initialLoad = false;
+            callback();
         });
     }
 
