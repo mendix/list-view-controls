@@ -1,12 +1,13 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
-import * as dojoConnect from "dojo/_base/connect";
+import * as mendixLang from "mendix/lang";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
 import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
 import { Validate } from "../Validate";
+import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 export interface ContainerProps extends WrapperProps {
     listViewEntity: string;
@@ -33,16 +34,15 @@ export interface ContainerState {
 
 export default class CheckboxFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private navigationHandler: object;
     private widgetDOM: HTMLElement;
+
+    readonly state: ContainerState = { listViewAvailable: false, alertMessage: Validate.validateProps(this.props) };
 
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = { listViewAvailable: false, alertMessage: Validate.validateProps(props) };
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.applyFilter = this.applyFilter.bind(this);
-        // Ensures that the listView is connected so the widget doesn't break in mobile due to unpredictable render timing
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
     }
 
     render() {
@@ -66,8 +66,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         }
     }
 
-    componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
+    private checkListViewAvailable(): boolean {
+        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.listViewEntity);
     }
 
     private renderAlert(message: ReactChild): ReactElement<AlertProps> {

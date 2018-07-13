@@ -1,6 +1,6 @@
 import { Component, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
-import * as dojoConnect from "dojo/_base/connect";
+import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -8,6 +8,7 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { DropDown, DropDownProps } from "./DropDownSort";
+import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import "../ui/DropDownSort.scss";
 
@@ -34,20 +35,20 @@ export interface ContainerState {
 }
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
-    private navigationHandler: object;
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
     private subscriptionTopic: string;
 
+    readonly state: ContainerState = {
+        defaultOption: this.getDefaultOption(),
+        listViewAvailable: false
+    };
+
     constructor(props: ContainerProps) {
         super(props);
 
-        this.state = {
-            defaultOption: this.getDefaultOption(),
-            listViewAvailable: false
-        };
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.updateSort = this.updateSort.bind(this);
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this, this.connectToListView.bind(this));
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
     }
@@ -76,8 +77,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
     }
 
-    componentWillUnmount() {
-        dojoConnect.disconnect(this.navigationHandler);
+    private checkListViewAvailable(): boolean {
+        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
     }
 
     private renderDropDown(): ReactElement<DropDownProps> | null {

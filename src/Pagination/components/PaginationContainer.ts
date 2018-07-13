@@ -1,6 +1,6 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
-import * as dojoConnect from "dojo/_base/connect";
+import * as mendixLang from "mendix/lang";
 import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
 
@@ -49,23 +49,23 @@ interface ValidateProps {
 }
 
 export default class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
-    private navigationHandler: object;
     private widgetDOM: HTMLElement;
     private subscriptionTopic: string;
+
+    readonly state: PaginationContainerState = {
+        findingListViewWidget: true,
+        hideUnusedPaging: false,
+        isLoadingItems: false,
+        listViewSize: 0,
+        message: "",
+        pageSize: 1
+    };
 
     constructor(props: ModelerProps) {
         super(props);
 
-        this.state = {
-            findingListViewWidget: true,
-            hideUnusedPaging: false,
-            isLoadingItems: false,
-            listViewSize: 0,
-            message: "",
-            pageSize: 1
-        };
-
-        this.navigationHandler = dojoConnect.connect(props.mxform, "onNavigation", this , this.findListView);
+        mendixLang.delay(this.findListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+        this.updateListView = this.updateListView.bind(this);
     }
 
     public static translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
@@ -89,8 +89,11 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
     componentWillUnmount() {
         const targetNode = this.state.targetNode;
 
-        dojoConnect.disconnect(this.navigationHandler);
         showLoadMoreButton(targetNode);
+    }
+
+    private checkListViewAvailable(): boolean {
+        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement);
     }
 
     private renderPageButton(): ReactElement<PaginationProps> | null {
@@ -114,7 +117,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         return null;
     }
 
-    private findListView = () => {
+    private findListView() {
         if (this.state.findingListViewWidget) {
             const targetListView = SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement);
             const targetNode = targetListView && targetListView.domNode;
@@ -228,7 +231,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         });
     }
 
-    private updateListView = (offSet: number, pageNumber: number, pageSize?: number) => {
+    private updateListView(offSet: number, pageNumber: number, pageSize?: number) {
         const { targetListView, targetNode, validationPassed, isLoadingItems } = this.state;
 
         if (targetListView && targetNode && validationPassed) {

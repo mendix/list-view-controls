@@ -4,7 +4,7 @@ exports.config = {
     host: "127.0.0.1",
     port: 4444,
     specs: [ "./dist/e2e/**/*.spec.js" ],
-    maxInstances: debug ? 1 : 5,
+    maxInstances: 1,
     capabilities: [ {
         maxInstances: 1,
         browserName: "chrome"
@@ -23,7 +23,7 @@ exports.config = {
     reporters: [ "dot", "spec" ],
     execArgv: debug ? [ "--inspect" ] : undefined,
     jasmineNodeOpts: {
-        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (100 * 1000),
+        defaultTimeoutInterval: debug ? (60 * 60 * 1000) : (120 * 1000),
         expectationResultHandler: function(passed, assertion) {
             if (passed) {
                 return;
