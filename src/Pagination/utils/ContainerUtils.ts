@@ -47,6 +47,8 @@ export const hideLoader = (targetListView: ListView) => {
 };
 
 export const mxTranslation = (namespace: string, key: string, replacements: any[]) => {
-    const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`) || "[No translation]";
+    const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
+        || window.mx.session.getConfig("uiconfig.translations")[`${namespace}.${key}`]
+        || "[No translation]";
     return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
 };
