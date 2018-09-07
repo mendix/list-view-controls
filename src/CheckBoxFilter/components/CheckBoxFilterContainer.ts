@@ -59,9 +59,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         );
     }
 
-    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable
-                && (!prevState.listViewAvailable || prevProps.mxObject !== this.props.mxObject)) {
+    componentDidUpdate() {
+        if (this.state.listViewAvailable) {
             this.applyFilter(this.props.defaultChecked);
         }
     }
