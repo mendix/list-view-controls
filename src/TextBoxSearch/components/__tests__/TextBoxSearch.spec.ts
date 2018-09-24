@@ -86,7 +86,7 @@ describe("TextBoxSearch", () => {
             };
             const searchBar = renderSearchBar(newSearchProps);
 
-            expect(searchBar.state().query).toEqual("Birds");
+            expect(searchBar.state("query")).toEqual("Birds");
         });
 
         it("updates when the search value changes", () => {
