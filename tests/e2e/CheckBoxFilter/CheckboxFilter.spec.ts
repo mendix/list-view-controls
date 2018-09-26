@@ -20,8 +20,8 @@ describe("Check box filter", () => {
         });
 
         it("the listview filters only 'African' countries", () => {
-            defaultFilter.listView.waitForVisible();
-            defaultFilter.listViewItems.waitForVisible();
+            defaultFilter.listView.waitForExist();
+            defaultFilter.listViewItems.waitForExist();
             const listViewItems = defaultFilter.listViewItems;
             for (const item of listViewItems.getHTML() as any) {
                 expect(item).toContain("Africa");

@@ -63,9 +63,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         );
     }
 
-    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable
-                && (!prevState.listViewAvailable || prevProps.mxObject !== this.props.mxObject)) {
+    componentDidUpdate() {
+        if (this.state.listViewAvailable) {
             const selectedFilter = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
             this.applyFilter(selectedFilter);
         }

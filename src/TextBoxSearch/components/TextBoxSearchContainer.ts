@@ -48,8 +48,8 @@ export default class SearchContainer extends Component<ContainerProps, Container
         this.applySearch = this.applySearch.bind(this);
     }
 
-    componentDidUpdate(_previousProps: ContainerProps, previousState: ContainerState) {
-        if (this.state.listViewAvailable && !previousState.listViewAvailable) {
+    componentDidUpdate() {
+        if (this.state.listViewAvailable) {
             this.applySearch(this.props.defaultQuery);
         }
     }
