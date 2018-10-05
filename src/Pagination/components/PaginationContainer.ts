@@ -72,6 +72,16 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
     }
 
+    componentDidMount() {
+        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+            logger.debug("Storing state");
+            const widgetViewState = formViewState[this.props.uniqueid] || (formViewState[this.props.uniqueid] = {});
+            widgetViewState.pageSize = this.state.pageSize;
+            widgetViewState.currentOffset = this.state.currentOffset;
+            widgetViewState.currentPageNumber = this.state.currentPageNumber;
+        });
+    }
+
     render() {
         return createElement("div",
             {
@@ -163,10 +173,13 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
             hideLoadMoreButton(targetNode);
 
             if (this.state.targetListView && this.state.targetNode) {
+
                 targetNode = this.state.targetNode;
                 const dataSource = this.state.targetListView._datasource;
                 const listViewSize = dataSource._setSize;
-                const pageSize = dataSource._pageSize;
+                const pageSize = this.getPageState("pageSize", dataSource._pageSize);
+                const offset = this.getPageState("currentOffset", 0);
+                const pageNumber = this.getPageState("currentPageNumber", 1);
                 const hideUnusedPaging = this.isHideUnUsed(this.state.targetListView) ;
 
                 this.setState({
@@ -174,14 +187,25 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                     hideUnusedPaging,
                     listViewSize,
                     pageSize,
-                    publishedOffset: 0,
-                    publishedPageNumber: 1,
+                    publishedOffset: offset,
+                    publishedPageNumber: pageNumber,
                     targetListView,
                     targetNode,
-                    updateSource: "other"
+                    updateSource: "multiple"
                 });
+                if (offset !== 0 || pageNumber !== 1 || pageSize !== dataSource._pageSize) {
+                    this.updateListView(offset, pageNumber, pageSize, false);
+                }
             }
         });
+    }
+
+    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
+        const mxform = this.props.mxform;
+        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
+        const state = 0 === arguments.length ? widgetViewState : widgetViewState && key in widgetViewState ? widgetViewState[key] : defaultValue;
+        logger.debug("getPageState", key, defaultValue, state);
+        return state;
     }
 
     private beforeListViewDataRender(targetListView: ListView) {
@@ -231,7 +255,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
         });
     }
 
-    private updateListView(offSet: number, pageNumber: number, pageSize?: number) {
+    private updateListView(offSet: number, pageNumber: number, pageSize?: number, publish = true) {
         const { targetListView, targetNode, validationPassed, isLoadingItems } = this.state;
 
         if (targetListView && targetNode && validationPassed) {
@@ -249,7 +273,9 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
                 targetListView._datasource.setOffset(offSet);
                 targetListView.sequence([ "_sourceReload", "_renderData" ]);
-                this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber });
+                if (publish) {
+                    this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber });
+                }
             }
         }
     }

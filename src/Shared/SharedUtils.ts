@@ -1,4 +1,5 @@
 export interface WrapperProps {
+    uniqueid: string;
     class: string;
     style: string;
     friendlyId: string;
