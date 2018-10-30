@@ -5,7 +5,7 @@ import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
 
 import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
@@ -29,9 +29,12 @@ export interface ContainerState {
     targetListView?: ListView;
 }
 
+type FormState = ContainerState & ContainerProps;
+
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
+    private setPageState: (store: Partial<FormState>) => void;
 
     readonly state: ContainerState = { listViewAvailable: false };
 
@@ -42,6 +45,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
+        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
     }
 
     render() {
@@ -58,11 +62,34 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         );
     }
 
+    componentDidMount() {
+        const persistedState = this.getPageState<FormState>();
+        if (persistedState) {
+            this.setState({
+                publishedSortAttribute: persistedState.publishedSortAttribute,
+                publishedSortOrder: persistedState.publishedSortOrder,
+                publishedSortWidgetFriendlyId: persistedState.publishedSortWidgetFriendlyId
+            });
+        }
+        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+            logger.debug("Storing state");
+            formViewState[this.props.uniqueid] = this.props.mxform.viewState[this.props.uniqueid] || {};
+            formViewState[this.props.uniqueid] = {
+                publishedSortAttribute: this.state.publishedSortAttribute,
+                publishedSortOrder: this.state.publishedSortOrder,
+                publishedSortWidgetFriendlyId: this.props.friendlyId
+            };
+        });
+    }
+
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable
-                && !prevState.listViewAvailable
-                && this.props.initialSorted) {
-            this.updateSort(this.props.sortAttribute, this.props.sortOrder);
+        const persistentState = this.getPageState<FormState>();
+        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+            if (this.props.initialSorted) {
+                this.updateSort(this.props.sortAttribute, this.props.sortOrder);
+            } else if (persistentState && persistentState.publishedSortAttribute) {
+                this.updateSort(this.props.sortAttribute, persistentState.publishedSortOrder);
+            }
         }
     }
 
@@ -105,19 +132,28 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
                 DataSourceHelper.showContent(targetListView.domNode);
             }
         }
+        const pageState = this.getPageState<FormState>();
 
         this.setState({
             alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView
+            targetListView,
+            publishedSortOrder: pageState && pageState.publishedSortOrder !== undefined ? pageState.publishedSortOrder : undefined,
+            publishedSortAttribute: pageState && pageState.publishedSortAttribute ? pageState.publishedSortAttribute as string : undefined
+
         });
     }
 
-    private updateSort(attribute: string, order: string) {
+    private updateSort(attribute: string, order: SortOrder) {
         const { targetListView } = this.state;
 
         if (targetListView && this.dataSourceHelper) {
             this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
+            this.setPageState({
+                publishedSortOrder: order,
+                publishedSortAttribute: attribute,
+                publishedSortWidgetFriendlyId: this.props.friendlyId
+            });
             this.publishWidgetChanges(attribute, order);
         }
     }
@@ -139,10 +175,15 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     private initialSortOrder(initialSorted: boolean, sortOrder: SortOrder): SortOrder {
-        if (initialSorted) {
-            return sortOrder;
-        }
-
-        return "";
+        return initialSorted ? sortOrder : "";
     }
+
+    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
+        const mxform = this.props.mxform;
+        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
+        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
+        logger.debug("getPageState", key, defaultValue, state);
+        return state;
+    }
+
 }
