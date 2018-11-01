@@ -1,7 +1,7 @@
 import { Component, FormEvent, OptionHTMLAttributes, ReactElement, createElement } from "react";
 import { AttributeType } from "./DropDownSortContainer";
 
-export interface DropDownOptionType extends AttributeType {
+export interface DropDownOptionType extends Partial<AttributeType> {
     value: string;
 }
 
@@ -13,6 +13,7 @@ export interface DropDownProps {
     publishedSortWidgetFriendlyId?: string;
     sortAttributes: AttributeType[];
     style: object;
+    defaultSortAttribute?: AttributeType;
 }
 
 export interface DropdownState {
@@ -23,7 +24,7 @@ export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptio
     key: string;
 }
 
-export class DropDown extends Component<DropDownProps, DropdownState> {
+export class DropDownSort extends Component<DropDownProps, DropdownState> {
     private options: DropDownOptionType[] = [];
     private selectorDomNode: HTMLSelectElement;
 
@@ -71,7 +72,9 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
 
     private getDefaultValue(props: DropDownProps): string {
         this.options = this.createOptionProps(props.sortAttributes);
-        const defaultOption = this.options.filter(option => option.defaultSelected)[0];
+        const defaultOption = this.props.defaultSortAttribute && this.options.filter(option =>
+            option.name === this.props.defaultSortAttribute.name
+            && option.sort === this.props.defaultSortAttribute.sort)[0] || undefined;
 
         if (defaultOption) {
             return defaultOption.value;
@@ -100,7 +103,6 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
 
         this.setState({ value });
         this.callOnChangeAction(value);
-
     }
 
     private callOnChangeAction(value: string) {
@@ -113,10 +115,10 @@ export class DropDown extends Component<DropDownProps, DropdownState> {
 
     private createOptionProps(sortAttributes: AttributeType[]): DropDownOptionType[] {
         return sortAttributes.map((optionObject, index) => {
-            const { name, caption, defaultSelected, sort } = optionObject;
+            const { name, caption, sort } = optionObject;
             const value = `${name}-${index}`;
 
-            return { name, caption, defaultSelected, sort, value };
+            return { name, caption, sort, value };
         });
     }
 }

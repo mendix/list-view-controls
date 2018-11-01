@@ -5,9 +5,9 @@ import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
 
-import { DropDown, DropDownProps } from "./DropDownSort";
+import { DropDownProps, DropDownSort } from "./DropDownSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 
 import "../ui/DropDownSort.scss";
@@ -32,11 +32,18 @@ export interface ContainerState {
     publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView | null;
     defaultOption?: AttributeType;
+    defaultSortOrder?: string;
+    defaultSortAttribute?: string;
+}
+
+export interface FormState {
+    defaultOption?: AttributeType;
 }
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
+    private setPageState: (store: Partial<FormState>) => void;
     private subscriptionTopic: string;
 
     readonly state: ContainerState = {
@@ -51,6 +58,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         this.updateSort = this.updateSort.bind(this);
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
+        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
     }
 
     render() {
@@ -67,12 +75,21 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         );
     }
 
+    componentDidMount() {
+        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+            logger.debug("Storing state");
+            formViewState[this.props.uniqueid] = {
+                defaultOption: this.state.defaultOption
+            };
+        });
+    }
+
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
-
+            const pageState: FormState = this.getPageState<FormState>();
+            const selectedSort = pageState && pageState.defaultOption || this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
             if (selectedSort) {
-                this.updateSort(selectedSort.name, selectedSort.sort);
+                    this.updateSort(selectedSort.name, selectedSort.sort);
             }
         }
     }
@@ -83,14 +100,15 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     private renderDropDown(): ReactElement<DropDownProps> | null {
         if (!this.state.alertMessage) {
-            return createElement(DropDown, {
+            return createElement(DropDownSort, {
                 friendlyId: this.props.friendlyId,
                 onDropDownChangeAction: this.updateSort,
                 publishedSortAttribute: this.state.publishedSortAttribute,
                 publishedSortOrder: this.state.publishedSortOrder,
                 publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
                 sortAttributes: this.props.sortAttributes,
-                style: SharedUtils.parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style),
+                defaultSortAttribute: this.getDefaultOption()
             });
         }
 
@@ -98,6 +116,11 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     }
 
     private getDefaultOption() {
+        const pageState = this.getPageState<FormState>();
+        const defaultOption = pageState && pageState.defaultOption;
+        if (pageState && defaultOption && defaultOption.sort && defaultOption.name) {
+            return defaultOption;
+        }
         return this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
     }
 
@@ -132,21 +155,44 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
         if (targetListView && this.dataSourceHelper) {
             this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
+            const selectedOption = this.props.sortAttributes.filter(option => option.name === attribute && option.sort === order)[0];
+            this.setWidgetState({
+                defaultOption: selectedOption
+            });
             this.publishWidgetChanges(attribute, order);
         }
     }
 
     private subScribeToWidgetChanges() {
         dojoTopic.subscribe(this.subscriptionTopic, (message: string[]) => {
-            this.setState({
-                publishedSortAttribute: message[0],
-                publishedSortOrder: message[1],
-                publishedSortWidgetFriendlyId: message[2]
-            });
+            const publishedSortAttribute = message[0];
+            const publishedSortOrder = message[1];
+            const publishedSortWidgetFriendlyId = message[2];
+            if (this.props.friendlyId !== publishedSortWidgetFriendlyId) {
+                this.setState({
+                    publishedSortAttribute,
+                    publishedSortOrder,
+                    publishedSortWidgetFriendlyId
+                });
+            }
         });
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
         dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.friendlyId ]);
+    }
+
+    private setWidgetState(state: Partial<ContainerState & FormState>) {
+        this.setPageState(state);
+        this.setState(state as ContainerState);
+        // this.setState(state as ContainerState);
+    }
+
+    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
+        const mxform = this.props.mxform;
+        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
+        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
+        logger.debug("getPageState", key, defaultValue, state);
+        return state;
     }
 }

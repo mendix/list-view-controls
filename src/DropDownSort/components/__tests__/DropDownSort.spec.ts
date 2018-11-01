@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { configure, shallow } from "enzyme";
 import Adapter = require("enzyme-adapter-react-16");
 
-import { DropDown, DropDownProps, OptionHTMLAttributesType } from "../DropDownSort";
+import { DropDownProps, DropDownSort, OptionHTMLAttributesType } from "../DropDownSort";
 
 configure({ adapter: new Adapter() });
 
@@ -10,7 +10,7 @@ configure({ adapter: new Adapter() });
 
 describe("DropDownSort", () => {
 
-    const renderDropdown = (props: DropDownProps) => shallow(createElement(DropDown, props));
+    const renderDropdown = (props: DropDownProps) => shallow(createElement(DropDownSort, props));
 
     const dropDownProps: DropDownProps = {
         onDropDownChangeAction: () => jasmine.any(Function) as any,
