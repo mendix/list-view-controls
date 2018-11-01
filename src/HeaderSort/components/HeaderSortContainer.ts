@@ -138,8 +138,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
             targetListView,
-            publishedSortOrder: pageState && pageState.publishedSortOrder !== undefined ? pageState.publishedSortOrder : undefined,
-            publishedSortAttribute: pageState && pageState.publishedSortAttribute ? pageState.publishedSortAttribute as string : undefined
+            publishedSortOrder: pageState && pageState.publishedSortOrder,
+            publishedSortAttribute: pageState && pageState.publishedSortAttribute
 
         });
     }
