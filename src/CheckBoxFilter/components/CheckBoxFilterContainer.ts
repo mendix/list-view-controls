@@ -4,7 +4,7 @@ import * as mendixLang from "mendix/lang";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
 import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
 import { Validate } from "../Validate";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
@@ -30,19 +30,28 @@ export interface ContainerState {
     listViewAvailable: boolean;
     targetListView?: ListView;
     validationPassed?: boolean;
+    defaultChecked?: boolean;
+}
+interface FormState {
+    defaultChecked?: boolean;
 }
 
 export default class CheckboxFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDOM: HTMLElement;
+    private setPageState: (store: Partial<FormState>) => void;
 
-    readonly state: ContainerState = { listViewAvailable: false, alertMessage: Validate.validateProps(this.props) };
+    readonly state: ContainerState = {
+        listViewAvailable: false,
+        alertMessage: Validate.validateProps(this.props)
+    };
 
     constructor(props: ContainerProps) {
         super(props);
 
         mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.applyFilter = this.applyFilter.bind(this);
+        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
     }
 
     render() {
@@ -59,9 +68,20 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         );
     }
 
-    componentDidUpdate() {
-        if (this.state.listViewAvailable) {
-            this.applyFilter(this.props.defaultChecked);
+    componentDidMount() {
+        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+            logger.debug("Storing state");
+            formViewState[this.props.uniqueid] = {
+                defaultChecked: this.state.defaultChecked
+            };
+        });
+    }
+
+    componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
+        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+            // const pageState: FormState = this.getPageState<FormState>();
+            const selectedSort = this.getDefaultValue() || this.props.defaultChecked;
+            this.applyFilter(selectedSort);
         }
     }
 
@@ -79,7 +99,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         if (!alertMessage) {
             return createElement(CheckboxFilter, {
                 handleChange: this.applyFilter,
-                isChecked: this.props.defaultChecked
+                isChecked: this.getDefaultValue()
             });
         }
 
@@ -89,6 +109,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     private applyFilter(isChecked: boolean) {
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group);
+            this.setWidgetState({ defaultChecked: isChecked });
         }
     }
 
@@ -164,5 +185,24 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             listViewAvailable: !!targetListView,
             targetListView
         });
+    }
+
+    private getDefaultValue() {
+        const pageState = this.getPageState<FormState>();
+        return pageState && pageState.defaultChecked || this.props.defaultChecked;
+    }
+
+    private setWidgetState(state: Partial<ContainerState & FormState>) {
+        this.setPageState(state);
+        this.setState(state as ContainerState);
+        // this.setState(state as ContainerState);
+    }
+
+    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
+        const mxform = this.props.mxform;
+        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
+        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
+        logger.debug("getPageState", key, defaultValue, state);
+        return state;
     }
 }
