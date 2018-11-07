@@ -14,7 +14,7 @@ import {
 } from "../utils/ContainerUtils";
 
 import { ModelerProps, TopicMessage, UpdateSourceType } from "../Pagination";
-import { OnChangeProps } from "./PageSizeSelect";
+import { OnChangeProps, calculateOffSet } from "./PageSizeSelect";
 import { Pagination, PaginationProps } from "./Pagination";
 import { Validate } from "../Validate";
 
@@ -119,6 +119,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
     private renderPageButton(): ReactElement<PaginationProps> | null {
         if (this.state.validationPassed) {
+            // const offSets = calculateOffSet(this.state.listViewSize, this.state.publishedPageNumber,this.state.publishedOffset);
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
                 hideUnusedPaging: this.state.hideUnusedPaging,
@@ -183,15 +184,17 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
     private subScribeToListViewChanges() {
         dojoTopic.subscribe(this.subscriptionTopic, (message: TopicMessage) => {
-            if (this.state.targetListView) {
+            if (this.state.targetListView && this.props.friendlyId !== message.widgetFriendlyID) {
+                const listViewSize = this.state.targetListView._datasource._setSize;
+                const calc = calculateOffSet(listViewSize, message.newPageSize || this.state.pageSize, message.newPageNumber);
                 this.setWidgetState({
-                    pageSize: message.newPageSize || this.state.pageSize,
-                    publishedOffset: message.newOffSet,
-                    pendingOffset: message.newOffSet,
-                    currentOffset: message.newOffSet,
-                    publishedPageNumber: message.newPageNumber,
-                    currentPageNumber: message.newPageNumber,
-                    pendingPageNumber: message.newPageNumber,
+                    pageSize: calc.newPageSize, // message.newPageSize || this.state.pageSize,
+                    publishedOffset: calc.newOffSet, // message.newOffSet,
+                    pendingOffset: calc.newOffSet,
+                    currentOffset: calc.newOffSet,
+                    publishedPageNumber: calc.newPageNumber,
+                    currentPageNumber: calc.newPageNumber,
+                    pendingPageNumber: calc.newPageNumber,
                     updateSource: "multiple"
                 });
             }
@@ -207,7 +210,7 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 const targetListViewOffSet = targetListView._datasource.getOffset() as number;
                 const listNode = getListNode(targetNode);
                 setListNodeToEmpty(listNode);
-                if (pendingPageNumber && pendingOffset && pendingOffset !== targetListViewOffSet) {
+                if (pendingPageNumber && pendingOffset !== targetListViewOffSet) {
                     this.updateListView(pendingOffset, pendingPageNumber);
                 }
             }
@@ -276,15 +279,17 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                     pageSize: newPageSize,
                     currentOffset: offSet,
                     currentPageNumber: pageNumber,
+                    publishedPageNumber: pageNumber,
                     publishedOffset: offSet,
                     isLoadingItems: true
+                    // listViewSize: targetListView._datasource._setSize
                 });
 
                 targetListView._datasource.setOffset(offSet);
                 targetListView._datasource._pageSize = newPageSize;
                 targetListView.sequence([ "_sourceReload", "_renderData" ]);
                 if (publish) {
-                    this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber, newPageSize });
+                    this.publishListViewUpdate({ newOffSet: offSet, newPageNumber: pageNumber, newPageSize, widgetFriendlyID: this.props.friendlyId });
                 }
             }
         }
