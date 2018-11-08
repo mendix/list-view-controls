@@ -2,6 +2,7 @@ import { Component, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
+import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
@@ -76,7 +77,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     }
 
     componentDidMount() {
-        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
             logger.debug("Storing state");
             formViewState[this.props.uniqueid] = {
                 defaultOption: this.state.defaultOption

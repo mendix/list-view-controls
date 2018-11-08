@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoAspect from "dojo/aspect";
 import * as dojoTopic from "dojo/topic";
+import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { ListView, SharedUtils, StoreState, paginationTopicSuffix } from "../../Shared/SharedUtils";
@@ -51,7 +52,6 @@ interface ValidateProps {
 export default class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
     private widgetDOM: HTMLElement;
     private subscriptionTopic: string;
-    private events: number[] = [];
     private setPageState: (store: Partial<PaginationContainerState>) => void;
 
     readonly state: PaginationContainerState = {
@@ -85,14 +85,13 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                 pageSize: persistedState.pageSize
             });
         }
-        const event = (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
             logger.debug("Storing state");
             const widgetViewState = formViewState[this.props.uniqueid] || (formViewState[this.props.uniqueid] = {});
             widgetViewState.pageSize = this.state.pageSize;
             widgetViewState.currentOffset = widgetViewState.publishedOffset = widgetViewState.pendingOffset = this.state.currentOffset;
             widgetViewState.currentPageNumber = widgetViewState.pendingPageNumber = widgetViewState.publishedPageNumber = this.state.currentPageNumber;
         });
-        this.events.push(event);
     }
 
     render() {

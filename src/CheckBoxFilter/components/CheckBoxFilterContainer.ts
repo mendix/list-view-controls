@@ -1,6 +1,7 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
+import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert, AlertProps } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
@@ -43,6 +44,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     private setPageState: (store: Partial<FormState>) => void;
 
     readonly state: ContainerState = {
+        defaultChecked: this.getDefaultValue(),
         listViewAvailable: false,
         alertMessage: Validate.validateProps(this.props)
     };
@@ -70,7 +72,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     componentDidMount() {
-        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
             logger.debug("Storing state");
             formViewState[this.props.uniqueid] = {
                 defaultChecked: this.state.defaultChecked
@@ -80,7 +82,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.getDefaultValue() || this.props.defaultChecked;
+            const selectedSort = this.getDefaultValue();
             this.applyFilter(selectedSort);
         }
     }
@@ -189,7 +191,11 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     private getDefaultValue() {
         const pageState = this.getPageState<FormState>();
-        return pageState && pageState.defaultChecked || this.props.defaultChecked;
+        if (pageState) {
+            return pageState.defaultChecked;
+        }
+
+        return this.props.defaultChecked;
     }
 
     private setWidgetState(state: Partial<ContainerState & FormState>) {

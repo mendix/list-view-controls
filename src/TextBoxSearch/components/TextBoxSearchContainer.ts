@@ -1,6 +1,7 @@
 import { Component, ReactElement, createElement } from "react";
 import * as mendixLang from "mendix/lang";
 import * as classNames from "classnames";
+import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
@@ -62,7 +63,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     componentDidMount() {
-        (dojo as any).connect(this.props.mxform, "onPersistViewState", (formViewState) => {
+        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
             logger.debug("Storing state");
             formViewState[this.props.uniqueid] = {
                 defaultSearchText: this.state.defaultSearchText
