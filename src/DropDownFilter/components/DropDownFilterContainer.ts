@@ -82,9 +82,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
             const pageState: FormState = this.getPageState<FormState>();
-            const selectedFilter = pageState && pageState.defaultOption || this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
-            // const selectedIndex = this.props.filters.indexOf(selectedFilter);
-            // if(selectedFilter && this.state.)
+            const defaultFilters = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
+            const selectedFilter = pageState && pageState.defaultOption || defaultFilters;
             this.applyFilter(selectedFilter);
         }
     }
@@ -188,7 +187,6 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     private setWidgetState(state: Partial<ContainerState & FormState>) {
         this.setPageState(state);
         this.setState(state as ContainerState);
-        // this.setState(state as ContainerState);
     }
 
     private getPageState<T>(key?: string, defaultValue?: T): T | undefined {

@@ -185,7 +185,6 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     private setWidgetState(state: Partial<ContainerState & FormState>) {
         this.setPageState(state);
         this.setState(state as ContainerState);
-        // this.setState(state as ContainerState);
     }
 
     private getPageState<T>(key?: string, defaultValue?: T): T | undefined {

@@ -32,6 +32,7 @@ export interface ContainerState {
     validationPassed?: boolean;
     defaultChecked?: boolean;
 }
+
 interface FormState {
     defaultChecked?: boolean;
 }
@@ -79,7 +80,6 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            // const pageState: FormState = this.getPageState<FormState>();
             const selectedSort = this.getDefaultValue() || this.props.defaultChecked;
             this.applyFilter(selectedSort);
         }
@@ -195,7 +195,6 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     private setWidgetState(state: Partial<ContainerState & FormState>) {
         this.setPageState(state);
         this.setState(state as ContainerState);
-        // this.setState(state as ContainerState);
     }
 
     private getPageState<T>(key?: string, defaultValue?: T): T | undefined {

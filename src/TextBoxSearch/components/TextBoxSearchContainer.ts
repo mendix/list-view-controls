@@ -109,7 +109,6 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         if (!searchQuery) {
             return "";
-
         }
 
         if (window.mx.isOffline()) {
@@ -166,7 +165,6 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private setWidgetState(state: Partial<ContainerState & FormState>) {
         this.setPageState(state);
         this.setState(state as ContainerState);
-        // this.setState(state as ContainerState);
     }
 
     private getPageState<T>(key?: string, defaultValue?: T): T | undefined {

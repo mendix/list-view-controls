@@ -119,7 +119,6 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
 
     private renderPageButton(): ReactElement<PaginationProps> | null {
         if (this.state.validationPassed) {
-            // const offSets = calculateOffSet(this.state.listViewSize, this.state.publishedPageNumber,this.state.publishedOffset);
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
                 hideUnusedPaging: this.state.hideUnusedPaging,
@@ -282,7 +281,6 @@ export default class PaginationContainer extends Component<ModelerProps, Paginat
                     publishedPageNumber: pageNumber,
                     publishedOffset: offSet,
                     isLoadingItems: true
-                    // listViewSize: targetListView._datasource._setSize
                 });
 
                 targetListView._datasource.setOffset(offSet);

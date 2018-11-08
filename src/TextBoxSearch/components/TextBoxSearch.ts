@@ -25,20 +25,32 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
     }
 
     render() {
-        return createElement("div", { className: "search-bar" },
+        return createElement("div",
+            {
+                className: "search-bar"
+            },
             createElement("input", {
                 className: "form-control",
                 onChange: this.handleOnChange,
                 placeholder: this.props.placeholder,
                 value: this.state.query
             }),
-            createElement("button", {
-                    className: `btn-transparent ${this.state.query ? "visible" : "hidden"}`,
+            this.renderReset()
+        );
+    }
+
+    renderReset() {
+        if (this.state.query) {
+            return createElement("button",
+                {
+                    className: `btn-transparent visible`,
                     onClick: this.resetQuery
                 },
                 createElement("span", { className: "glyphicon glyphicon-remove" })
-            )
-        );
+            );
+        }
+
+        return null;
     }
 
     componentWillReceiveProps(newProps: TextBoxSearchProps) {
