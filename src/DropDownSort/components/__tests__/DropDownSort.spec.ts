@@ -51,12 +51,14 @@ describe("DropDownSort", () => {
     });
 
     it("renders with the specified default sort", () => {
+        const sortAttributes = [
+            { caption: "Name Asc", name: "Name", defaultSelected: false, sort: "asc" },
+            { caption: "Name Desc", name: "Name", defaultSelected: true, sort: "desc" }
+        ];
         const props: DropDownProps = {
             ...dropDownProps,
-            sortAttributes: [
-                { caption: "Name Asc", name: "Name", defaultSelected: false, sort: "asc" },
-                { caption: "Name Desc", name: "Name", defaultSelected: true, sort: "desc" }
-            ]
+            sortAttributes,
+            defaultSortAttribute: sortAttributes[1]
         };
 
         const wrapper = renderDropdown(props);
