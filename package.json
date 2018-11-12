@@ -5,7 +5,7 @@
   "description": "Search and filter Mendix list views",
   "copyright": "Mendix BV",
   "scripts": {
-    "start": "nodemon --watch webpack.config.js --watch Gruntfile.js --exec grunt",
+    "start": "webpack-dev-server --hot --open",
     "emit": "tsc",
     "pretest": "tsc && npm run lint && npm run build",
     "test": "npm run test:unit && npm run test:conditional",
@@ -21,6 +21,10 @@
     "updateProject": "node ./node_modules/mendix-widget-build-script/dist/UpdateMxProject.js",
     "deployApp": "node ./node_modules/mendix-widget-build-script/dist/DeployMxApp.js",
     "deployAndTest": "npm run deploy && npm run test:e2e"
+  },
+  "config": {
+    "mendixHost": "http://localhost:8080",
+    "developmentPort": 3000
   },
   "pre-commit": [
     "emit",
@@ -82,6 +86,7 @@
     "raw-loader": "^0.5.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
+    "react-hot-loader": "^4.3.12",
     "react-test-renderer": "^16.5.2",
     "remap-istanbul": "^0.12.0",
     "sass-loader": "^7.1.0",
@@ -103,6 +108,7 @@
     "webpack-merge": "^4.1.4"
   },
   "dependencies": {
-    "classnames": "^2.2.6"
+    "classnames": "^2.2.6",
+    "fork-ts-checker-webpack-plugin": "^0.4.15"
   }
 }
