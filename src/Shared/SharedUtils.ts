@@ -18,6 +18,7 @@ export interface ListView extends mxui.widget._WidgetBase {
         getOffset: () => number;
         getPageSize: () => number;
         getSetSize: () => number;
+        __customWidgetPagingOffset: number;
     };
     _entity: string;
     _renderData: () => void;

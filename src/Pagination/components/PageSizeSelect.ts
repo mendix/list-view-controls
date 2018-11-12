@@ -7,7 +7,7 @@ export interface PageSizeSelectProps {
     listViewSize: number;
 
     sizeOptions: OptionProps[];
-    handleChange: (optionProps: OnChangeProps) => void;
+    onChange: (offSet?: number, pageSize?: number) => void;
 }
 
 interface PageSizeState {
@@ -103,7 +103,7 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
          });
 
         const newOffSet = calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
-        this.props.handleChange(newOffSet);
+        this.props.onChange(newOffSet.newOffSet, newOffSet.newPageSize);
     }
 
     static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {

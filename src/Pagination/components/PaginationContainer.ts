@@ -15,7 +15,6 @@ import {
 } from "../utils/ContainerUtils";
 
 import { ModelerProps } from "../Pagination";
-import { OnChangeProps } from "./PageSizeSelect";
 import { Pagination, PaginationProps } from "./Pagination";
 import { Validate } from "../Validate";
 import FormViewState from "../../Shared/FormViewState";
@@ -28,7 +27,6 @@ interface PaginationContainerState {
     targetListView?: ListView | null;
     targetNode?: HTMLElement | null;
     validationPassed?: boolean;
-    offset: number;
 }
 
 interface PaginationPageState {
@@ -42,8 +40,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
     readonly state: PaginationContainerState = {
         findingListViewWidget: true,
-        message: "",
-        offset: 0
+        message: ""
     };
 
     constructor(props: ModelerProps) {
@@ -51,6 +48,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".constructor");
 
         this.updateListView = this.updateListView.bind(this);
+
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
             const datasource = this.state.targetListView._datasource;
@@ -99,21 +97,20 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
         if (this.state.validationPassed) {
             const datasource = this.state.targetListView._datasource;
-            const offset = datasource.getOffset();
-            const listViewSize = datasource.getSetSize();
             const pageSize = datasource.getPageSize();
+            const offset = datasource.getOffset();
             const pageNumber = (offset / pageSize) + 1;
+
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
-                hideUnusedPaging: this.isHideUnUsed(this.state.targetListView),
+                hideUnusedPaging: this.props.hideUnusedPaging && pageSize === 0,
                 items: this.props.items,
-                listViewSize,
+                listViewSize: datasource.getSetSize(),
                 pageSize,
                 offset,
                 pageNumber,
-                onClickAction: this.updateListView,
+                onChange: this.updateListView,
                 pagingStyle: this.props.pagingStyle,
-                pageSizeOnChange: this.applyPageSize,
                 pageSizeOptions: this.props.pageSizeOptions
             });
         }
@@ -127,20 +124,20 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             const targetListView = SharedContainerUtils.findTargetListView(this.widgetDom.parentElement);
             const targetNode = targetListView && targetListView.domNode;
 
-            const message = this.validateListView({ targetNode, targetListView });
+            const message = Validate.validate({ ...this.props, targetNode, targetListView });
+            const validationPassed = !message;
 
             this.setState({
                 findingListViewWidget: false,
                 message,
                 targetListView,
                 targetNode,
-                validationPassed: !message
+                validationPassed
             });
 
-            if (targetListView) {
-                hideLoadMoreButton(targetNode);
-                this.beforeListViewDataRender(targetListView);
+            if (validationPassed) {
                 this.afterListViewLoad(targetListView, targetNode);
+                this.beforeListViewDataRender(targetListView);
                 this.afterListViewDataRender(targetListView);
             }
 
@@ -153,12 +150,13 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             logger.debug(this.props.friendlyId, "_renderData.before");
             // Update from new constraints required update.
             this.forceUpdate();
-            if (this.state.offset !== targetListView._datasource.getOffset()) {
+            const previousOffset = targetListView._datasource.__customWidgetPagingOffset;
+            if (previousOffset !== targetListView._datasource.getOffset()) {
                 const size = targetListView._datasource.getSetSize();
-                if (size > this.state.offset) {
-                    this.updateDataSource(this.state.offset);
+                if (size > previousOffset) {
+                    this.updateDataSource(previousOffset);
                 } else {
-                    this.setState({ offset: targetListView._datasource.getOffset() });
+                    this.state.targetListView._datasource.__customWidgetPagingOffset = 0;
                 }
             }
             const targetNode = targetListView.domNode;
@@ -171,12 +169,12 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     private afterListViewLoad(targetListView: ListView, targetNode: HTMLElement) {
         logger.debug(this.props.friendlyId, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
-        if (targetListView && targetNode) {
-            const dataSource = targetListView._datasource;
-            const pageSize = this.viewStateManager.getPageState("pageSize", dataSource.getPageSize());
-            const offset = this.viewStateManager.getPageState("offset", dataSource.getOffset());
-            this.updateDataSource(offset, pageSize);
-        }
+        const datasource = targetListView._datasource;
+        datasource.__customWidgetPagingOffset = 0;
+        const pageSize = this.viewStateManager.getPageState("pageSize", datasource.getPageSize());
+        const offset = this.viewStateManager.getPageState("offset", datasource.getOffset());
+        this.updateDataSource(offset, pageSize);
+
         hideLoadMoreButton(targetNode);
     }
 
@@ -190,20 +188,9 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         });
     }
 
-    private validateListView(target: { targetNode: HTMLElement, targetListView: ListView }) {
-        return Validate.validate({
-            ...this.props as ModelerProps,
-            queryNode: target.targetNode,
-            targetListView: target.targetListView
-        });
-    }
-
-    // TODO remove _pageNumber argument
-    private updateListView(offSet: number, _pageNumber: number, pageSize?: number) {
+    private updateListView(offSet?: number, pageSize?: number) {
         logger.debug(this.props.friendlyId, ".updateListView");
-        const { targetListView, targetNode, validationPassed } = this.state;
-
-        if (targetListView && targetNode && validationPassed) {
+        if (this.state.validationPassed) {
             this.updateDataSource(offSet, pageSize);
         }
     }
@@ -214,9 +201,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         // On navigating back, the core listview persist list length, should be truncated
         if (offset !== undefined && offset !== dataSource.getOffset() || dataSource._pageObjs.length > pageSize) {
             this.state.targetListView._datasource.setOffset(offset);
-            this.setState({
-                offset
-            });
+            this.state.targetListView._datasource.__customWidgetPagingOffset = offset;
             changed = true;
         }
         if (pageSize !== undefined && dataSource.getPageSize() !== pageSize) {
@@ -227,16 +212,6 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             showLoader(this.state.targetListView);
             this.state.targetListView.sequence([ "_sourceReload", "_renderData" ]);
         }
-    }
-
-    private isHideUnUsed(targetListView: ListView): boolean {
-        const pageSize = targetListView._datasource.getPageSize();
-        return this.props.hideUnusedPaging && pageSize === 0;
-    }
-
-    private applyPageSize = (onChangeProps: OnChangeProps) => {
-        const { newPageSize, newOffSet } = onChangeProps;
-        this.updateListView(newOffSet, 0, newPageSize);
     }
 }
 

@@ -95,7 +95,7 @@
     "ts-loader": "^5.2.0",
     "tslint": "^5.11.0",
     "tslint-eslint-rules": "^5.4.0",
-    "typescript": "^3.0.3",
+    "typescript": "^3.1.6",
     "url-loader": "^1.1.1",
     "wdio-dot-reporter": "0.0.10",
     "wdio-jasmine-framework": "^0.3.2",

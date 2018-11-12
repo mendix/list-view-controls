@@ -2,10 +2,12 @@ import { ReactChild, createElement } from "react";
 import { ListView } from "../Shared/SharedUtils";
 import { ModelerProps } from "./Pagination";
 
-export interface ValidateConfigProps extends ModelerProps {
-    inWebModeler?: boolean;
-    queryNode?: HTMLElement | null;
-    targetListView?: ListView | null;
+type Props = Readonly<{ children?: React.ReactNode; }> & Readonly<ModelerProps>;
+
+export interface ValidateConfigProps extends Props {
+    readonly inWebModeler?: boolean;
+    readonly targetNode?: HTMLElement | null;
+    readonly targetListView?: ListView | null;
 }
 
 export class Validate {
@@ -32,7 +34,7 @@ export class Validate {
         }
 
         if (!props.inWebModeler) {
-            if (!props.queryNode) {
+            if (!props.targetNode) {
                 errorMessages.push("unable to find a list view on the page");
             }
             if (props.targetListView && !Validate.isCompatible(props.targetListView)) {

@@ -38,15 +38,12 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 items: this.props.items,
                 listViewSize: 20,
                 pageSize: 2,
-                onClickAction: () => {
+                onChange: () => {
                     return;
                 },
                 pagingStyle: this.props.pagingStyle,
                 offset: 0,
                 pageNumber: 1,
-                pageSizeOnChange: () => {
-                    return;
-                },
                 pageSizeOptions: this.props.pageSizeOptions
             })
         );

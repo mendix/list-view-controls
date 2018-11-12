@@ -13,10 +13,9 @@ export interface PaginationProps {
     pageSize: number;
     offset?: number;
     pageNumber?: number;
-    onClickAction: (offset: number, pageNumber: number) => void;
+    onChange: (offSet?: number, pageSize?: number) => void;
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
-    pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
     pageSizeOptions?: OptionProps[];
 }
 
@@ -158,7 +157,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
             if (buttonProps.buttonType === "pageSize") {
                 return createElement(PageSizeSelect, {
-                    handleChange: this.props.pageSizeOnChange,
+                    onChange: this.props.onChange,
                     pageSize: this.props.pageSize,
                     sizeOptions: this.props.pageSizeOptions,
                     listViewSize: this.props.listViewSize,
@@ -225,7 +224,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             selectedPageNumber
         });
 
-        this.props.onClickAction(currentOffset, selectedPageNumber);
+        this.props.onChange(currentOffset);
     }
 
     private nextPageClickAction = () => {
@@ -240,7 +239,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             selectedPageNumber
         });
 
-        this.props.onClickAction(currentOffset, selectedPageNumber);
+        this.props.onChange(currentOffset);
     }
 
     private previousPageClickAction = () => {
@@ -266,7 +265,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             });
         }
 
-        this.props.onClickAction(currentOffset, selectedPageNumber);
+        this.props.onChange(currentOffset);
     }
 
     private lastPageClickAction = () => {
@@ -285,7 +284,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             });
         }
 
-        this.props.onClickAction(currentOffset, selectedPageNumber);
+        this.props.onChange(currentOffset);
     }
 
     private getMessageStatus = (message?: string): string => {
@@ -333,7 +332,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             selectedPageNumber: pageNumber
         });
 
-        this.props.onClickAction(currentOffset, pageNumber);
+        this.props.onChange(currentOffset);
     }
 
 }
