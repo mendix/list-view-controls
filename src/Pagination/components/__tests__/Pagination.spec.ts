@@ -254,9 +254,8 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                publishedOffset: 8,
-                publishedPageNumber: 4,
-                updateSource: "multiple"
+                offset: 8,
+                pageNumber: 4
             });
             const paginationInstance = pagination.instance() as Pagination;
 
@@ -270,9 +269,8 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                publishedOffset: 8,
-                publishedPageNumber: 4,
-                updateSource: "other"
+                offset: 8,
+                pageNumber: 4
             });
             const paginationInstance = pagination.instance() as Pagination;
 

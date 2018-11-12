@@ -32,6 +32,7 @@ export const getListNode = (targetNode: HTMLElement): HTMLUListElement => {
 };
 
 export const setListNodeToEmpty = (listNode: HTMLUListElement) => {
+    logger.debug("setListNodeToEmpty");
     // Explicitly remove children as IE does not like listNode.innerHTML = "";
     while (listNode.firstChild) {
         listNode.removeChild(listNode.firstChild);
@@ -39,10 +40,12 @@ export const setListNodeToEmpty = (listNode: HTMLUListElement) => {
 };
 
 export const showLoader = (targetListView: ListView) => {
+    logger.debug("showLoader");
     targetListView.domNode.classList.add("widget-pagination-loading");
 };
 
 export const hideLoader = (targetListView: ListView) => {
+    logger.debug("hideLoader");
     targetListView.domNode.classList.remove("widget-pagination-loading");
 };
 

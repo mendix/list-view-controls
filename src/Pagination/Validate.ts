@@ -53,11 +53,14 @@ export class Validate {
     static isCompatible(targetListView: ListView): boolean {
         return !!(targetListView
             && targetListView._datasource
+            && targetListView._datasource.getOffset
             && targetListView._datasource.setOffset
-            && targetListView._datasource._pageSize !== undefined
+            && targetListView._datasource.getPageSize
+            && targetListView._datasource.setPageSize
             && targetListView._sourceReload
+            && targetListView._datasource._pageObjs
             && targetListView._renderData
-            && targetListView._datasource._setSize !== undefined
+            && targetListView._datasource.getSetSize
             && targetListView.update);
     }
 }

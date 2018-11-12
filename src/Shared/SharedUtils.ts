@@ -10,12 +10,14 @@ export interface WrapperProps {
 export interface ListView extends mxui.widget._WidgetBase {
     _datasource: {
         setOffset: (offSet: number) => void;
+        setPageSize: (pageSize: number) => void;
         _constraints: Constraints;
         _entity: string;
-        _pageSize: number;
-        _setSize: number;
+        _pageObjs: any[];
         _sorting: string[][];
         getOffset: () => number;
+        getPageSize: () => number;
+        getSetSize: () => number;
     };
     _entity: string;
     _renderData: () => void;

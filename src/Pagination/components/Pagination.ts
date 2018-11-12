@@ -2,7 +2,7 @@ import { Component, ReactElement, SFCElement, createElement } from "react";
 import * as classNames from "classnames";
 
 import { PageButton, PageButtonProps } from "./PageButton";
-import { IconType, ItemType, PageStyleType, UpdateSourceType } from "../Pagination";
+import { IconType, ItemType, PageStyleType } from "../Pagination";
 import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
 
@@ -11,12 +11,11 @@ export interface PaginationProps {
     items: ItemType[];
     listViewSize: number;
     pageSize: number;
-    publishedOffset?: number;
-    publishedPageNumber?: number;
+    offset?: number;
+    pageNumber?: number;
     onClickAction: (offset: number, pageNumber: number) => void;
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
-    updateSource?: UpdateSourceType;
     pageSizeOnChange?: (OptionProps: OnChangeProps) => void;
     pageSizeOptions?: OptionProps[];
 }
@@ -72,29 +71,19 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     componentWillReceiveProps(nextProps: PaginationProps) {
-        const { publishedOffset, listViewSize, pageSize, publishedPageNumber } = nextProps;
+        const { offset, listViewSize, pageSize, pageNumber } = nextProps;
         const pageCount = pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize;
-        const currentOffset = publishedOffset as number;
+        const currentOffset = offset || 0;
+        const selectedPageNumber = pageNumber || 1;
 
-        if (nextProps.updateSource === "other") {
-            this.setState({
-                currentOffset: 0,
-                isVisible: !nextProps.hideUnusedPaging,
-                nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
-                pageCount,
-                previousIsDisabled: currentOffset <= 0,
-                selectedPageNumber: 1
-            });
-        } else {
-            this.setState({
-                currentOffset,
-                isVisible: !nextProps.hideUnusedPaging,
-                nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
-                pageCount,
-                previousIsDisabled: currentOffset <= 0,
-                selectedPageNumber: publishedPageNumber as number
-            });
-        }
+        this.setState({
+            currentOffset,
+            isVisible: !nextProps.hideUnusedPaging,
+            nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
+            pageCount,
+            previousIsDisabled: currentOffset <= 0,
+            selectedPageNumber
+        });
     }
 
     private renderPagination = (): SFCElement<PageNumberViewProps>[] | ReactElement<{}>[] => {

@@ -25,7 +25,6 @@ export type Display = Partial<OptionProps> & Partial<PageSizeState>;
 export interface OnChangeProps {
     newOffSet: number;
     newPageSize: number;
-    newPageNumber: number;
 }
 
 export const calculateOffSet = (listViewSize: number, newPageSize: number, oldPageNumber: number): OnChangeProps => {
@@ -35,7 +34,6 @@ export const calculateOffSet = (listViewSize: number, newPageSize: number, oldPa
 
     return {
         newOffSet,
-        newPageNumber,
         newPageSize
     };
 };
