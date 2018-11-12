@@ -5,7 +5,6 @@ export default class FromViewState<T> {
 
     constructor(private form: mxui.lib.form._FormBase, private widgetId: string, storeCallback: (state: T) => void) {
         this.persistHandle = dojoConnect.connect(form, "onPersistViewState", null, (formViewState: T) => {
-
             const widgetViewState = formViewState[widgetId] || (formViewState[widgetId] = {});
             storeCallback(widgetViewState);
         });

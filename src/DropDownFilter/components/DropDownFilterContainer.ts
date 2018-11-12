@@ -43,7 +43,7 @@ interface FormState {
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private widgetDOM: HTMLElement;
+    private widgetDom: HTMLElement;
     private setPageState: (store: Partial<FormState>) => void;
 
     readonly state: ContainerState = {
@@ -63,7 +63,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return createElement("div",
             {
                 className: classNames("widget-drop-down-filter", this.props.class),
-                ref: (widgetDOM: HTMLElement) => this.widgetDOM = widgetDOM,
+                ref: (widgetDom: HTMLElement) => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             this.renderAlert(),
@@ -90,7 +90,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private checkListViewAvailable(): boolean {
-        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
+        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
     private renderAlert() {
@@ -168,7 +168,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         let targetListView: ListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;

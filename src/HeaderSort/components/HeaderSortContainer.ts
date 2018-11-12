@@ -34,7 +34,7 @@ type FormState = ContainerState & ContainerProps;
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private widgetDOM: HTMLElement;
+    private widgetDom: HTMLElement;
     private setPageState: (store: Partial<FormState>) => void;
 
     readonly state: ContainerState = { listViewAvailable: false };
@@ -52,7 +52,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     render() {
         return createElement("div", {
                 className: classNames("widget-header-sort", this.props.class),
-                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
+                ref: (widgetDom) => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -95,7 +95,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     private checkListViewAvailable(): boolean {
-        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
+        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
     private renderSort(): ReactElement<HeaderSortProps> | null {
@@ -121,7 +121,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         let targetListView: ListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;

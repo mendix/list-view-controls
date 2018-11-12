@@ -36,7 +36,7 @@ interface FormState {
 
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private widgetDOM: HTMLElement;
+    private widgetDom: HTMLElement;
     private setPageState: (store: Partial<FormState>) => void;
 
     readonly state: ContainerState = { listViewAvailable: false };
@@ -51,7 +51,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
-                ref: (widgetDOM) => this.widgetDOM = widgetDOM,
+                ref: (widgetDom) => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -78,7 +78,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private checkListViewAvailable(): boolean {
-        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
+        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
@@ -145,7 +145,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         let targetListView: ListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;

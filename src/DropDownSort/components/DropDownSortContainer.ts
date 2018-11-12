@@ -43,7 +43,7 @@ export interface FormState {
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
-    private widgetDOM: HTMLElement;
+    private widgetDom: HTMLElement;
     private setPageState: (store: Partial<FormState>) => void;
     private subscriptionTopic: string;
 
@@ -65,7 +65,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     render() {
         return createElement("div", {
                 className: classNames("widget-drop-down-sort", this.props.class),
-                ref: (widgetDOM: HTMLElement) => this.widgetDOM = widgetDOM,
+                ref: (widgetDom: HTMLElement) => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -96,7 +96,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     }
 
     private checkListViewAvailable(): boolean {
-        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
+        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
     private renderDropDown(): ReactElement<DropDownProps> | null {
@@ -130,7 +130,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         let targetListView: ListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             alertMessage = error.message;
