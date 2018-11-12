@@ -2,14 +2,14 @@ import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
-import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
+import FormViewState from "../../Shared/FormViewState";
 
 import "../ui/HeaderSort.scss";
 
@@ -28,25 +28,31 @@ export interface ContainerState {
     publishedSortOrder?: SortOrder;
     publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView;
+    defaultSortOrder?: SortOrder;
 }
 
-type FormState = ContainerState & ContainerProps;
+interface FormState {
+    defaultSortOrder: SortOrder;
+}
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
-    private setPageState: (store: Partial<FormState>) => void;
-
-    readonly state: ContainerState = { listViewAvailable: false };
+    private viewStateManager: FormViewState<FormState>;
 
     constructor(props: ContainerProps) {
         super(props);
 
         this.updateSort = this.updateSort.bind(this);
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
-        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
+        const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
+
+        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+            viewState.defaultSortOrder = this.state.defaultSortOrder;
+        });
+
+        this.state = { listViewAvailable: false, defaultSortOrder: this.getDefaultValue() };
     }
 
     render() {
@@ -64,52 +70,33 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     componentDidMount() {
-        const persistedState = this.getPageState<FormState>();
-        if (persistedState) {
-            this.setState({
-                publishedSortAttribute: persistedState.publishedSortAttribute,
-                publishedSortOrder: persistedState.publishedSortOrder,
-                publishedSortWidgetFriendlyId: persistedState.publishedSortWidgetFriendlyId
-            });
-        }
-        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
-            logger.debug("Storing state");
-            formViewState[this.props.uniqueid] = this.props.mxform.viewState[this.props.uniqueid] || {};
-            formViewState[this.props.uniqueid] = {
-                publishedSortAttribute: this.state.publishedSortAttribute,
-                publishedSortOrder: this.state.publishedSortOrder,
-                publishedSortWidgetFriendlyId: this.props.friendlyId
-            };
-        });
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        const persistentState = this.getPageState<FormState>();
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            if (this.props.initialSorted) {
-                this.updateSort(this.props.sortAttribute, this.props.sortOrder);
-            } else if (persistentState && persistentState.publishedSortAttribute) {
-                this.updateSort(this.props.sortAttribute, persistentState.publishedSortOrder);
-            }
+            this.updateSort(this.state.defaultSortOrder);
         }
     }
 
+    componentWillUnmount() {
+        this.viewStateManager.destroy();
+    }
+
     private checkListViewAvailable(): boolean {
+        if (!this.widgetDom) {
+            return false;
+        }
+
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
-    private renderSort(): ReactElement<HeaderSortProps> | null {
+    private renderSort(): ReactElement<HeaderSortProps> {
         if (!this.state.alertMessage) {
             return createElement(HeaderSort, {
                 caption: this.props.caption,
-                friendlyId: this.props.friendlyId,
-                initialSorted: this.props.initialSorted,
                 onClickAction: this.updateSort,
-                publishedSortAttribute: this.state.publishedSortAttribute,
-                publishedSortOrder: this.state.publishedSortOrder,
-                publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
-                sortAttribute: this.props.sortAttribute,
-                sortOrder: this.initialSortOrder(this.props.initialSorted, this.props.sortOrder)
+                sortOrder: this.state.defaultSortOrder
             });
         }
 
@@ -133,38 +120,34 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
                 DataSourceHelper.showContent(targetListView.domNode);
             }
         }
-        const pageState = this.getPageState<FormState>();
 
         this.setState({
             alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
             targetListView,
-            publishedSortOrder: pageState && pageState.publishedSortOrder,
-            publishedSortAttribute: pageState && pageState.publishedSortAttribute
-
+            publishedSortOrder: this.viewStateManager.getPageState("defaultSortOrder", this.getDefaultValue())
         });
     }
 
-    private updateSort(attribute: string, order: SortOrder) {
+    private updateSort(order: SortOrder) {
         const { targetListView } = this.state;
+        const { sortAttribute } = this.props;
 
         if (targetListView && this.dataSourceHelper) {
-            this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
-            this.setPageState({
-                publishedSortOrder: order,
-                publishedSortAttribute: attribute,
-                publishedSortWidgetFriendlyId: this.props.friendlyId
-            });
-            this.publishWidgetChanges(attribute, order);
+            this.dataSourceHelper.setSorting(this.props.friendlyId, [ sortAttribute, order ]);
+            this.setState({ defaultSortOrder: order });
+            this.publishWidgetChanges(sortAttribute, order);
         }
     }
 
     private subScribeToWidgetChanges(targetListView: ListView) {
         dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
+            const publishedSortAttribute = message[0];
+            const publishedSortOrder = message[1] as SortOrder;
+            const publishedSortWidgetFriendlyId = message[2];
+            if (publishedSortAttribute === this.props.sortAttribute && publishedSortWidgetFriendlyId !== this.props.friendlyId)
             this.setState({
-                publishedSortAttribute: message[0],
-                publishedSortOrder: message[1] as SortOrder,
-                publishedSortWidgetFriendlyId: message[2]
+                defaultSortOrder: publishedSortOrder
             });
         });
     }
@@ -175,16 +158,9 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
     }
 
-    private initialSortOrder(initialSorted: boolean, sortOrder: SortOrder): SortOrder {
-        return initialSorted ? sortOrder : "";
-    }
-
-    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
-        const mxform = this.props.mxform;
-        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
-        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
-        logger.debug("getPageState", key, defaultValue, state);
-        return state;
+    private getDefaultValue(): SortOrder {
+        const initialSortOrder = this.props.initialSorted ? this.props.sortOrder : "";
+        return this.viewStateManager.getPageState("defaultSortOrder", initialSortOrder);
     }
 
 }

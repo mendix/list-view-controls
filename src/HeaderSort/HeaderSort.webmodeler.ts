@@ -23,9 +23,7 @@ export class preview extends Component<ContainerProps, {}> {
             },
             createElement(HeaderSort, {
                 caption: this.props.caption,
-                initialSorted: this.props.initialSorted,
                 onClickAction: () => { return; },
-                sortAttribute: this.props.sortAttribute,
                 sortOrder: this.initialSortOrder(this.props.initialSorted, this.props.sortOrder)
             })
         );
