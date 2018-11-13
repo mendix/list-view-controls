@@ -7,10 +7,7 @@ export interface DropDownOptionType extends Partial<AttributeType> {
 
 export interface DropDownProps {
     friendlyId?: string;
-    onDropDownChangeAction?: (attribute: string, order: string) => void;
-    publishedSortAttribute?: string;
-    publishedSortOrder?: string;
-    publishedSortWidgetFriendlyId?: string;
+    onDropDownChangeAction?: (selectedOption: AttributeType) => void;
     sortAttributes: AttributeType[];
     style: object;
     defaultSortAttribute?: AttributeType;
@@ -43,13 +40,6 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
 
         if (this.state.value !== value) {
             this.setState({ value });
-        }
-
-        // Received update from one of the widgets
-        if (newProps.publishedSortAttribute
-            && newProps.publishedSortOrder
-            && !(this.props.friendlyId === newProps.publishedSortWidgetFriendlyId)) {
-            this.setState({ value: "" });
         }
     }
 
@@ -106,10 +96,11 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     }
 
     private callOnChangeAction(value: string) {
-        const option = this.options.filter((optionFilter => optionFilter.value === value))[0];
+        const dropOption = this.options.filter(optionFilter => optionFilter.value === value)[0];
+        const selectedOption = dropOption && this.props.sortAttributes.filter(option => option.name === dropOption.name && option.sort === dropOption.sort)[0];
 
-        if (option && this.props.onDropDownChangeAction) {
-            this.props.onDropDownChangeAction(option.name, option.sort);
+        if (dropOption && this.props.onDropDownChangeAction) {
+            this.props.onDropDownChangeAction(selectedOption);
         }
     }
 
