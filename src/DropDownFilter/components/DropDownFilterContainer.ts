@@ -1,15 +1,15 @@
 import { Component, ReactChild, ReactElement, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
-import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, OfflineConstraint, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
+import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { Validate } from "../Validate";
 
 import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
+import FormViewState from "../../Shared/FormViewState";
 
 import "../ui/DropDownFilter.scss";
 
@@ -44,19 +44,22 @@ interface FormState {
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
-    private setPageState: (store: Partial<FormState>) => void;
-
-    readonly state: ContainerState = {
-        alertMessage: Validate.validateProps(this.props),
-        listViewAvailable: false
-    };
+    private viewStateManager: FormViewState<FormState>;
 
     constructor(props: ContainerProps) {
         super(props);
 
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.applyFilter = this.applyFilter.bind(this);
-        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
+        const id = this.props.uniqueid || this.props.friendlyId;
+        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+            viewState.defaultOption = this.state.defaultOption;
+        });
+
+        this.state = {
+            alertMessage: Validate.validateProps(this.props),
+            listViewAvailable: false,
+            defaultOption: this.getDefaultOption()
+        };
     }
 
     render() {
@@ -72,24 +75,24 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     componentDidMount() {
-        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
-            logger.debug("Storing state");
-            formViewState[this.props.uniqueid] = {
-                defaultOption: this.state.defaultOption
-            };
-        });
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const pageState: FormState = this.getPageState<FormState>();
-            const defaultFilters = this.props.filters.filter(filter => filter.isDefault)[0] || this.props.filters[0];
-            const selectedFilter = pageState && pageState.defaultOption || defaultFilters;
-            this.applyFilter(selectedFilter);
+            this.applyFilter(this.state.defaultOption);
         }
     }
 
+    componentWillUnmount() {
+        this.viewStateManager.destroy();
+    }
+
     private checkListViewAvailable(): boolean {
+        if (!this.widgetDom) {
+            return false;
+        }
+
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
@@ -102,11 +105,10 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
         if (!this.state.alertMessage) {
-            const pageState = this.getPageState<FormState>();
-            const defaultFilter = pageState && pageState.defaultOption || this.props.filters.filter(value => value.isDefault)[0];
-            const defaultFilterIndex = this.props.filters.map(value => value.caption).indexOf(defaultFilter.caption);
+            const selectedCaption = this.state.defaultOption && this.state.defaultOption.caption;
+            const defaultFilterIndex = this.props.filters.map(value => value.caption).indexOf(selectedCaption);
             if (this.props.mxObject) {
-            this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
+                this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
                     this.props.mxObject.getGuid()
                 ));
             }
@@ -120,12 +122,18 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return null;
     }
 
+    private getDefaultOption() {
+        const defaultFilter = this.props.filters.filter(value => value.isDefault)[0];
+
+        return this.viewStateManager.getPageState("defaultOption", defaultFilter);
+    }
+
     private applyFilter(selectedFilter: FilterProps) {
         const constraint = this.getConstraint(selectedFilter);
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
         }
-        this.setWidgetState({ defaultOption: selectedFilter });
+        this.setState({ defaultOption: selectedFilter });
     }
 
     private getConstraint(selectedFilter: FilterProps) {
@@ -185,16 +193,4 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         });
     }
 
-    private setWidgetState(state: Partial<ContainerState & FormState>) {
-        this.setPageState(state);
-        this.setState(state as ContainerState);
-    }
-
-    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
-        const mxform = this.props.mxform;
-        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
-        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
-        logger.debug("getPageState", key, defaultValue, state);
-        return state;
-    }
 }
