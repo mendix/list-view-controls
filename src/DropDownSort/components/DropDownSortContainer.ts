@@ -57,6 +57,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
             viewState.defaultOption = this.state.defaultOption;
         });
 
+        // State is moved into constructor to avoid unnecessary
+        // rerendering while using Persisted state (FormViewState)
         this.state = {
             defaultOption: this.getDefaultOption(),
             listViewAvailable: false
@@ -103,12 +105,15 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     private renderDropDown(): ReactElement<DropDownProps> | null {
         if (!this.state.alertMessage) {
+            const selectedCaption = this.state.defaultOption && this.state.defaultOption.caption;
+            const defaultSortIndex = this.props.sortAttributes.map(value => value.caption).indexOf(selectedCaption);
+
             return createElement(DropDownSort, {
                 friendlyId: this.props.friendlyId,
                 onDropDownChangeAction: this.updateSort,
                 sortAttributes: this.props.sortAttributes,
                 style: SharedUtils.parseStyle(this.props.style),
-                defaultSortAttribute: this.state.defaultOption
+                defaultSortIndex
             });
         }
 

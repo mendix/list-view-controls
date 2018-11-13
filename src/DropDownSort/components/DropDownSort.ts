@@ -10,7 +10,7 @@ export interface DropDownProps {
     onDropDownChangeAction?: (selectedOption: AttributeType) => void;
     sortAttributes: AttributeType[];
     style: object;
-    defaultSortAttribute?: AttributeType;
+    defaultSortIndex?: number;
 }
 
 export interface DropdownState {
@@ -28,11 +28,9 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     constructor(props: DropDownProps) {
         super(props);
 
-        this.state = { value: this.getDefaultValue(this.props) };
-
         this.handleChange = this.handleChange.bind(this);
         this.renderOptions = this.renderOptions.bind(this);
-        this.callOnChangeAction = this.callOnChangeAction.bind(this);
+        this.state = { value: this.getDefaultValue(this.props) };
     }
 
     componentWillReceiveProps(newProps: DropDownProps) {
@@ -61,20 +59,17 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     }
 
     private getDefaultValue(props: DropDownProps): string {
-        this.options = this.createOptionProps(props.sortAttributes);
-        const defaultOption = this.props.defaultSortAttribute && this.options.filter(option =>
-            option.name === this.props.defaultSortAttribute.name
-            && option.sort === this.props.defaultSortAttribute.sort)[0] || undefined;
-
-        if (defaultOption) {
-            return defaultOption.value;
+        if (!this.options.length) {
+            this.options = this.createOptionProps(this.props.sortAttributes);
         }
 
-        return "";
+        return props.defaultSortIndex !== undefined
+            ? `${this.options[props.defaultSortIndex].value}`
+            : "";
     }
 
     private renderOptions(): Array<ReactElement<{}>> {
-        return this.options.map((optionObject) => {
+        return this.options.map(optionObject => {
             const { caption, value } = optionObject;
 
             const optionValue: OptionHTMLAttributesType = {
@@ -89,27 +84,26 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     }
 
     private handleChange(event: FormEvent<HTMLSelectElement>) {
-        const value = event.currentTarget.value;
+        const value = event.currentTarget.value.split("-").pop();
 
         this.setState({ value });
-        this.callOnChangeAction(value);
+        this.callOnChangeAction(Number(value));
     }
 
-    private callOnChangeAction(value: string) {
-        const dropOption = this.options.filter(optionFilter => optionFilter.value === value)[0];
-        const selectedOption = dropOption && this.props.sortAttributes.filter(option => option.name === dropOption.name && option.sort === dropOption.sort)[0];
+    private callOnChangeAction(selectedIndex: number) {
+        const selectedOption = this.props.sortAttributes[selectedIndex];
 
-        if (dropOption && this.props.onDropDownChangeAction) {
+        if (selectedOption && this.props.onDropDownChangeAction) {
             this.props.onDropDownChangeAction(selectedOption);
         }
     }
 
     private createOptionProps(sortAttributes: AttributeType[]): DropDownOptionType[] {
-        return sortAttributes.map((optionObject, index) => {
-            const { name, caption, sort } = optionObject;
-            const value = `${name}-${index}`;
-
-            return { name, caption, sort, value };
-        });
+        return sortAttributes.map(({ name, caption, sort }, index) => ({
+            name,
+            caption,
+            sort,
+            value: `${name}-${index}`
+        }));
     }
 }
