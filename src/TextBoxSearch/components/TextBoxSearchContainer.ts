@@ -1,14 +1,14 @@
 import { Component, ReactElement, createElement } from "react";
 import * as mendixLang from "mendix/lang";
 import * as classNames from "classnames";
-import * as dojoConnect from "dojo/_base/connect";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils, StoreState, WrapperProps } from "../../Shared/SharedUtils";
+import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
+import FormViewState from "../../Shared/FormViewState";
 
 export interface ContainerProps extends WrapperProps {
     attributeList: SearchAttributes[];
@@ -37,15 +37,22 @@ interface FormState {
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
-    private setPageState: (store: Partial<FormState>) => void;
+    private viewStateManager: FormViewState<FormState>;
 
-    readonly state: ContainerState = { listViewAvailable: false };
     constructor(props: ContainerProps) {
         super(props);
 
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.applySearch = this.applySearch.bind(this);
-        this.setPageState = StoreState(this.props.mxform, this.props.uniqueid);
+        const id = this.props.uniqueid || this.props.friendlyId;
+        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+            viewState.defaultSearchText = this.state.defaultSearchText;
+        });
+
+        this.state = {
+            defaultSearchText: this.getDefaultValue(),
+            listViewAvailable: false
+        };
+
     }
 
     render() {
@@ -63,28 +70,27 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     componentDidMount() {
-        dojoConnect.connect(this.props.mxform, "onPersistViewState", null, (formViewState) => {
-            logger.debug("Storing state");
-            formViewState[this.props.uniqueid] = {
-                defaultSearchText: this.state.defaultSearchText
-            };
-        });
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            this.applySearch(this.getDefaultValue());
+            this.applySearch(this.state.defaultSearchText);
         }
     }
 
     private checkListViewAvailable(): boolean {
+        if (!this.widgetDom) {
+            return false;
+        }
+
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
         if (!this.state.alertMessage) {
             return createElement(TextBoxSearch, {
-                defaultQuery: this.getDefaultValue(),
+                defaultQuery: this.state.defaultSearchText,
                 onTextChange: this.applySearch,
                 placeholder: this.props.placeHolder
             });
@@ -100,7 +106,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
         }
-        this.setWidgetState({ defaultSearchText: searchQuery });
+        this.setState({ defaultSearchText: searchQuery });
     }
 
     private getConstraint(searchQuery: string): string | GroupedOfflineConstraint {
@@ -159,20 +165,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private getDefaultValue() {
-        const pageState = this.getPageState<FormState>();
-        return pageState && pageState.defaultSearchText || this.props.defaultQuery;
+        return this.viewStateManager.getPageState("defaultSearchText", this.props.defaultQuery);
     }
 
-    private setWidgetState(state: Partial<ContainerState & FormState>) {
-        this.setPageState(state);
-        this.setState(state as ContainerState);
-    }
-
-    private getPageState<T>(key?: string, defaultValue?: T): T | undefined {
-        const mxform = this.props.mxform;
-        const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.props.uniqueid] : void 0;
-        const state = 0 === arguments.length ? widgetViewState : widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
-        logger.debug("getPageState", key, defaultValue, state);
-        return state;
-    }
 }

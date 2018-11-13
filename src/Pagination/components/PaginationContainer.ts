@@ -89,6 +89,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
     private checkListViewAvailable(): boolean {
         logger.debug(this.props.friendlyId, ".checkListViewAvailable");
+        if (!this.widgetDom) {
+            return false;
+        }
+
         return !! SharedContainerUtils.findTargetListView(this.widgetDom.parentElement);
     }
 
