@@ -58,7 +58,7 @@ describe("DropDownSort", () => {
         const props: DropDownProps = {
             ...dropDownProps,
             sortAttributes,
-            defaultSortAttribute: sortAttributes[1]
+            defaultSortIndex: 1
         };
 
         const wrapper = renderDropdown(props);
@@ -80,12 +80,12 @@ describe("DropDownSort", () => {
 
             select.simulate("change", {
                 currentTarget: {
-                    value: newValue + "-2"
+                    value: newValue + "-0"
                 }
             });
 
             setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(newValue, "desc");
+                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
                 done();
             }, 1000);
         });
@@ -107,16 +107,16 @@ describe("DropDownSort", () => {
             });
 
             setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith("Name", "asc");
+                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
 
                 select.simulate("change", {
                     currentTarget: {
-                        value: newValue + "-2"
+                        value: newValue + "-1"
                     }
                 });
 
                 setTimeout(() => {
-                    expect(props.onDropDownChangeAction).toHaveBeenCalledWith(newValue, "desc");
+                    expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[1]);
                     done();
                 }, 1000);
             }, 1000);

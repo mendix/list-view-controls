@@ -79,11 +79,10 @@ describe("PageSizeDropdown", () => {
         select.simulate("change", { currentTarget : { value: "2" } }); // Index 2 is page size 10
 
         setTimeout(() => {
-            expect(props.onChange).toHaveBeenCalledWith({
-                newOffSet: 0,
-                newPageNumber: 1,
-                newPageSize: 10 // Index 2 is page size 10
-            });
+            expect(props.onChange).toHaveBeenCalledWith(
+                0, // newOffSet
+                10 // Index 2 is page size 10
+            );
             done();
         }, 500);
     });

@@ -123,7 +123,7 @@ describe("Pagination", () => {
         it("when previous button is clicked and page is 8, set page to 7", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
@@ -142,7 +142,7 @@ describe("Pagination", () => {
         it("when previous button is clicked and page number is at start, disable previous button", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -161,7 +161,7 @@ describe("Pagination", () => {
         it("when next button is clicked and page is 4, set page to 5", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -180,7 +180,7 @@ describe("Pagination", () => {
         it("when last button is clicked set page to page count", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -200,7 +200,7 @@ describe("Pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
                 listViewSize: 33,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -219,7 +219,7 @@ describe("Pagination", () => {
         it("when same custom page button 5 is clicked do nothing", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -235,7 +235,7 @@ describe("Pagination", () => {
         it("when next custom page button 6 is clicked update pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -274,10 +274,10 @@ describe("Pagination", () => {
             });
             const paginationInstance = pagination.instance() as Pagination;
 
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
+            expect(paginationInstance.state.selectedPageNumber).toBe(4);
             expect(paginationInstance.state.nextIsDisabled).toBe(false);
             expect(paginationInstance.state.previousIsDisabled).toBe(false);
-            expect(paginationInstance.state.currentOffset).toBe(0);
+            expect(paginationInstance.state.currentOffset).toBe(8);
         });
     });
 
@@ -387,7 +387,7 @@ describe("Pagination", () => {
         items: [],
         listViewSize: 32,
         pageSize: 2,
-        onChange: jasmine.any(Function),
+        onChange: jasmine.createSpy("onChange"),
         pagingStyle: "default"
     };
 

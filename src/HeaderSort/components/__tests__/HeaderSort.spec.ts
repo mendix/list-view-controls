@@ -41,7 +41,6 @@ describe("HeaderSort", () => {
     });
 
     it("changes listview sort order when its clicked ", (done) => {
-        const newValue = "Name";
         const props: HeaderSortProps = {
             ...defaultProps,
             onClickAction: () => jasmine.any(Function) as any,
@@ -58,7 +57,7 @@ describe("HeaderSort", () => {
         headerSortInstance.componentWillReceiveProps(props);
 
         setTimeout(() => {
-            expect(props.onClickAction).toHaveBeenCalledWith(newValue, "desc");
+            expect(props.onClickAction).toHaveBeenCalledWith("desc");
             done();
         }, 1000);
     });
