@@ -27,6 +27,8 @@ interface PaginationContainerState {
     targetListView?: ListView | null;
     targetNode?: HTMLElement | null;
     validationPassed?: boolean;
+    pageSize?: number;
+    offset: number;
 }
 
 interface PaginationPageState {
@@ -37,11 +39,6 @@ interface PaginationPageState {
 class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<PaginationPageState>;
-
-    readonly state: PaginationContainerState = {
-        findingListViewWidget: true,
-        message: ""
-    };
 
     constructor(props: ModelerProps) {
         super(props);
@@ -55,6 +52,13 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             viewState.pageSize = datasource.getPageSize();
             viewState.offset = datasource.getOffset();
         });
+
+        this.state = {
+            findingListViewWidget: true,
+            message: "",
+            pageSize: this.viewStateManager.getPageState("pageSize", undefined), // We dont know, based on the modeler configuration of the list view.
+            offset: this.viewStateManager.getPageState("offset", 0)
+        };
     }
 
     componentDidMount() {
@@ -99,11 +103,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     private renderPageButton(): ReactElement<PaginationProps> | null {
         logger.debug(this.props.friendlyId, ".renderPageButton");
 
-        if (this.state.validationPassed) {
+        if (this.state.validationPassed && this.state.pageSize) {
             const datasource = this.state.targetListView._datasource;
-            const pageSize = datasource.getPageSize();
-            const offset = datasource.getOffset();
-            const pageNumber = (offset / pageSize) + 1;
+            const pageSize = this.state.pageSize; // datasource.getPageSize();
+            const offset = this.state.offset; // datasource.getOffset();
 
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
@@ -112,7 +115,6 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 listViewSize: datasource.getSetSize(),
                 pageSize,
                 offset,
-                pageNumber,
                 onChange: this.updateListView,
                 pagingStyle: this.props.pagingStyle,
                 pageSizeOptions: this.props.pageSizeOptions
@@ -120,6 +122,17 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         }
 
         return null;
+    }
+
+    public updateListView(offSet?: number, pageSize?: number) {
+        logger.debug(this.props.friendlyId, ".updateListView");
+        if (this.state.validationPassed) {
+            this.setState({
+                offset: offSet !== undefined ? offSet : this.state.offset,
+                pageSize: pageSize !== undefined ? pageSize : this.state.pageSize
+            });
+            this.updateDataSource(offSet, pageSize);
+        }
     }
 
     private findListView() {
@@ -140,7 +153,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             });
 
             if (validationPassed) {
-                this.afterListViewLoad(targetListView, targetNode);
+                this.afterListViewLoaded(targetListView, targetNode);
                 this.beforeListViewDataRender(targetListView);
                 this.afterListViewDataRender(targetListView);
             }
@@ -152,8 +165,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".beforeListViewDataRender");
         dojoAspect.before(targetListView, "_renderData", () => {
             logger.debug(this.props.friendlyId, "_renderData.before");
-            // Update from new constraints required update.
-            this.forceUpdate();
+
             const previousOffset = targetListView._datasource.__customWidgetPagingOffset;
             if (previousOffset !== targetListView._datasource.getOffset()) {
                 const size = targetListView._datasource.getSetSize();
@@ -170,14 +182,31 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         });
     }
 
-    private afterListViewLoad(targetListView: ListView, targetNode: HTMLElement) {
+    private afterListViewLoaded(targetListView: ListView, targetNode: HTMLElement) {
         logger.debug(this.props.friendlyId, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
         datasource.__customWidgetPagingOffset = 0;
-        const pageSize = this.viewStateManager.getPageState("pageSize", datasource.getPageSize());
-        const offset = this.viewStateManager.getPageState("offset", datasource.getOffset());
-        this.updateDataSource(offset, pageSize);
+        const pageSizeCurrent = datasource.getPageSize();
+        const offsetCurrent = datasource.getOffset();
+        const size = targetListView._datasource.getSetSize();
+
+        let offset = offsetCurrent;
+        if (this.state.offset > size) {
+            offset = this.state.offset;
+        }
+
+        let pageSize = datasource.getPageSize();
+        if (this.state.pageSize !== undefined && this.state.pageSize !== pageSizeCurrent) {
+            pageSize = this.state.pageSize;
+        }
+        // Only to initial run, page size needs to be set, when navigating back the data is coming from FormViewState
+        if (!this.state.pageSize) {
+            this.setState({ pageSize });
+        }
+        if (offset !== offsetCurrent || pageSize !== pageSizeCurrent) {
+            this.updateDataSource(offset, pageSize);
+        }
 
         hideLoadMoreButton(targetNode);
     }
@@ -192,18 +221,11 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         });
     }
 
-    private updateListView(offSet?: number, pageSize?: number) {
-        logger.debug(this.props.friendlyId, ".updateListView");
-        if (this.state.validationPassed) {
-            this.updateDataSource(offSet, pageSize);
-        }
-    }
-
     private updateDataSource(offset?: number, pageSize?: number) {
         const dataSource = this.state.targetListView._datasource;
         let changed = false;
         // On navigating back, the core listview persist list length, should be truncated
-        if (offset !== undefined && offset !== dataSource.getOffset() || dataSource._pageObjs.length > pageSize) {
+        if (offset !== undefined && (offset !== dataSource.getOffset() || dataSource._pageObjs.length > pageSize)) {
             this.state.targetListView._datasource.setOffset(offset);
             this.state.targetListView._datasource.__customWidgetPagingOffset = offset;
             changed = true;

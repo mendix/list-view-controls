@@ -254,8 +254,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                offset: 8,
-                pageNumber: 4
+                offset: 8
             });
             const paginationInstance = pagination.instance() as Pagination;
 
@@ -269,8 +268,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                offset: 8,
-                pageNumber: 4
+                offset: 8
             });
             const paginationInstance = pagination.instance() as Pagination;
 

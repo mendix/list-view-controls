@@ -12,7 +12,6 @@ export interface PaginationProps {
     listViewSize: number;
     pageSize: number;
     offset?: number;
-    pageNumber?: number;
     onChange: (offSet?: number, pageSize?: number) => void;
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
@@ -40,13 +39,18 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     constructor(props: PaginationProps) {
         super(props);
 
+        const { offset, listViewSize, pageSize } = props;
+        const pageCount = Math.ceil(listViewSize / pageSize);
+        const currentOffset = offset || 0;
+        const selectedPageNumber = (currentOffset / pageSize) + 1;
+
         this.state = {
-            currentOffset: 0,
-            isVisible: !this.props.hideUnusedPaging,
-            nextIsDisabled: false,
-            pageCount: 0,
-            previousIsDisabled: true,
-            selectedPageNumber: 1
+            currentOffset,
+            isVisible: !props.hideUnusedPaging,
+            nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
+            pageCount,
+            previousIsDisabled: currentOffset <= 0,
+            selectedPageNumber
         };
     }
 
@@ -70,18 +74,16 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     }
 
     componentWillReceiveProps(nextProps: PaginationProps) {
-        const { offset, listViewSize, pageSize, pageNumber } = nextProps;
+        const { offset, listViewSize, pageSize } = nextProps;
         const pageCount = pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize;
         const currentOffset = offset || 0;
-        const selectedPageNumber = pageNumber || 1;
 
         this.setState({
             currentOffset,
             isVisible: !nextProps.hideUnusedPaging,
             nextIsDisabled: (currentOffset + pageSize) >= listViewSize,
             pageCount,
-            previousIsDisabled: currentOffset <= 0,
-            selectedPageNumber
+            previousIsDisabled: currentOffset <= 0
         });
     }
 
