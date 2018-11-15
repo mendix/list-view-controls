@@ -55,7 +55,7 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
 
     componentWillReceiveProps(newProps: TextBoxSearchProps) {
         if (this.state.query !== newProps.defaultQuery) {
-            this.setState({ query: this.props.defaultQuery });
+            this.setState({ query: newProps.defaultQuery });
         }
     }
 
