@@ -14,7 +14,7 @@ export default class FromViewState<T> {
         const mxform = this.form;
         const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.widgetId] : void 0;
         const state = widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
-        logger.debug("getPageState", key, defaultValue, state);
+        logger.debug("getPageState", this.widgetId, key, defaultValue, state);
         return state;
     }
 

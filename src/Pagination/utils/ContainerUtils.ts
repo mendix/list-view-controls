@@ -2,38 +2,38 @@ import { ListView } from "../../Shared/SharedUtils";
 
 export const hideLoadMoreButton = (targetNode?: HTMLElement | null) => {
     if (targetNode) {
-        const buttonNode = targetNode.querySelector(".mx-listview-loadMore") as HTMLButtonElement;
-
-        if (buttonNode) {
-            buttonNode.classList.add("widget-pagination-hide-load-more");
-        }
+        targetNode.classList.add("hide-load-more");
     }
 };
 
 export const showLoadMoreButton = (targetNode?: HTMLElement | null) => {
     if (targetNode) {
-        const buttonNode = targetNode.querySelector(".mx-listview-loadMore") as HTMLButtonElement;
-
-        if (buttonNode) {
-            buttonNode.classList.remove("widget-pagination-hide-load-more");
-        }
+        targetNode.classList.remove("hide-load-more");
     }
 };
 
-export const resetListViewStructure = (targetNode: HTMLElement) => {
+export const resetListViewHeight = (targetNode: HTMLElement) => {
     const listNode = targetNode.querySelector("ul") as HTMLUListElement;
 
     listNode.style.removeProperty("height");
     listNode.style.removeProperty("overflow");
+};
+export const persistListViewHeight = (targetNode: HTMLElement) => {
+    const listNode = targetNode.querySelector("ul") as HTMLUListElement;
+    if (listNode.offsetHeight > 0) {
+        listNode.style.height = listNode.offsetHeight + "px";
+        listNode.style.overflow = "hidden";
+    }
 };
 
 export const getListNode = (targetNode: HTMLElement): HTMLUListElement => {
     return targetNode.querySelector("ul") as HTMLUListElement;
 };
 
-export const setListNodeToEmpty = (listNode: HTMLUListElement) => {
+export const setListNodeToEmpty = (targetNode: HTMLElement) => {
     logger.debug("setListNodeToEmpty");
     // Explicitly remove children as IE does not like listNode.innerHTML = "";
+    const listNode = targetNode.querySelector("ul") as HTMLUListElement;
     while (listNode.firstChild) {
         listNode.removeChild(listNode.firstChild);
     }
