@@ -27,7 +27,9 @@ describe("Pagination", () => {
         it("is not visible when hide un-used property is set", () => {
             const paginationProps: PaginationProps = {
                 ...defaultStylePaginationProps,
-                hideUnusedPaging: true
+                hideUnusedPaging: true,
+                listViewSize: 10,
+                pageSize: 10
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -42,12 +44,12 @@ describe("Pagination", () => {
         it("renders the structure as disabled when list view is empty", () => {
             const paginationProps: PaginationProps = {
                 ...defaultStylePaginationProps,
-                listViewSize: 0
+                listViewSize: 0,
+                offset: 0,
+                pageSize: 10
             };
 
             const pagination = shallowRenderPagination(paginationProps);
-            const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.componentDidMount();
 
             expect(pagination).toBeElement(
                 createElement("div", { className: "pagination visible" },
@@ -59,9 +61,6 @@ describe("Pagination", () => {
 
     it("renders default page buttons", () => {
         const pagination = shallowRenderPagination({ ...defaultStylePaginationProps, pagingStyle: "pageNumberButtons" });
-
-        const paginationInstance = pagination.instance() as Pagination;
-        paginationInstance.componentDidMount();
 
         expect(pagination).toBeElement(
             createElement("div", { className: "pagination visible" },
@@ -90,7 +89,7 @@ describe("Pagination", () => {
             };
 
             const pagination = shallowRenderPagination(paginationProps);
-            // check if message contains zero
+
             expect(pagination).toBeElement(
                 createElement("div", { className: "pagination visible" },
                     getCustomPageButtons()
@@ -108,15 +107,12 @@ describe("Pagination", () => {
             };
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ selectedPageNumber: 8 });
+            paginationInstance.setState({ currentOffset: 2 });
 
             const firstPageButton = pagination.find(PageButton).at(0);
             firstPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
             expect(paginationInstance.state.currentOffset).toBe(0);
         });
 
@@ -127,15 +123,12 @@ describe("Pagination", () => {
             };
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 14, selectedPageNumber: 8 });
+            paginationInstance.setState({ currentOffset: 14 });
 
             const previousPageButton = pagination.find(PageButton).at(1);
             previousPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(7);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
             expect(paginationInstance.state.currentOffset).toBe(12);
         });
 
@@ -147,14 +140,11 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 2 });
+            paginationInstance.setState({ currentOffset: 2 });
             const previousPageButton = pagination.find(PageButton).at(1);
             previousPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
             expect(paginationInstance.state.currentOffset).toBe(0);
         });
 
@@ -166,14 +156,11 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const nextPageButton = pagination.find(PageButton).at(2);
             nextPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(5);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
@@ -185,14 +172,11 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
             lastPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(16);
-            expect(paginationInstance.state.nextIsDisabled).toBe(true);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(30);
         });
 
@@ -205,14 +189,11 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
             lastPageButton.props().onClickAction();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(17);
-            expect(paginationInstance.state.nextIsDisabled).toBe(true);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(32);
         });
 
@@ -224,12 +205,12 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 5 });
+            paginationInstance.setState({ currentOffset: 8 });
             const pageNumberButton = pagination.find(PageNumberView);
             pageNumberButton.props().onClickAction(5);
 
             expect(paginationProps.onChange).not.toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(5);
+            expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
         it("when next custom page button 6 is clicked update pagination", () => {
@@ -240,12 +221,12 @@ describe("Pagination", () => {
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 5 });
+            paginationInstance.setState({ currentOffset: 2 });
             const pageNumberButton = pagination.find(PageNumberView);
             pageNumberButton.props().onClickAction(6);
 
             expect(paginationProps.onChange).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(6);
+            expect(paginationInstance.state.currentOffset).toBe(10);
         });
     });
 
@@ -258,9 +239,6 @@ describe("Pagination", () => {
             });
             const paginationInstance = pagination.instance() as Pagination;
 
-            expect(paginationInstance.state.selectedPageNumber).toBe(4);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
@@ -272,9 +250,6 @@ describe("Pagination", () => {
             });
             const paginationInstance = pagination.instance() as Pagination;
 
-            expect(paginationInstance.state.selectedPageNumber).toBe(4);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(8);
         });
     });
@@ -382,6 +357,7 @@ describe("Pagination", () => {
             return getMessageStatus(fromValue, toValue, maxPageSize);
         },
         hideUnusedPaging: false,
+        offset: 0,
         items: [],
         listViewSize: 32,
         pageSize: 2,
