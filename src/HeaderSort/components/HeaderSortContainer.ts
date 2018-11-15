@@ -39,6 +39,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
+    private subscriptionTopic: string;
     private retriesFind = 0;
 
     constructor(props: ContainerProps) {
@@ -123,7 +124,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
 
         if (targetListView) {
-            this.subScribeToWidgetChanges(targetListView);
+            this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
+            this.subScribeToWidgetChanges();
             if (!this.props.initialSorted || errorMessage) {
                 DataSourceHelper.showContent(targetListView.domNode);
             }
@@ -148,21 +150,28 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
     }
 
-    private subScribeToWidgetChanges(targetListView: ListView) {
-        dojoTopic.subscribe(targetListView.friendlyId, (message: string[]) => {
+    private subScribeToWidgetChanges() {
+        dojoTopic.subscribe(this.subscriptionTopic, (message: string[]) => {
             const publishedSortAttribute = message[0];
             const publishedSortOrder = message[1] as SortOrder;
             const publishedSortWidgetFriendlyId = message[2];
-            if (publishedSortAttribute === this.props.sortAttribute && publishedSortWidgetFriendlyId !== this.props.friendlyId)
-            this.setState({
-                defaultSortOrder: publishedSortOrder
-            });
+            if (publishedSortWidgetFriendlyId !== this.props.friendlyId) {
+                if (publishedSortAttribute === this.props.sortAttribute) {
+                    this.setState({
+                        defaultSortOrder: publishedSortOrder
+                    });
+                } else {
+                    this.setState({
+                        defaultSortOrder: ""
+                    });
+                }
+            }
         });
     }
 
     private publishWidgetChanges(attribute: string, order: string) {
         if (this.state.targetListView) {
-            dojoTopic.publish(this.state.targetListView.friendlyId, [ attribute, order, this.props.friendlyId ]);
+            dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.friendlyId ]);
         }
     }
 
