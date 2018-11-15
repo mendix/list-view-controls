@@ -45,6 +45,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -92,7 +93,10 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         if (!this.widgetDom) {
             return false;
         }
-
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
+        }
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
@@ -123,7 +127,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private getDefaultOption() {
-        const defaultFilter = this.props.filters.filter(value => value.isDefault)[0];
+        const defaultFilter = this.props.filters.filter(value => value.isDefault)[0] || this.props.filters[0];
 
         return this.viewStateManager.getPageState("defaultOption", defaultFilter);
     }

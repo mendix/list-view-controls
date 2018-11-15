@@ -39,6 +39,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -52,7 +53,10 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             viewState.defaultSortOrder = this.state.defaultSortOrder;
         });
 
-        this.state = { listViewAvailable: false, defaultSortOrder: this.getDefaultValue() };
+        this.state = {
+            listViewAvailable: false,
+            defaultSortOrder: this.getDefaultValue()
+        };
     }
 
     render() {
@@ -74,7 +78,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+        if (this.state.listViewAvailable && !prevState.listViewAvailable && this.props.initialSorted) {
             this.updateSort(this.state.defaultSortOrder);
         }
     }
@@ -86,6 +90,10 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     private checkListViewAvailable(): boolean {
         if (!this.widgetDom) {
             return false;
+        }
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
         }
 
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);

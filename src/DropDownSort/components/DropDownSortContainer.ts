@@ -44,6 +44,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
     private subscriptionTopic: string;
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -99,6 +100,10 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         if (!this.widgetDom) {
             return false;
         }
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
+        }
 
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
@@ -113,7 +118,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
                 onDropDownChangeAction: this.updateSort,
                 sortAttributes: this.props.sortAttributes,
                 style: SharedUtils.parseStyle(this.props.style),
-                defaultSortIndex
+                defaultSortIndex: defaultSortIndex !== -1 ? defaultSortIndex : undefined
             });
         }
 

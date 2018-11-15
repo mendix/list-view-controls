@@ -38,6 +38,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -82,6 +83,10 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private checkListViewAvailable(): boolean {
         if (!this.widgetDom) {
             return false;
+        }
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
         }
 
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
