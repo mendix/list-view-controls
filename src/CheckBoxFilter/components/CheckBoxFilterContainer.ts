@@ -31,23 +31,18 @@ export interface ContainerState {
     listViewAvailable: boolean;
     targetListView?: ListView;
     validationPassed?: boolean;
-    defaultChecked?: boolean;
+    isChecked?: boolean;
 }
 
 interface FormState {
-    defaultChecked?: boolean;
+    isChecked?: boolean;
 }
 
 export default class CheckboxFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper: DataSourceHelper;
     private widgetDom: HTMLElement;
     private viewStateManager: FormViewState<FormState>;
-
-    readonly state: ContainerState = {
-        defaultChecked: this.props.defaultChecked,
-        listViewAvailable: false,
-        alertMessage: Validate.validateProps(this.props)
-    };
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
@@ -55,8 +50,14 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         this.applyFilter = this.applyFilter.bind(this);
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
-            viewState.defaultChecked = this.state.defaultChecked;
+            viewState.isChecked = this.state.isChecked;
         });
+
+        this.state = {
+            isChecked: this.getDefaultValue(),
+            listViewAvailable: false,
+            alertMessage: Validate.validateProps(this.props)
+        };
     }
 
     render() {
@@ -79,8 +80,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.getDefaultValue();
-            this.applyFilter(selectedSort);
+            // const selectedSort = this.getDefaultValue();
+            this.applyFilter(this.state.isChecked);
         }
     }
 
@@ -91,6 +92,10 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     private checkListViewAvailable(): boolean {
         if (!this.widgetDom) {
             return false;
+        }
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
         }
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.listViewEntity);
     }
@@ -105,7 +110,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         if (!alertMessage) {
             return createElement(CheckboxFilter, {
                 handleChange: this.applyFilter,
-                isChecked: this.getDefaultValue()
+                isChecked: this.state.isChecked
             });
         }
 
@@ -115,7 +120,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     private applyFilter(isChecked: boolean) {
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group);
-            this.setState({ defaultChecked: isChecked });
+            this.setState({ isChecked });
         }
     }
 
@@ -194,7 +199,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     private getDefaultValue(): boolean {
-        return this.viewStateManager.getPageState("defaultChecked", this.props.defaultChecked);
+        return this.viewStateManager.getPageState("isChecked", this.props.defaultChecked);
     }
 
 }
