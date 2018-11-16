@@ -182,24 +182,33 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 this.afterListViewLoaded(targetListView);
                 this.initialLoading = false;
             } else {
-                const previousOffset = this.state.offset;
-                const listSize = datasource.getSetSize();
-                let offset = previousOffset;
-                if (previousOffset !== datasource.getOffset()) {
-                    if (listSize > previousOffset) {
-                        this.updateDatasource(offset);
-                    } else {
-                        offset = 0;
-                        datasource.__customWidgetPagingOffset = offset;
-                    }
-                }
-                const pageSize = datasource.getPageSize();
-                if (this.state.offset !== offset || this.state.pageSize !== pageSize || this.state.listSize !== listSize) {
+                if (datasource.__customWidgetPagingLoading) {
+                    // other pagination widget did the update, just take the new values
                     this.setState({
-                        offset,
-                        pageSize,
-                        listSize
+                        offset: datasource.getOffset(),
+                        pageSize: datasource.getPageSize(),
+                        listSize: datasource.getSetSize()
                     });
+                } else {
+                    const previousOffset = this.state.offset;
+                    const listSize = datasource.getSetSize();
+                    let offset = previousOffset;
+                    if (previousOffset !== datasource.getOffset()) {
+                        if (listSize > previousOffset) {
+                            this.updateDatasource(offset);
+                        } else {
+                            offset = 0;
+                            datasource.__customWidgetPagingOffset = offset;
+                        }
+                    }
+                    const pageSize = datasource.getPageSize();
+                    if (this.state.offset !== offset || this.state.pageSize !== pageSize || this.state.listSize !== listSize) {
+                        this.setState({
+                            offset,
+                            pageSize,
+                            listSize
+                        });
+                    }
                 }
             }
             persistListViewHeight(targetListView.domNode);
