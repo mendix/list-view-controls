@@ -29,12 +29,16 @@ interface PaginationContainerState {
     validationPassed?: boolean;
     pageSize?: number;
     offset: number;
-    listSize: number;
+    listSize?: number;
+    offsetGuid?: string;
+    isPersisted?: boolean;
 }
 
 interface PaginationPageState {
     pageSize?: number;
     offset?: number;
+    offsetGuid?: string;
+    isPersisted?: boolean;
 }
 
 class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
@@ -52,19 +56,23 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+            const datasource = this.state.targetListView._datasource;
             if (this.state.validationPassed) {
-                const datasource = this.state.targetListView._datasource;
-                viewState.pageSize = datasource.getPageSize();
-                viewState.offset = datasource.getOffset();
+                viewState.pageSize = this.state.pageSize;
+                viewState.offset = this.state.offset;
+                viewState.offsetGuid = datasource.getSetSize() ? (datasource._pageObjs[0] as mendix.lib.MxObject).getGuid() : this.state.offsetGuid;
+                viewState.isPersisted = true;
+                // viewState.listSize = this.state.listSize;
             }
         });
 
         this.state = {
             findingListViewWidget: true,
             message: "",
-            pageSize: this.viewStateManager.getPageState("pageSize", undefined), // We dont know, based on the modeler configuration of the list view.
-            offset: this.viewStateManager.getPageState("offset", 0),
-            listSize: 0
+            pageSize: this.viewStateManager.getPageState("pageSize", undefined) as number, // We dont know, based on the modeler configuration of the list view.
+            offset: this.viewStateManager.getPageState("offset", 0) as number,
+            offsetGuid: this.viewStateManager.getPageState("offsetGuid", undefined) as string,
+            isPersisted: this.viewStateManager.getPageState("isPersisted", false) as boolean
         };
     }
 
@@ -103,6 +111,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         if (!this.widgetDom) {
             return false;
         }
+        // Added to deal with the passing this predicate in mendixLang.delay
         this.retriesFind++;
         if (this.retriesFind > 25) {
             return true; // Give-up searching
@@ -114,16 +123,14 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     private renderPageButton(): ReactElement<PaginationProps> | null {
         logger.debug(this.props.friendlyId, ".renderPageButton");
 
-        if (this.state.validationPassed && this.state.pageSize) {
-            const datasource = this.state.targetListView._datasource;
-            const pageSize = this.state.pageSize; // datasource.getPageSize();
-            const offset = this.state.offset; // datasource.getOffset();
+        if (this.state.validationPassed && this.state.pageSize && this.state.targetListView._datasource.getSetSize() > 0) {
+            const { offset, pageSize } = this.state;
 
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
                 hideUnusedPaging: this.props.hideUnusedPaging,
                 items: this.props.items,
-                listViewSize: datasource.getSetSize(),
+                listViewSize: this.state.targetListView._datasource.getSetSize(),
                 pageSize,
                 offset,
                 onChange: this.updateListView,
@@ -165,9 +172,9 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
             if (validationPassed) {
                 hideLoadMoreButton(targetNode);
-                // this.afterListViewLoaded(targetListView);
                 this.beforeListViewDataRender(targetListView);
                 this.afterListViewDataRender(targetListView);
+                targetListView._renderData(); // render the initial listview so before and after render events apply.
             }
 
         }
@@ -177,12 +184,23 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".beforeListViewDataRender");
         dojoAspect.before(targetListView, "_renderData", () => {
             logger.debug(this.props.friendlyId, "_renderData.before");
+            logger.debug("LIST VIEW SIZE IS: ", targetListView._datasource.getSetSize());
+            logger.debug("LIST VIEW OFFSET IS: ", targetListView._datasource.getOffset());
+            logger.debug("STATE OFFSET IS: ", this.state.offset);
+
             const datasource = targetListView._datasource;
+            if (datasource.getSetSize() === 0) {
+                this.setState({ listSize: datasource.getSetSize() });
+                return;
+            } else {
+                this.setState({ listSize: datasource.getSetSize() });
+            }
             if (this.initialLoading) {
                 this.afterListViewLoaded(targetListView);
                 this.initialLoading = false;
             } else {
                 if (datasource.__customWidgetPagingLoading) {
+                    logger.debug(this.props.friendlyId, ".initialLoading False, pagingLoading True");
                     // other pagination widget did the update, just take the new values
                     this.setState({
                         offset: datasource.getOffset(),
@@ -190,6 +208,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                         listSize: datasource.getSetSize()
                     });
                 } else {
+                    logger.debug(this.props.friendlyId, ".initialLoading False, pagingLoading False");
                     const previousOffset = this.state.offset;
                     const listSize = datasource.getSetSize();
                     let offset = previousOffset;
@@ -208,9 +227,17 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                             pageSize,
                             listSize
                         });
+                        this.updateDatasource(offset, pageSize);
                     }
                 }
             }
+            // if (this.state.isPersisted && targetListView._datasource.getSetSize()) {
+            //     if(targetListView._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
+            //         this.setState( { isPersisted: false, offsetGuid: undefined });
+            //     } else {
+            //         targetListView.sequence([ "_sourceReload", "_renderData" ]);
+            //     }
+            // }
             persistListViewHeight(targetListView.domNode);
             setListNodeToEmpty(targetListView.domNode);
         });
@@ -220,8 +247,8 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
-        datasource.__customWidgetPagingOffset = 0;
-        const pageSize = this.state.pageSize ? this.state.pageSize : datasource.getPageSize();
+        // let offset = datasource.__customWidgetPagingOffset !== undefined ? datasource.__customWidgetPagingOffset : 0;
+        const pageSize = this.state.pageSize ? this.state.pageSize : datasource.getPageSize() && datasource.getPageSize() || 10;
         if (!this.state.pageSize) {
             // Only to initial run, page size needs to be set, when navigating back the data is coming from FormViewState
             this.setState({ pageSize });
@@ -233,24 +260,38 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".afterListViewDataRender");
         dojoAspect.after(targetListView, "_renderData", () => {
             logger.debug(this.props.friendlyId, "_renderData.after");
+            logger.debug("LIST VIEW SIZE IS: ", targetListView._datasource.getSetSize());
+            logger.debug("LIST VIEW OFFSET IS: ", targetListView._datasource.getOffset());
+            logger.debug("STATE OFFSET IS: ", this.state.offset);
             resetListViewHeight(targetListView.domNode as HTMLElement);
+            // if (this.state.isPersisted && targetListView._datasource.getSetSize()) {
+            //     if(targetListView._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
+            //         this.setState( { isPersisted: false, offsetGuid: undefined });
+            //     } else {
+            //         targetListView.sequence([ "_sourceReload", "_renderData" ]);
+            //     }
+            // }
         });
     }
 
     private updateDatasource(offset?: number, pageSize?: number) {
+        logger.debug(".updateDataSource offset, pageSize", offset, pageSize);
         const listview = this.state.targetListView;
         const datasource = listview._datasource;
         if (datasource.__customWidgetPagingLoading) {
+            logger.debug("customWidgetPagingLoading");
             return;
         }
         let changed = false;
         // On navigating back, the core listview persist list length, should be truncated
         if (offset !== undefined && (offset !== datasource.getOffset() || datasource._pageObjs.length > pageSize)) {
+            logger.debug("off set is defined");
             datasource.__customWidgetPagingOffset = offset;
             datasource.setOffset(offset);
             changed = true;
         }
         if (pageSize !== undefined && datasource.getPageSize() !== pageSize) {
+            logger.debug("page size is defined");
             datasource.setPageSize(pageSize);
             changed = true;
         }
@@ -264,6 +305,18 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 resetListViewHeight(listview.domNode);
                 logger.debug(this.props.friendlyId, ".updateDatasource updated");
                 hideLoader(listview);
+                if (this.state.isPersisted) {
+                    if (listview._datasource.getSetSize() && listview._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
+                        this.setState({ isPersisted: false, offsetGuid: undefined });
+                        logger.debug(this.props.friendlyId, ".updateDatasource setstate persisted False and offsetGuid");
+                    } else {
+                        logger.debug(this.props.friendlyId, ".updateDatasource cause sourceReload and _renderData");
+                        listview.sequence([ "_sourceReload", "_renderData" ]);
+                    }
+                } else {
+                    logger.debug(this.props.friendlyId, ".updateDatasource .setstate of offsetGuid");
+                    this.setState({ offsetGuid: datasource._pageObjs[0].getGuid() });
+                }
             });
         }
     }

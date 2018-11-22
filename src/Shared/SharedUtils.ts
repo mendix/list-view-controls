@@ -13,7 +13,7 @@ export interface ListView extends mxui.widget._WidgetBase {
         setPageSize: (pageSize: number) => void;
         _constraints: Constraints;
         _entity: string;
-        _pageObjs: any[];
+        _pageObjs: mendix.lib.MxObject[];
         _sorting: string[][];
         getOffset: () => number;
         getPageSize: () => number;
