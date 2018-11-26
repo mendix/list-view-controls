@@ -106,7 +106,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
     private applySearch(searchQuery: string) {
         // Construct constraint based on search query
-        const constraint = this.getConstraint(searchQuery);
+        const constraint = this.getConstraint((mxui as any).dom.escapeHTMLQuotes(searchQuery));
 
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);

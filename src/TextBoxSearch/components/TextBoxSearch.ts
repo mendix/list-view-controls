@@ -67,7 +67,7 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
                 window.clearTimeout(this.updateHandle);
             }
             this.updateHandle = window.setTimeout(() => {
-                this.props.onTextChange((mxui as any).dom.escapeHTMLQuotes(query)); // update mendix typings to remove the any
+                this.props.onTextChange(query);
             }, this.searchTimeOut);
         }
         this.setState({ query });
