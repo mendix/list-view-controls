@@ -161,6 +161,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     private getAttributeConstraint(attribute: string, attributeValue: string): string | OfflineConstraint {
+        const { targetListView } = this.state;
         if (window.mx.isOffline()) {
             const constraints: OfflineConstraint = {
                 attribute,
@@ -172,7 +173,19 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
             return constraints;
         }
 
-        return `[contains(${attribute},'${attributeValue}')]`;
+        if (targetListView && targetListView._datasource && attributeValue) {
+            const entityMeta = mx.meta.getEntity(this.props.entity);
+
+            if (entityMeta.isEnum(attribute)) {
+                return `[${attribute}='${attributeValue}']`;
+            } else if (entityMeta.isBoolean(attribute)) {
+                return `[${attribute} = '${attributeValue.toLowerCase()}']`;
+            } else {
+                return `[contains(${attribute},'${attributeValue}')]`;
+            }
+        }
+
+        return "";
     }
 
     private connectToListView() {
