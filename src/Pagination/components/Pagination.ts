@@ -54,7 +54,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         } else if (this.props.pagingStyle === "pageNumberButtons") {
             const { listViewSize, pageSize } = this.props;
             const pageCount = Math.ceil(listViewSize / pageSize);
-            const selectedPageNumber = (this.state.currentOffset / pageSize) + 1;
+            const selectedPageNumber = this.getPageNumber(this.state.currentOffset, pageSize, listViewSize);
             return [
                 createElement(PageNumberView, {
                     maxPageButtons: 7,
@@ -67,6 +67,10 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
             return this.renderCustom();
         }
+    }
+
+    private getPageNumber(offset: number, pageSize: number, listSize: number) {
+        return offset < listSize ? offset / pageSize + 1 : 1;
     }
 
     private renderDefault = (): Array<ReactElement<{}>> => {
@@ -111,7 +115,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             if (buttonProps.buttonType === "pageNumberButtons") {
                 const { listViewSize, pageSize } = this.props;
                 const pageCount = Math.ceil(listViewSize / pageSize);
-                const selectedPageNumber = (this.state.currentOffset / pageSize) + 1;
+                const selectedPageNumber = this.getPageNumber(this.state.currentOffset, pageSize, listViewSize);
 
                 return createElement(PageNumberView, {
                     maxPageButtons: option.maxPageButtons,
@@ -122,13 +126,14 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             }
 
             if (buttonProps.buttonType === "pageSize") {
-                const currentPage = (this.state.currentOffset / this.props.pageSize) + 1;
+                const { listViewSize, pageSize } = this.props;
+                const currentPage = this.getPageNumber(this.state.currentOffset, pageSize, listViewSize);
 
                 return createElement(PageSizeSelect, {
                     onChange: this.props.onChange,
                     pageSize: this.props.pageSize,
                     sizeOptions: this.props.pageSizeOptions,
-                    listViewSize: this.props.listViewSize,
+                    listViewSize,
                     currentPage
                 });
             }
