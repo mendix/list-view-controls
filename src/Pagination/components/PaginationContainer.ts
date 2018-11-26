@@ -58,11 +58,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
             const datasource = this.state.targetListView._datasource;
             if (this.state.validationPassed) {
-                viewState.pageSize = this.state.pageSize;
-                viewState.offset = this.state.offset;
+                viewState.pageSize = datasource.getPageSize() || this.state.pageSize;
+                viewState.offset = datasource.getOffset() || this.state.offset;
                 viewState.offsetGuid = datasource.getSetSize() ? (datasource._pageObjs[0] as mendix.lib.MxObject).getGuid() : this.state.offsetGuid;
                 viewState.isPersisted = true;
-                // viewState.listSize = this.state.listSize;
             }
         });
 
@@ -125,6 +124,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
         if (this.state.validationPassed && this.state.pageSize && this.state.targetListView._datasource.getSetSize() > 0) {
             const { offset, pageSize } = this.state;
+            logger.debug(this.props.friendlyId, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView._datasource.getSetSize());
 
             return createElement(Pagination, {
                 getMessageStatus: PaginationContainer.translateMessageStatus,
@@ -199,6 +199,22 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 this.afterListViewLoaded(targetListView);
                 this.initialLoading = false;
             } else {
+                if (this.state.isPersisted) {
+                    if (targetListView._datasource.getSetSize() && targetListView._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
+                        this.setState({ isPersisted: false, offsetGuid: undefined });
+                        logger.debug(this.props.friendlyId, ".updateDatasource setstate persisted False and offsetGuid");
+                        targetListView._renderData();
+                    } else {
+                        if (targetListView._datasource.getOffset() !== this.state.offset) {
+                            targetListView._datasource.setOffset(this.state.offset);
+                        }
+                        logger.debug(this.props.friendlyId, ".updateDatasource cause sourceReload and _renderData");
+                        targetListView.sequence([ "_sourceReload", "_renderData" ]);
+                    }
+                } else {
+                    logger.debug(this.props.friendlyId, ".updateDatasource .setstate of offsetGuid");
+                    this.setState({ offsetGuid: datasource._pageObjs[0].getGuid() });
+                }
                 if (datasource.__customWidgetPagingLoading) {
                     logger.debug(this.props.friendlyId, ".initialLoading False, pagingLoading True");
                     // other pagination widget did the update, just take the new values
@@ -231,23 +247,39 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                     }
                 }
             }
-            // if (this.state.isPersisted && targetListView._datasource.getSetSize()) {
-            //     if(targetListView._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
-            //         this.setState( { isPersisted: false, offsetGuid: undefined });
-            //     } else {
-            //         targetListView.sequence([ "_sourceReload", "_renderData" ]);
-            //     }
-            // }
+            //  this.persistenceTimeout = 0 && window.setTimeout(this.checkPersistence.bind(this,targetListView),100);
             persistListViewHeight(targetListView.domNode);
             setListNodeToEmpty(targetListView.domNode);
         });
     }
 
+    // private checkPersistence (targetListView: ListView) {
+    //     const datasource = targetListView._datasource;
+    //     if (this.state.isPersisted) {
+    //         logger.debug(this.props.friendlyId, "peristence retries: ", this.retriesPersisted);
+    //         if (this.retriesPersisted > 20) {
+    //             return;
+    //         }
+    //         if (datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
+    //             this.setState({ isPersisted: false, offsetGuid: undefined });
+    //             this.retriesPersisted = 0;
+    //             logger.debug(this.props.friendlyId, ".updateDatasource setstate persisted False and offsetGuid");
+    //             window.clearTimeout(this.persistenceTimeout);
+    //         } else {
+    //             logger.debug(this.props.friendlyId, ".updateDatasource cause sourceReload and _renderData");
+    //             this.retriesPersisted++;
+    //             targetListView.sequence([ "_sourceReload", "_renderData" ]);
+    //         }
+    //     } else {
+    //         logger.debug(this.props.friendlyId, ".updateDatasource .setstate of offsetGuid");
+    //         this.setState({ offsetGuid: datasource._pageObjs[0].getGuid() });
+    //     }
+    // }
+
     private afterListViewLoaded(targetListView: ListView) {
         logger.debug(this.props.friendlyId, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
-        // let offset = datasource.__customWidgetPagingOffset !== undefined ? datasource.__customWidgetPagingOffset : 0;
         const pageSize = this.state.pageSize ? this.state.pageSize : datasource.getPageSize() && datasource.getPageSize() || 10;
         if (!this.state.pageSize) {
             // Only to initial run, page size needs to be set, when navigating back the data is coming from FormViewState
@@ -260,17 +292,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".afterListViewDataRender");
         dojoAspect.after(targetListView, "_renderData", () => {
             logger.debug(this.props.friendlyId, "_renderData.after");
-            logger.debug("LIST VIEW SIZE IS: ", targetListView._datasource.getSetSize());
-            logger.debug("LIST VIEW OFFSET IS: ", targetListView._datasource.getOffset());
-            logger.debug("STATE OFFSET IS: ", this.state.offset);
             resetListViewHeight(targetListView.domNode as HTMLElement);
-            // if (this.state.isPersisted && targetListView._datasource.getSetSize()) {
-            //     if(targetListView._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
-            //         this.setState( { isPersisted: false, offsetGuid: undefined });
-            //     } else {
-            //         targetListView.sequence([ "_sourceReload", "_renderData" ]);
-            //     }
-            // }
         });
     }
 
@@ -292,6 +314,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         }
         if (pageSize !== undefined && datasource.getPageSize() !== pageSize) {
             logger.debug("page size is defined");
+            datasource.__customWidgetPagingPageSize = pageSize;
             datasource.setPageSize(pageSize);
             changed = true;
         }
@@ -305,18 +328,6 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 resetListViewHeight(listview.domNode);
                 logger.debug(this.props.friendlyId, ".updateDatasource updated");
                 hideLoader(listview);
-                if (this.state.isPersisted) {
-                    if (listview._datasource.getSetSize() && listview._datasource._pageObjs[0].getGuid() === this.state.offsetGuid) {
-                        this.setState({ isPersisted: false, offsetGuid: undefined });
-                        logger.debug(this.props.friendlyId, ".updateDatasource setstate persisted False and offsetGuid");
-                    } else {
-                        logger.debug(this.props.friendlyId, ".updateDatasource cause sourceReload and _renderData");
-                        listview.sequence([ "_sourceReload", "_renderData" ]);
-                    }
-                } else {
-                    logger.debug(this.props.friendlyId, ".updateDatasource .setstate of offsetGuid");
-                    this.setState({ offsetGuid: datasource._pageObjs[0].getGuid() });
-                }
             });
         }
     }
