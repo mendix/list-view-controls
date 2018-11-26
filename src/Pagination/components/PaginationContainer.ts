@@ -199,6 +199,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                 this.initialLoading = false;
             } else {
                 if (this.state.isPersisted) {
+                    if (targetListView._datasource.getPageSize() !== this.state.pageSize) {
+                        targetListView._datasource.setPageSize(this.state.pageSize);
+                    }
+
                     const offset = this.correctOffset(this.state.offset, targetListView._datasource.getSetSize());
                     this.setState({ offset });
 
