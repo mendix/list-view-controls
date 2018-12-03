@@ -1,5 +1,9 @@
+
 import { Constraints, GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils } from "../SharedUtils";
 import { SharedContainerUtils } from "../SharedContainerUtils";
+import { resetListViewHeight } from "../../Pagination/utils/ContainerUtils";
+import { updateListViewPrototype } from "../ListViewPrototype";
+
 import "./ui/DataSourceHelper.scss";
 
 interface ConstraintStore {
@@ -7,8 +11,21 @@ interface ConstraintStore {
     sorting: { [widgetId: string]: string[] };
 }
 
-interface DataSourceHelperListView extends ListView {
+export interface Paging {
+    offset?: number;
+    pageSize?: number;
+}
+
+export interface DataSourceHelperListView extends ListView {
     __customWidgetDataSourceHelper?: DataSourceHelper;
+    __proto__: any;
+    getState: (key: string, defaultValue?: any) => any;
+    _loadData: (callback: () => void) => void;
+    _onLoad: () => void;
+    _itemList: any[];
+    templateMap: any[];
+    selection: any;
+    _createSource: () => void;
 }
 
 export class DataSourceHelper {
@@ -19,6 +36,9 @@ export class DataSourceHelper {
     private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
+    public sorting: string[][] = [];
+    public constraints: Constraints = [];
+    public paging?: Paging;
 
     constructor(widget: DataSourceHelperListView) {
         this.widget = widget;
@@ -32,8 +52,11 @@ export class DataSourceHelper {
             if (!widget.__customWidgetDataSourceHelper) {
                 widget.__customWidgetDataSourceHelper = new DataSourceHelper(widget);
             }
-            widget.__customWidgetDataSourceHelper.initialLoad = true;
-            this.hideContent(widget.domNode);
+            const restoreState = widget.getState("lvcPersistState", false);
+            if (!restoreState) {
+                this.hideContent(widget.domNode);
+            }
+            updateListViewPrototype(widget);
 
             return widget.__customWidgetDataSourceHelper;
         }
@@ -41,54 +64,56 @@ export class DataSourceHelper {
         throw new Error(compatibilityMessage);
     }
 
-    setSorting(widgetId: string, sortConstraint: string[]) {
+    setSorting(widgetId: string, sortConstraint: string[], restoreState = false) {
         this.store.sorting = {} ;
         this.store.sorting[widgetId] = sortConstraint;
-        this.registerUpdate();
+        this.registerUpdate(restoreState);
     }
 
-    setConstraint(widgetId: string, constraint: string | OfflineConstraint | GroupedOfflineConstraint, groupName = "_none") {
+    setConstraint(widgetId: string, constraint: string | OfflineConstraint | GroupedOfflineConstraint, groupName = "_none", restoreState = false) {
         const group = groupName.trim() || "_none";
         if (this.store.constraints[group]) {
             this.store.constraints[group][widgetId] = constraint;
         } else {
             this.store.constraints[group] = { [widgetId] : constraint };
         }
-        this.registerUpdate();
+        this.registerUpdate(restoreState);
     }
 
     getListView(): ListView {
         return this.widget as ListView;
     }
 
-    private registerUpdate() {
+    private registerUpdate(restoreState: boolean) {
+        logger.debug("DataSourceHelper .registerUpdate");
         if (this.timeoutHandle) {
             window.clearTimeout(this.timeoutHandle);
         }
         if (!this.updateInProgress) {
             this.timeoutHandle = window.setTimeout(() => {
+                logger.debug("DataSourceHelper .execute");
                 this.updateInProgress = true;
                 // TODO Check if there's currently no update happening on the listView coming from another
                 // Feature/functionality/widget which does not use DataSourceHelper
-                this.iterativeUpdateDataSource();
+                this.iterativeUpdateDataSource(restoreState);
             }, this.delay);
         } else {
             this.requiresUpdate = true;
         }
     }
 
-    private iterativeUpdateDataSource() {
+    private iterativeUpdateDataSource(restoreState: boolean) {
         this.updateDataSource(() => {
             if (this.requiresUpdate) {
                 this.requiresUpdate = false;
-                this.iterativeUpdateDataSource();
+                this.iterativeUpdateDataSource(restoreState);
             } else {
                 this.updateInProgress = false;
             }
-        });
+        }, restoreState);
     }
 
-    private updateDataSource(callback: () => void) {
+    private updateDataSource(callback: () => void, restoreState: boolean) {
         let constraints: Constraints = [];
         const sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
@@ -143,18 +168,29 @@ export class DataSourceHelper {
             constraints = unGroupedConstraints + groupedConstraints;
         }
 
-        this.widget._datasource._constraints = constraints;
-        this.widget._datasource[window.mx.isOffline() ? "_sort" : "_sorting"] = sorting;
+        this.sorting = sorting;
+        this.constraints = constraints;
+        if (!restoreState) {
+            this.widget._datasource._constraints = constraints;
+            this.widget._datasource[window.mx.isOffline() ? "_sort" : "_sorting"] = sorting;
+            logger.debug("DataSourceHelper .set sort and constraint");
 
-        if (!this.initialLoad) {
-            this.showLoader();
-        }
+            if (!this.initialLoad) {
+                this.showLoader();
+            }
 
-        this.widget.update(null, () => {
+            this.widget.update(null, () => {
+                logger.debug("DataSourceHelper .updated");
+                this.hideLoader();
+                this.initialLoad = false;
+                callback();
+            });
+        } else {
+            DataSourceHelper.showContent(this.widget.domNode);
             this.hideLoader();
             this.initialLoad = false;
             callback();
-        });
+        }
     }
 
     private showLoader() {
@@ -176,5 +212,39 @@ export class DataSourceHelper {
     private hideLoader() {
         this.widget.domNode.classList.remove("widget-data-source-helper-loading");
         DataSourceHelper.showContent(this.widget.domNode);
+    }
+
+    setPaging(offset?: number, pageSize?: number) {
+        const datasource = this.widget._datasource;
+        if (datasource.__customWidgetPagingLoading) {
+            return;
+        }
+        let changed = false;
+        if (offset !== undefined && offset !== datasource.getOffset()) {
+            datasource.__customWidgetPagingOffset = offset;
+            datasource.setOffset(offset);
+            changed = true;
+        }
+        if (pageSize !== undefined && pageSize !== datasource.getPageSize()) {
+            datasource.setPageSize(pageSize);
+            changed = true;
+        }
+
+        this.paging = {
+            pageSize: pageSize !== undefined ? pageSize : datasource.getPageSize(),
+            offset: offset !== undefined ? offset : datasource.getOffset()
+        };
+
+        if (changed) {
+            logger.debug(".updateDatasource changed", offset, pageSize);
+            datasource.__customWidgetPagingLoading = true;
+            this.showLoader();
+            this.widget.sequence([ "_sourceReload", "_renderData" ], () => {
+                datasource.__customWidgetPagingLoading = false;
+                resetListViewHeight(this.widget.domNode);
+                logger.debug(".updateDatasource updated");
+                this.hideLoader();
+            });
+        }
     }
 }

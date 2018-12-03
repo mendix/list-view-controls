@@ -13,7 +13,7 @@ export default class FromViewState<T> {
     getPageState<K extends keyof T>(key: keyof T, defaultValue?: T[K]): T[K] | undefined {
         const mxform = this.form;
         const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.widgetId] : void 0;
-        const state = widgetViewState && widgetViewState[key] ? widgetViewState[key] : defaultValue;
+        const state = widgetViewState && widgetViewState[key] !== undefined ? widgetViewState[key] : defaultValue;
         logger.debug("getPageState", this.widgetId, key, defaultValue, state);
         return state;
     }

@@ -13,16 +13,16 @@ export interface ListView extends mxui.widget._WidgetBase {
         setPageSize: (pageSize: number) => void;
         _constraints: Constraints;
         _entity: string;
-        _pageObjs: mendix.lib.MxObject[];
         _sorting: string[][];
         getOffset: () => number;
         getPageSize: () => number;
         getSetSize: () => number;
+        reload: (callback: () => void) => void;
         __customWidgetPagingOffset: number;
         __customWidgetPagingLoading: boolean;
     };
     _entity: string;
-    _renderData: () => void;
+    _renderData: (callback?: () => void) => void;
     _showLoadingIcon: () => void;
     _sourceReload: () => void;
     friendlyId: string;
@@ -89,7 +89,7 @@ export class SharedUtils {
         if (!(targetListView && targetListView._datasource && targetListView._entity && targetListView.update)) {
             return "This widget version is not compatible with this Mendix version";
         }
-        if (targetListView._entity && listViewEntity !== targetListView._entity) {
+        if (targetListView._entity && listViewEntity !== undefined && listViewEntity !== targetListView._entity) {
             return `The supplied entity "${props.listViewEntity}" does not belong to list view data source`;
         }
 

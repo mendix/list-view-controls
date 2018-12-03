@@ -32,11 +32,11 @@ export interface ContainerState {
     publishedSortOrder?: string;
     publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView | null;
-    defaultOption?: AttributeType;
+    selectedOption?: AttributeType;
 }
 
 export interface FormState {
-    defaultOption?: AttributeType;
+    selectedOption?: AttributeType;
 }
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
@@ -55,13 +55,13 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
 
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
-            viewState.defaultOption = this.state.defaultOption;
+            viewState.selectedOption = this.state.selectedOption;
         });
 
         // State is moved into constructor to avoid unnecessary
-        // rerendering while using Persisted state (FormViewState)
+        // rendering while using Persisted state (FormViewState)
         this.state = {
-            defaultOption: this.getDefaultOption(),
+            selectedOption: this.getDefaultOption(),
             listViewAvailable: false
         };
     }
@@ -86,8 +86,9 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            if (this.state.defaultOption) {
-                this.updateSort(this.state.defaultOption);
+            if (this.state.selectedOption) {
+                const restoreState = this.checkRestoreState();
+                this.updateSort(this.state.selectedOption, restoreState);
             }
         }
     }
@@ -110,7 +111,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     private renderDropDown(): ReactElement<DropDownProps> | null {
         if (!this.state.alertMessage) {
-            const selectedCaption = this.state.defaultOption && this.state.defaultOption.caption;
+            const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption;
             const defaultSortIndex = this.props.sortAttributes.map(value => value.caption).indexOf(selectedCaption);
 
             return createElement(DropDownSort, {
@@ -125,10 +126,14 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         return null;
     }
 
+    private checkRestoreState(): boolean {
+        return this.viewStateManager.getPageState("selectedOption") !== undefined;
+    }
+
     private getDefaultOption() {
         const initialDefaultOption = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
 
-        return this.viewStateManager.getPageState("defaultOption", initialDefaultOption);
+        return this.viewStateManager.getPageState("selectedOption", initialDefaultOption);
     }
 
     private connectToListView() {
@@ -145,7 +150,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         if (targetListView && !alertMessage) {
             this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
             this.subScribeToWidgetChanges();
-            if (!this.state.defaultOption) {
+            if (!this.state.selectedOption) {
                 DataSourceHelper.showContent(targetListView.domNode);
             }
         }
@@ -157,12 +162,13 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         });
     }
 
-    private updateSort(selectedOption: AttributeType) {
+    private updateSort(selectedOption: AttributeType, restoreState = false) {
         const { targetListView } = this.state;
 
         if (targetListView && this.dataSourceHelper) {
-            this.dataSourceHelper.setSorting(this.props.friendlyId, [ selectedOption.name, selectedOption.sort ]);
-            this.setState({ defaultOption: selectedOption });
+            logger.debug(this.props.friendlyId, "updateSort", selectedOption.name, selectedOption.sort);
+            this.dataSourceHelper.setSorting(this.props.friendlyId, [ selectedOption.name, selectedOption.sort ], restoreState);
+            this.setState({ selectedOption });
             this.publishWidgetChanges(selectedOption);
         }
     }
@@ -172,9 +178,9 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
             const attribute = message[0];
             const order = message[1];
             const sourceWidgetId = message[2];
-            const defaultOption = this.props.sortAttributes.filter(option => option.name === attribute && option.sort === order)[0];
+            const selectedOption = this.props.sortAttributes.filter(option => option.name === attribute && option.sort === order)[0];
             if (attribute && order && this.props.friendlyId !== sourceWidgetId) {
-                this.setState({ defaultOption });
+                this.setState({ selectedOption });
             }
         });
     }

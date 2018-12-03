@@ -80,8 +80,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            // const selectedSort = this.getDefaultValue();
-            this.applyFilter(this.state.isChecked);
+            const restoreState = this.checkRestoreState();
+            this.applyFilter(this.state.isChecked, restoreState);
         }
     }
 
@@ -117,9 +117,10 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         return null;
     }
 
-    private applyFilter(isChecked: boolean) {
+    private applyFilter(isChecked: boolean, restoreState = false) {
         if (this.dataSourceHelper) {
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group);
+            logger.debug(this.props.friendlyId, "applyFilter", isChecked, this.props.group);
+            this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group, restoreState);
             this.setState({ isChecked });
         }
     }
@@ -196,6 +197,10 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
             listViewAvailable: !!targetListView,
             targetListView
         });
+    }
+
+    private checkRestoreState(): boolean {
+        return this.viewStateManager.getPageState("isChecked") !== undefined;
     }
 
     private getDefaultValue(): boolean {

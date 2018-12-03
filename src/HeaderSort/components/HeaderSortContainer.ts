@@ -16,23 +16,20 @@ import "../ui/HeaderSort.scss";
 export interface ContainerProps extends WrapperProps {
     entity: string;
     caption: string;
-    initialSorted: boolean;
     sortAttribute: string;
-    sortOrder: "asc" | "desc";
+    initialSorted: boolean;
+    sortOrder: "asc" | "desc"; // initialSortOrder
 }
 
 export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
-    publishedSortAttribute?: string;
-    publishedSortOrder?: SortOrder;
-    publishedSortWidgetFriendlyId?: string;
     targetListView?: ListView;
-    defaultSortOrder?: SortOrder;
+    sortOrder?: SortOrder;
 }
 
 interface FormState {
-    defaultSortOrder: SortOrder;
+    sortOrder: SortOrder;
 }
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
@@ -51,12 +48,12 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
 
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
-            viewState.defaultSortOrder = this.state.defaultSortOrder;
+            viewState.sortOrder = this.state.sortOrder;
         });
 
         this.state = {
             listViewAvailable: false,
-            defaultSortOrder: this.getDefaultValue()
+            sortOrder: this.getInitialStateSortOrder()
         };
     }
 
@@ -79,8 +76,9 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable && this.props.initialSorted) {
-            this.updateSort(this.state.defaultSortOrder);
+        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+            const restoreState = this.checkRestoreState();
+            this.updateSort(this.state.sortOrder, restoreState);
         }
     }
 
@@ -105,7 +103,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             return createElement(HeaderSort, {
                 caption: this.props.caption,
                 onClickAction: this.updateSort,
-                sortOrder: this.state.defaultSortOrder
+                sortOrder: this.state.sortOrder
             });
         }
 
@@ -134,19 +132,20 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         this.setState({
             alertMessage: errorMessage,
             listViewAvailable: !!targetListView,
-            targetListView,
-            publishedSortOrder: this.viewStateManager.getPageState("defaultSortOrder", this.getDefaultValue())
+            targetListView
         });
     }
 
-    private updateSort(order: SortOrder) {
+    private updateSort(order: SortOrder, restoreState = false) {
         const { targetListView } = this.state;
         const { sortAttribute } = this.props;
 
         if (targetListView && this.dataSourceHelper) {
-            this.dataSourceHelper.setSorting(this.props.friendlyId, [ sortAttribute, order ]);
-            this.setState({ defaultSortOrder: order });
-            this.publishWidgetChanges(sortAttribute, order);
+            this.dataSourceHelper.setSorting(this.props.friendlyId, [ sortAttribute, order ], restoreState);
+            if (!restoreState) {
+                this.setState({ sortOrder: order });
+                this.publishWidgetChanges(sortAttribute, order);
+            }
         }
     }
 
@@ -158,11 +157,11 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
             if (publishedSortWidgetFriendlyId !== this.props.friendlyId) {
                 if (publishedSortAttribute === this.props.sortAttribute) {
                     this.setState({
-                        defaultSortOrder: publishedSortOrder
+                        sortOrder: publishedSortOrder
                     });
                 } else {
                     this.setState({
-                        defaultSortOrder: ""
+                        sortOrder: ""
                     });
                 }
             }
@@ -175,9 +174,14 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
     }
 
-    private getDefaultValue(): SortOrder {
-        const initialSortOrder = this.props.initialSorted ? this.props.sortOrder : "";
-        return this.viewStateManager.getPageState("defaultSortOrder", initialSortOrder);
+    private checkRestoreState(): boolean {
+        return this.viewStateManager.getPageState("sortOrder") !== undefined;
+    }
+
+    private getInitialStateSortOrder(): SortOrder {
+        const restore = this.checkRestoreState();
+        const initialSortOrder = this.props.initialSorted && !restore ? this.props.sortOrder : "";
+        return this.viewStateManager.getPageState("sortOrder", initialSortOrder);
     }
 
 }

@@ -65,10 +65,11 @@ export class Validate {
             && targetListView._datasource.setOffset
             && targetListView._datasource.getPageSize
             && targetListView._datasource.setPageSize
-            && targetListView._sourceReload
-            && targetListView._datasource._pageObjs
-            && targetListView._renderData
             && targetListView._datasource.getSetSize
+            && targetListView._datasource.reload
+            && targetListView._sourceReload
+            && targetListView._renderData
             && targetListView.update);
     }
+
 }

@@ -34,11 +34,11 @@ export interface ContainerState {
     listViewAvailable: boolean;
     targetListView?: ListView;
     targetNode?: HTMLElement;
-    defaultOption?: FilterProps;
+    selectedOption?: FilterProps;
 }
 
 interface FormState {
-    defaultOption?: FilterProps;
+    selectedOption?: FilterProps;
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
@@ -53,13 +53,13 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         this.applyFilter = this.applyFilter.bind(this);
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
-            viewState.defaultOption = this.state.defaultOption;
+            viewState.selectedOption = this.state.selectedOption;
         });
 
         this.state = {
             alertMessage: Validate.validateProps(this.props),
             listViewAvailable: false,
-            defaultOption: this.getDefaultOption()
+            selectedOption: this.getInitialStateSelectedOption()
         };
     }
 
@@ -81,7 +81,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            this.applyFilter(this.state.defaultOption);
+            const restoreState = this.checkRestoreState();
+            this.applyFilter(this.state.selectedOption, restoreState);
         }
     }
 
@@ -109,7 +110,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
         if (!this.state.alertMessage) {
-            const selectedCaption = this.state.defaultOption && this.state.defaultOption.caption;
+            const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption;
             const defaultFilterIndex = this.props.filters.map(value => value.caption).indexOf(selectedCaption);
             if (this.props.mxObject) {
                 this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
@@ -126,18 +127,23 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return null;
     }
 
-    private getDefaultOption() {
-        const defaultFilter = this.props.filters.filter(value => value.isDefault)[0] || this.props.filters[0];
-
-        return this.viewStateManager.getPageState("defaultOption", defaultFilter);
+    private checkRestoreState(): boolean {
+        return this.viewStateManager.getPageState("selectedOption") !== undefined;
     }
 
-    private applyFilter(selectedFilter: FilterProps) {
+    private getInitialStateSelectedOption() {
+        const defaultFilter = this.props.filters.filter(value => value.isDefault)[0] || this.props.filters[0];
+
+        return this.viewStateManager.getPageState("selectedOption", defaultFilter);
+    }
+
+    private applyFilter(selectedFilter: FilterProps, restoreState = false) {
         const constraint = this.getConstraint(selectedFilter);
         if (this.dataSourceHelper) {
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
+            logger.debug(this.props.friendlyId, "applyFilter", constraint);
+            this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint, undefined, restoreState);
         }
-        this.setState({ defaultOption: selectedFilter });
+        this.setState({ selectedOption: selectedFilter });
     }
 
     private getConstraint(selectedFilter: FilterProps) {

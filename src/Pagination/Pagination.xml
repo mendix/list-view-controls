@@ -71,7 +71,7 @@
         <property key="pageSizeOptions" type="object" isList="true" required="false">
             <caption>Options</caption>
             <category>Page size</category>
-            <description>Dropdown options for 'Paging style' 'Custom'. The options are used for the item 'Page size' when 'Render page size' is 'Drop down'</description>
+            <description>Dropdown options for 'Paging style' 'Custom'. The options are used for the item 'Page size' when 'Render page size' is 'Drop down', it is required to contain the list view original 'Page size'</description>
             <properties>
                 <property key="size" type="integer" defaultValue="10">
                     <caption>Page size</caption>
