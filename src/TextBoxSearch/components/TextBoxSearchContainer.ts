@@ -158,7 +158,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         this.setState({
             alertMessage,
-            listViewAvailable: !!alertMessage
+            listViewAvailable: !alertMessage
         });
     }
 

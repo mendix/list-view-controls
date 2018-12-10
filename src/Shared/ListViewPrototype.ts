@@ -91,7 +91,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
             && listview._datasource.setOffset
             && listview._datasource.setPageSize
             && listview._datasource._constraints !== undefined
-            && listview._datasource._sorting
+            && (listview._datasource._sorting || listview._datasource._sort)
             && listview._datasource.getSetSize
             && listview._datasource.getOffset
         );
