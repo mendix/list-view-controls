@@ -42,6 +42,15 @@ export class DataSourceHelper {
 
     constructor(widget: DataSourceHelperListView) {
         this.widget = widget;
+        aspect.after(widget, "storeState", (store: (key: string, value: any) => void) => {
+            logger.debug("after storeState");
+            if (widget.__customWidgetDataSourceHelper) {
+                store("datasourceOffset", 0);
+                store("lvcSorting", widget.__customWidgetDataSourceHelper.sorting);
+                store("lvcConstraints", widget.__customWidgetDataSourceHelper.constraints);
+                store("lvcPaging", widget.__customWidgetDataSourceHelper.paging);
+    }
+        }, true);
     }
 
     static getInstance(widgetParent: HTMLElement, widgetEntity?: string) {
