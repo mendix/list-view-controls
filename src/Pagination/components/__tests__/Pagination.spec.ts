@@ -359,6 +359,7 @@ describe("Pagination", () => {
         hideUnusedPaging: false,
         offset: 0,
         items: [],
+        pageSizeOptions: [],
         listViewSize: 32,
         pageSize: 2,
         onChange: jasmine.createSpy("onChange"),

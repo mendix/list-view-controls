@@ -23,7 +23,7 @@ export interface OptionHTMLAttributesType extends OptionHTMLAttributes<HTMLOptio
 
 export class DropDownSort extends Component<DropDownProps, DropdownState> {
     private options: DropDownOptionType[] = [];
-    private selectorDomNode: HTMLSelectElement;
+    private selectorDomNode: HTMLSelectElement | null = null;
 
     constructor(props: DropDownProps) {
         super(props);
@@ -53,7 +53,7 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     }
 
     componentDidUpdate(_previousProps: DropDownProps, _previousState: DropdownState) {
-        if (this.state.value === "") {
+        if (this.state.value === "" && this.selectorDomNode) {
             this.selectorDomNode.selectedIndex = -1;
         }
     }
@@ -84,7 +84,7 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
     }
 
     private handleChange(event: FormEvent<HTMLSelectElement>) {
-        const value = event.currentTarget.value.split("-").pop();
+        const value = event.currentTarget.value.split("-").pop() || "";
 
         this.setState({ value });
         this.callOnChangeAction(Number(value));

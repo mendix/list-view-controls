@@ -25,7 +25,7 @@ export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
     targetListView?: DataSourceHelperListView;
-    sortOrder?: SortOrder;
+    sortOrder: SortOrder;
 }
 
 interface FormState {
@@ -36,7 +36,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     private dataSourceHelper?: DataSourceHelper;
     private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
-    private subscriptionTopic: string;
+    private subscriptionTopic = "";
     private retriesFind = 0;
 
     constructor(props: ContainerProps) {
@@ -122,7 +122,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
 
         if (targetListView) {
-            this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
+            const id = targetListView.friendlyId + (targetListView.uniqueid ? targetListView.uniqueid : "");
+            this.subscriptionTopic = `${id}_sortUpdate`;
             this.subScribeToWidgetChanges();
             if (!this.props.initialSorted || errorMessage) {
                 DataSourceHelper.showContent(targetListView.domNode);

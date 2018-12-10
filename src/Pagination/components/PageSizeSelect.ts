@@ -40,7 +40,7 @@ export const calculateOffSet = (listViewSize: number, newPageSize: number, oldPa
 
 export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
-    private pageSizeSelectDom: HTMLSelectElement;
+    private pageSizeSelectDom: HTMLSelectElement | null = null;
     private defaultPageSize?: number;
 
     constructor(props: PageSizeSelectProps) {
@@ -77,12 +77,12 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
     }
 
     componentDidUpdate(_previousProps: PageSizeSelectProps, _previousState: PageSizeState) {
-        if (this.state.selectedValue === "-1") {
+        if (this.state.selectedValue === "-1" && this.pageSizeSelectDom) {
             this.pageSizeSelectDom.selectedIndex = -1;
         }
     }
 
-    private renderDropDown = () => {
+    private renderDropDown() {
         return createElement("select",
             {
                 className: "form-control",
@@ -96,7 +96,7 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
 
     private handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const { listViewSize } = this.props;
-        const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
+        const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value)!.size as number;
         this.setState({
             selectedValue: event.currentTarget.value,
             pageSize: selectedPageSize
@@ -106,11 +106,11 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
         this.props.onChange(newOffSet.newOffSet, newOffSet.newPageSize);
     }
 
-    static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
-        return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
+    static getSelectedValue(sizeOptions: OptionProps[], selectedPageSize: number): string {
+        return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize)!)}`;
     }
 
-    static createOptions = (options: Display[]): ReactNode[] => {
+    static createOptions(options: Display[]): ReactNode[] {
         return options.map((option, index) => createElement("option", {
             className: "",
             key: index,

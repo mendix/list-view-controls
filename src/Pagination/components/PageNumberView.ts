@@ -22,8 +22,8 @@ export const PageNumberView: SFC<PageNumberViewProps> = (props) => {
         const rightBreakpoint = Math.floor(props.maxPageButtons / 2);
         const hasLeftDivider = props.selectedPageNumber > leftBreakpoint;
         const hasRightDivider = props.selectedPageNumber < (props.pageCount - rightBreakpoint);
-        let leftButtonNumber: number;
-        let rightButtonNumber: number;
+        let leftButtonNumber = 1;
+        let rightButtonNumber = 1;
         if (!hasLeftDivider && hasRightDivider) {
             // [first] [left] _ _ _ [right] [...] [last]
             leftButtonNumber = 1 + 1; // first

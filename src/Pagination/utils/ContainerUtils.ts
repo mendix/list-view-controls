@@ -6,9 +6,9 @@ export const hideLoadMoreButton = (targetNode?: HTMLElement | null) => {
     }
 };
 
-export const showLoadMoreButton = (targetNode?: HTMLElement | null) => {
-    if (targetNode) {
-        targetNode.classList.remove("hide-load-more");
+export const showLoadMoreButton = (listView?: DataSourceHelperListView) => {
+    if (listView) {
+        listView.domNode.classList.remove("hide-load-more");
     }
 };
 
@@ -51,7 +51,7 @@ export const hideLoader = (targetListView: DataSourceHelperListView) => {
 
 export const mxTranslation = (namespace: string, key: string, replacements: any[]) => {
     const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
-        || window.mx.session.getConfig("uiconfig.translations")[`${namespace}.${key}`]
+        || (window.mx.session.getConfig("uiconfig.translations") as any)[`${namespace}.${key}`]
         || "[No translation]";
     return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
 };

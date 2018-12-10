@@ -33,8 +33,7 @@ export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
     targetListView?: DataSourceHelperListView;
-    targetNode?: HTMLElement;
-    selectedOption?: FilterProps;
+    selectedOption: FilterProps;
 }
 
 interface FormState {
@@ -112,7 +111,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
-    private renderAlert() {
+    private renderAlert(): ReactNode {
         return createElement(Alert, {
             className: "widget-checkbox-filter-alert"
         }, this.state.alertMessage);
@@ -142,7 +141,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         return this.viewStateManager.getPageState("selectedOption") !== undefined;
     }
 
-    private getInitialStateSelectedOption() {
+    private getInitialStateSelectedOption(): FilterProps {
         const defaultFilter = this.props.filters.filter(value => value.isDefault)[0] || this.props.filters[0];
 
         return this.viewStateManager.getPageState("selectedOption", defaultFilter);
@@ -157,11 +156,11 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         this.setState({ selectedOption: selectedFilter });
     }
 
-    private getConstraint(selectedFilter: FilterProps) {
+    private getConstraint(selectedFilter: FilterProps): string | mendix.lib.dataSource.OfflineConstraint {
         const { targetListView } = this.state;
         const { attribute, filterBy, constraint, attributeValue } = selectedFilter;
 
-        if (targetListView && targetListView._datasource) {
+        if (targetListView) {
             const mxObjectId = this.props.mxObject ? this.props.mxObject.getGuid() : "";
             const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
 
@@ -171,10 +170,9 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
                 return constraint;
             } else if (filterBy === "attribute" && attributeValue) {
                 return this.getAttributeConstraint(attribute, attributeValue);
-            } else {
-                return "";
             }
         }
+        return "";
     }
 
     private getAttributeConstraint(attribute: string, attributeValue: string): string | mendix.lib.dataSource.OfflineConstraint {

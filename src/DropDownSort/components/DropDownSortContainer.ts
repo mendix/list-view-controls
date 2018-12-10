@@ -32,7 +32,7 @@ export interface ContainerState {
     publishedSortOrder?: string;
     publishedSortWidgetFriendlyId?: string;
     targetListView?: DataSourceHelperListView | null;
-    selectedOption?: AttributeType;
+    selectedOption: AttributeType;
 }
 
 export interface FormState {
@@ -43,15 +43,13 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
     private dataSourceHelper?: DataSourceHelper;
     private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
-    private subscriptionTopic: string;
+    private subscriptionTopic = "";
     private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
 
         this.updateSort = this.updateSort.bind(this);
-        this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
-        this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
         const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
 
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
@@ -130,7 +128,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         return this.viewStateManager.getPageState("selectedOption") !== undefined;
     }
 
-    private getDefaultOption() {
+    private getDefaultOption(): AttributeType {
         const initialDefaultOption = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
 
         return this.viewStateManager.getPageState("selectedOption", initialDefaultOption);
@@ -148,7 +146,8 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         }
 
         if (targetListView && !alertMessage) {
-            this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
+            const id = targetListView.friendlyId + (targetListView.uniqueid ? targetListView.uniqueid : "");
+            this.subscriptionTopic = `${id}_sortUpdate`;
             this.subScribeToWidgetChanges();
             if (!this.state.selectedOption) {
                 DataSourceHelper.showContent(targetListView.domNode);

@@ -78,7 +78,7 @@
     "karma-sourcemap-loader": "^0.3.7",
     "karma-spec-reporter": "0.0.32",
     "karma-webpack": "^3.0.5",
-    "mendix-client": "^7.15.5",
+    "mendix-client": "^7.15.6",
     "mendix-widget-build-script": "^1.0.0",
     "node-sass": "^4.9.3",
     "pre-commit": "^1.2.2",

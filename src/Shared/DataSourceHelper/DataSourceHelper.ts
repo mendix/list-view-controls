@@ -19,7 +19,6 @@ export interface Paging {
 export interface DataSourceHelperListView extends mxui.widget.ListView {
     prototype: DataSourceHelperListView;
     __customWidgetDataSourceHelper?: DataSourceHelper;
-    _loadData: (callback: () => void) => void;
     __loadDataOriginal: (callback: () => void) => void;
     __postCreateOriginal: () => void;
     __lvcPagingEnabled: boolean;
@@ -175,9 +174,9 @@ export class DataSourceHelper {
                 .replace(/\[]/g, ""); // Remove empty string "[]"
 
             constraints = unGroupedConstraints + groupedConstraints;
-            if (!restoreState) {
-                this.widget._datasource._sorting = sorting;
-            }
+            // if (!restoreState) {
+            //     this.widget._datasource._sorting = sorting;
+            // }
         }
 
         this.sorting = sorting;

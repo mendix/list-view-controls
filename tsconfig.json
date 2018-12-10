@@ -16,7 +16,7 @@
       "watch": false,
       "forceConsistentCasingInFileNames": true,
       "noFallthroughCasesInSwitch": true,
-      "strict": false,
+      "strict": true,
       "alwaysStrict": true,
       "skipLibCheck": false,
       "noUnusedLocals": true,

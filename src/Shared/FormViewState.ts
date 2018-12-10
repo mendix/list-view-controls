@@ -10,7 +10,7 @@ export class FormViewState<T> {
         });
     }
 
-    getPageState<K extends keyof T, D = T[K]>(key: keyof T, defaultValue?: D): T[K] | D {
+    getPageState<K extends keyof T, D = T[K]>(key: keyof T, defaultValue?: D): D {
         const mxform = this.form;
         const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.widgetId] : void 0;
         const state = widgetViewState && widgetViewState[key] !== undefined ? widgetViewState[key] : defaultValue;

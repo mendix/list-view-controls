@@ -1,4 +1,4 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactNode, createElement } from "react";
 import * as mendixLang from "mendix/lang";
 import * as classNames from "classnames";
 
@@ -6,7 +6,7 @@ import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
 import { GroupedOfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
-import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
+import { TextBoxSearch } from "./TextBoxSearch";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 import { FormViewState } from "../../Shared/FormViewState";
 
@@ -90,7 +90,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
-    private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
+    private renderTextBoxSearch(): ReactNode {
         if (!this.state.alertMessage) {
             return createElement(TextBoxSearch, {
                 defaultQuery: this.state.searchText,
@@ -136,15 +136,12 @@ export default class SearchContainer extends Component<ContainerProps, Container
             };
         }
 
-        if (searchQuery) {
-            const constraints: string[] = [];
-            this.props.attributeList.forEach(searchAttribute => {
-                constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
-            });
+        const constraints: string[] = [];
+        this.props.attributeList.forEach(searchAttribute => {
+            constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+        });
 
-            return "[" + constraints.join(" or ") + "]";
-        }
-        return "";
+        return "[" + constraints.join(" or ") + "]";
     }
 
     private connectToListView() {
@@ -163,7 +160,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private getDefaultValue(): string {
-        return this.viewStateManager.getPageState("defaultSearchText", this.props.defaultQuery) as string;
+        return this.viewStateManager.getPageState("defaultSearchText", this.props.defaultQuery);
     }
 
 }

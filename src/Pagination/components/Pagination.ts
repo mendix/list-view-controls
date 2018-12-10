@@ -15,7 +15,7 @@ export interface PaginationProps {
     onChange: (offSet?: number, pageSize?: number) => void;
     getMessageStatus: (currentOffset: number, offset: number, maxPageSize: number) => string;
     pagingStyle: PageStyleType;
-    pageSizeOptions?: OptionProps[];
+    pageSizeOptions: OptionProps[];
 }
 
 export interface OnChangeProps {
@@ -47,7 +47,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.setState({ currentOffset: nextProps.offset });
     }
 
-    private renderPagination = (): ReactNode[] => {
+    private renderPagination(): ReactNode[] {
         if (this.props.pagingStyle === "default") {
 
             return this.renderDefault();
@@ -73,7 +73,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         return offset < listSize ? offset / pageSize + 1 : 1;
     }
 
-    private renderDefault = (): ReactNode[] => {
+    private renderDefault(): ReactNode[] {
         return [
             this.createFirstButton(),
             this.createPreviousButton(),
@@ -83,7 +83,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         ];
     }
 
-    private renderCustom = (): ReactNode[] => {
+    private renderCustom(): ReactNode[] {
         return this.props.items.map(option => {
             const buttonProps = {
                 buttonCaption: option.buttonCaption,
@@ -140,7 +140,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createFirstButton = (buttonProps?: PageButtonProps): ReactNode => {
+    private createFirstButton(buttonProps?: PageButtonProps): ReactNode {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -152,7 +152,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createPreviousButton = (buttonProps?: PageButtonProps): ReactNode => {
+    private createPreviousButton(buttonProps?: PageButtonProps): ReactNode {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -164,7 +164,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createNextButton = (buttonProps?: PageButtonProps): ReactNode => {
+    private createNextButton(buttonProps?: PageButtonProps): ReactNode {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -176,7 +176,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createLastButton = (buttonProps?: PageButtonProps): ReactNode => {
+    private createLastButton(buttonProps?: PageButtonProps): ReactNode {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -229,7 +229,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.props.onChange(newOffset);
     }
 
-    private getMessageStatus = (message?: string): string => {
+    private getMessageStatus(message?: string): string {
         const currentOffset = this.state.currentOffset;
         const { listViewSize, pageSize } = this.props;
         let fromValue = currentOffset + 1;

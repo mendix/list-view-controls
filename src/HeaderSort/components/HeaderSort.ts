@@ -3,7 +3,7 @@ import * as classNames from "classnames";
 
 export interface HeaderSortProps {
     caption: string;
-    onClickAction?: (order: string) => void;
+    onClickAction?: (order: SortOrder) => void;
     sortOrder: SortOrder;
 }
 
