@@ -1,4 +1,4 @@
-import { ChangeEvent, Component, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactNode, createElement } from "react";
 
 import { FilterProps } from "./DropDownFilterContainer";
 
@@ -50,7 +50,7 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         }
     }
 
-    private createOptions(): ReactElement<{}>[] {
+    private createOptions(): ReactNode[] {
         return this.filters.map((option, index) => createElement("option", {
             className: "",
             key: index,

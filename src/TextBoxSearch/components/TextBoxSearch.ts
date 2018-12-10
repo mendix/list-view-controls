@@ -13,16 +13,12 @@ interface TextBoxSearchState {
 }
 
 export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchState> {
-    private searchTimeOut = 500;
-    private updateHandle: number;
+    private searchTimeOut = 100;
+    private updateHandle?: number;
+    private resetQueryHandle = this.resetQuery.bind(this);
+    private onChangeHandle = this.onChange.bind(this);
 
-    constructor(props: TextBoxSearchProps) {
-        super(props);
-
-        this.state = { query: this.props.defaultQuery };
-        this.resetQuery = this.resetQuery.bind(this);
-        this.handleOnChange = this.handleOnChange.bind(this);
-    }
+    readonly state: TextBoxSearchState = { query: this.props.defaultQuery };
 
     render() {
         return createElement("div",
@@ -31,26 +27,12 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
             },
             createElement("input", {
                 className: "form-control",
-                onChange: this.handleOnChange,
+                onChange: this.onChangeHandle,
                 placeholder: this.props.placeholder,
                 value: this.state.query
             }),
             this.renderReset()
         );
-    }
-
-    renderReset() {
-        if (this.state.query) {
-            return createElement("button",
-                {
-                    className: `btn-transparent visible`,
-                    onClick: this.resetQuery
-                },
-                createElement("span", { className: "glyphicon glyphicon-remove" })
-            );
-        }
-
-        return null;
     }
 
     componentWillReceiveProps(newProps: TextBoxSearchProps) {
@@ -59,7 +41,7 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
         }
     }
 
-    private handleOnChange(event: ChangeEvent<HTMLSelectElement>) {
+    private onChange(event: ChangeEvent<HTMLSelectElement>) {
         const query = event.currentTarget.value;
 
         if (this.state.query !== query) {
@@ -71,6 +53,20 @@ export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchSt
             }, this.searchTimeOut);
         }
         this.setState({ query });
+    }
+
+    private renderReset() {
+        if (this.state.query) {
+            return createElement("button",
+                {
+                    className: `btn-transparent visible`,
+                    onClick: this.resetQueryHandle
+                },
+                createElement("span", { className: "glyphicon glyphicon-remove" })
+            );
+        }
+
+        return null;
     }
 
     private resetQuery() {

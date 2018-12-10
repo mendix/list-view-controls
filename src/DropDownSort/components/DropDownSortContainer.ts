@@ -1,15 +1,15 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
-import { DropDownProps, DropDownSort } from "./DropDownSort";
+import { DropDownSort } from "./DropDownSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 import "../ui/DropDownSort.scss";
 
@@ -31,7 +31,7 @@ export interface ContainerState {
     publishedSortAttribute?: string;
     publishedSortOrder?: string;
     publishedSortWidgetFriendlyId?: string;
-    targetListView?: ListView | null;
+    targetListView?: DataSourceHelperListView | null;
     selectedOption?: AttributeType;
 }
 
@@ -40,8 +40,8 @@ export interface FormState {
 }
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDom: HTMLElement;
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
     private subscriptionTopic: string;
     private retriesFind = 0;
@@ -109,9 +109,9 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
-    private renderDropDown(): ReactElement<DropDownProps> | null {
+    private renderDropDown(): ReactNode {
         if (!this.state.alertMessage) {
-            const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption;
+            const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption || "";
             const defaultSortIndex = this.props.sortAttributes.map(value => value.caption).indexOf(selectedCaption);
 
             return createElement(DropDownSort, {
@@ -138,10 +138,10 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
 
     private connectToListView() {
         let alertMessage = "";
-        let targetListView: ListView | undefined;
+        let targetListView: DataSourceHelperListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             alertMessage = error.message;

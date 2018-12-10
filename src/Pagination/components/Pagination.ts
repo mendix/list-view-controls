@@ -1,9 +1,9 @@
-import { Component, ReactElement, SFCElement, createElement } from "react";
+import { Component, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 
 import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType } from "../Pagination";
-import { PageNumberView, PageNumberViewProps } from "./PageNumberView";
+import { PageNumberView } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
 
 export interface PaginationProps {
@@ -47,7 +47,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         this.setState({ currentOffset: nextProps.offset });
     }
 
-    private renderPagination = (): SFCElement<PageNumberViewProps>[] | ReactElement<{}>[] => {
+    private renderPagination = (): ReactNode[] => {
         if (this.props.pagingStyle === "default") {
 
             return this.renderDefault();
@@ -73,7 +73,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         return offset < listSize ? offset / pageSize + 1 : 1;
     }
 
-    private renderDefault = (): Array<ReactElement<{}>> => {
+    private renderDefault = (): ReactNode[] => {
         return [
             this.createFirstButton(),
             this.createPreviousButton(),
@@ -83,7 +83,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         ];
     }
 
-    private renderCustom = (): Array<ReactElement<{}>> => {
+    private renderCustom = (): ReactNode[] => {
         return this.props.items.map(option => {
             const buttonProps = {
                 buttonCaption: option.buttonCaption,
@@ -137,10 +137,10 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     currentPage
                 });
             }
-        }) as Array<ReactElement<{}>>;
+        });
     }
 
-    private createFirstButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
+    private createFirstButton = (buttonProps?: PageButtonProps): ReactNode => {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -152,7 +152,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createPreviousButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
+    private createPreviousButton = (buttonProps?: PageButtonProps): ReactNode => {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -164,7 +164,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createNextButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
+    private createNextButton = (buttonProps?: PageButtonProps): ReactNode => {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -176,7 +176,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createLastButton = (buttonProps?: PageButtonProps): ReactElement<{}> => {
+    private createLastButton = (buttonProps?: PageButtonProps): ReactNode => {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -188,7 +188,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
         });
     }
 
-    private createMessage(message?: string): ReactElement<{}> {
+    private createMessage(message?: string): ReactNode {
         message = this.getMessageStatus(message);
 
         return createElement("button", { className: "paging-status" }, message);

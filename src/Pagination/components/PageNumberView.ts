@@ -1,4 +1,4 @@
-import { ReactElement, SFC, createElement } from "react";
+import { ReactNode, SFC, createElement } from "react";
 
 import { BreakView } from "./BreakView";
 import { PageNumberButton } from "./PageNumberButton";
@@ -11,7 +11,7 @@ export interface PageNumberViewProps {
 }
 
 export const PageNumberView: SFC<PageNumberViewProps> = (props) => {
-    const pageItems: Array<ReactElement<any>> = [];
+    const pageItems: ReactNode[] = [];
     const { selectedPageNumber, onClickAction } = props;
     if (props.pageCount <= props.maxPageButtons) {
         for (let pageNumber = 1; pageNumber <= props.pageCount; pageNumber++) {

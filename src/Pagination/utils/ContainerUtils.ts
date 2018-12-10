@@ -1,4 +1,4 @@
-import { ListView } from "../../Shared/SharedUtils";
+import { DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
 
 export const hideLoadMoreButton = (targetNode?: HTMLElement | null) => {
     if (targetNode) {
@@ -39,12 +39,12 @@ export const setListNodeToEmpty = (targetNode: HTMLElement) => {
     }
 };
 
-export const showLoader = (targetListView: ListView) => {
+export const showLoader = (targetListView: DataSourceHelperListView) => {
     logger.debug("showLoader");
     targetListView.domNode.classList.add("widget-pagination-loading");
 };
 
-export const hideLoader = (targetListView: ListView) => {
+export const hideLoader = (targetListView: DataSourceHelperListView) => {
     logger.debug("hideLoader");
     targetListView.domNode.classList.remove("widget-pagination-loading");
 };

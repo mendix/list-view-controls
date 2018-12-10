@@ -1,5 +1,5 @@
 import { ReactChild, createElement } from "react";
-import { ListView } from "../Shared/SharedUtils";
+import { DataSourceHelperListView } from "../Shared/DataSourceHelper/DataSourceHelper";
 import { ModelerProps } from "./Pagination";
 
 type Props = Readonly<{ children?: React.ReactNode; }> & Readonly<ModelerProps>;
@@ -7,12 +7,12 @@ type Props = Readonly<{ children?: React.ReactNode; }> & Readonly<ModelerProps>;
 export interface ValidateConfigProps extends Props {
     readonly inWebModeler?: boolean;
     readonly targetNode?: HTMLElement | null;
-    readonly targetListView?: ListView | null;
+    readonly targetListView?: DataSourceHelperListView | null;
 }
 
 export class Validate {
 
-    static validate(props: ValidateConfigProps): ReactChild {
+    static validateProps(props: ValidateConfigProps): ReactChild {
         const errorMessages: string[] = [];
 
         if (props.pagingStyle === "custom") {
@@ -39,15 +39,6 @@ export class Validate {
             });
         }
 
-        if (!props.inWebModeler) {
-            if (!props.targetNode) {
-                errorMessages.push("unable to find a list view on the page");
-            }
-            if (props.targetListView && !Validate.isCompatible(props.targetListView)) {
-                errorMessages.push("this Mendix version is incompatible");
-            }
-        }
-
         if (errorMessages.length) {
             return createElement("div", {},
                 "Configuration error in widget:",
@@ -57,19 +48,4 @@ export class Validate {
 
         return "";
     }
-
-    static isCompatible(targetListView: ListView): boolean {
-        return !!(targetListView
-            && targetListView._datasource
-            && targetListView._datasource.getOffset
-            && targetListView._datasource.setOffset
-            && targetListView._datasource.getPageSize
-            && targetListView._datasource.setPageSize
-            && targetListView._datasource.getSetSize
-            && targetListView._datasource.reload
-            && targetListView._sourceReload
-            && targetListView._renderData
-            && targetListView.update);
-    }
-
 }

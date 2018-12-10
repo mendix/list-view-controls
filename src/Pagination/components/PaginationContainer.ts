@@ -6,9 +6,9 @@ import * as mendixLang from "mendix/lang";
 import * as dojoAspect from "dojo/aspect";
 
 import { Alert } from "../../Shared/components/Alert";
-import { ListView, SharedUtils } from "../../Shared/SharedUtils";
+import { SharedUtils } from "../../Shared/SharedUtils";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
 
 import {
     hideLoadMoreButton, mxTranslation, persistListViewHeight,
@@ -18,15 +18,13 @@ import {
 import { ModelerProps } from "../Pagination";
 import { Pagination, PaginationProps } from "./Pagination";
 import { Validate } from "../Validate";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 import "../ui/Pagination.scss";
 
 interface PaginationContainerState {
-    findingListViewWidget: boolean;
-    message: ReactChild;
-    targetListView?: ListView | null;
-    targetNode?: HTMLElement | null;
+    alertMessage?: ReactChild;
+    targetListView?: DataSourceHelperListView | null;
     validationPassed?: boolean;
     pageSize?: number;
     offset: number;
@@ -41,11 +39,11 @@ interface PaginationPageState {
 }
 
 class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
-    private widgetDom: HTMLElement;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<PaginationPageState>;
     private retriesFind = 0;
     private initialLoading = true;
-    private dataSourceHelper: DataSourceHelper;
+    private dataSourceHelper?: DataSourceHelper;
 
     constructor(props: ModelerProps) {
         super(props);
@@ -65,8 +63,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         });
 
         this.state = {
-            findingListViewWidget: true,
-            message: "",
+            alertMessage: Validate.validateProps(this.props),
             pageSize: this.viewStateManager.getPageState("pageSize", undefined) as number, // We dont know, based on the modeler configuration of the list view.
             offset: this.viewStateManager.getPageState("offset", 0) as number,
             isPersisted: this.viewStateManager.getPageState("isPersisted", false) as boolean
@@ -88,14 +85,14 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             },
             createElement(Alert, {
                 className: "widget-pagination-alert"
-            }, this.state.message),
+            }, this.state.alertMessage),
             this.renderPageButton()
         );
     }
 
     componentWillUnmount() {
         logger.debug(this.props.friendlyId, ".componentWillUnmount");
-        showLoadMoreButton(this.state.targetNode);
+        showLoadMoreButton(this.state.targetListView.domNode);
         this.viewStateManager.destroy();
     }
 
@@ -152,41 +149,37 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private connectToListView() {
-        logger.debug(this.props.friendlyId, ".findListView");
-        if (this.state.findingListViewWidget) {
-            const targetListView = SharedContainerUtils.findTargetListView(this.widgetDom.parentElement);
-            const targetNode = targetListView && targetListView.domNode;
+        let alertMessage = "";
+        let targetListView: DataSourceHelperListView | undefined;
 
-            let message = Validate.validate({ ...this.props, targetNode, targetListView });
+        try {
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom);
+            targetListView = this.dataSourceHelper.getListView();
+        } catch (error) {
+            alertMessage = error.message;
+        }
 
-            try {
-                this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement);
-            } catch (error) {
-                message = error.message;
-            }
-            const validationPassed = !message;
+        if (targetListView) {
+            DataSourceHelper.showContent(targetListView.domNode);
+        }
 
-            DataSourceHelper.showContent(targetNode);
+        const validationPassed = !alertMessage;
+        this.setState({
+            alertMessage,
+            targetListView,
+            validationPassed
+        });
 
-            this.setState({
-                findingListViewWidget: false,
-                message,
-                targetListView,
-                targetNode,
-                validationPassed
-            });
-
-            if (validationPassed) {
-                hideLoadMoreButton(targetNode);
-                this.beforeListViewDataRender(targetListView);
-                this.afterListViewDataRender(targetListView);
-                targetListView._renderData(); // render the initial listview so before and after render events apply.
-            }
-
+        if (validationPassed) {
+            targetListView.__lvcPagingEnabled = true;
+            hideLoadMoreButton(targetListView.domNode);
+            this.beforeListViewDataRender(targetListView);
+            this.afterListViewDataRender(targetListView);
+            targetListView._renderData(); // render the initial listview so before and after render events apply.
         }
     }
 
-    private beforeListViewDataRender(targetListView: ListView) {
+    private beforeListViewDataRender(targetListView: DataSourceHelperListView) {
         logger.debug(this.props.friendlyId, ".beforeListViewDataRender");
 
         dojoAspect.before(targetListView, "_renderData", () => {
@@ -214,7 +207,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                     this.setState({ isPersisted: false });
                     targetListView._renderData();
                 }
-                if (datasource.__customWidgetPagingLoading) {
+                if (targetListView.__customWidgetPagingLoading) {
                     // Other pagination widget did the update, just take the new values
                     this.setState({
                         offset: datasource.getOffset(),
@@ -231,7 +224,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                             this.dataSourceHelper.setPaging(offset);
                         } else {
                             offset = 0;
-                            datasource.__customWidgetPagingOffset = offset;
+                            targetListView.__customWidgetPagingOffset = offset;
                         }
                     }
                     const pageSize = datasource.getPageSize();
@@ -250,7 +243,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         });
     }
 
-    private afterListViewLoaded(targetListView: ListView) {
+    private afterListViewLoaded(targetListView: DataSourceHelperListView) {
         logger.debug(this.props.friendlyId, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
@@ -263,7 +256,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         this.dataSourceHelper.setPaging(offset, pageSize); // State is changed in here
     }
 
-    private afterListViewDataRender(targetListView: ListView) {
+    private afterListViewDataRender(targetListView: DataSourceHelperListView) {
         logger.debug(this.props.friendlyId, ".afterListViewDataRender");
         dojoAspect.after(targetListView, "_renderData", () => {
             logger.debug(this.props.friendlyId, "_renderData.after");

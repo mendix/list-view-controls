@@ -1,4 +1,4 @@
-import { ChangeEvent, Component, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactNode, createElement } from "react";
 
 export interface PageSizeSelectProps {
     text?: string;
@@ -110,7 +110,7 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
         return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
     }
 
-    static createOptions = (options: Display[]): ReactElement<{}>[] => {
+    static createOptions = (options: Display[]): ReactNode[] => {
         return options.map((option, index) => createElement("option", {
             className: "",
             key: index,

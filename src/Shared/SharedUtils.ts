@@ -1,3 +1,5 @@
+import { DataSourceHelperListView } from "./DataSourceHelper/DataSourceHelper";
+
 export interface WrapperProps {
     uniqueid: string;
     class: string;
@@ -7,52 +9,13 @@ export interface WrapperProps {
     mxObject: mendix.lib.MxObject;
 }
 
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        setOffset: (offSet: number) => void;
-        setPageSize: (pageSize: number) => void;
-        _constraints: Constraints;
-        _entity: string;
-        _sorting: string[][];
-        getOffset: () => number;
-        getPageSize: () => number;
-        getSetSize: () => number;
-        reload: (callback: () => void) => void;
-        __customWidgetPagingOffset: number;
-        __customWidgetPagingLoading: boolean;
-    };
-    _entity: string;
-    _renderData: (callback?: () => void) => void;
-    _showLoadingIcon: () => void;
-    _sourceReload: () => void;
-    friendlyId: string;
-    datasource: {
-        type: "microflow" | "entityPath" | "database" | "xpath";
-    };
-    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
-    sequence: (sequence: string[], callback?: () => void) => void;
-}
-
-export interface OfflineConstraint {
-    attribute: string;
-    operator: string;
-    value: string;
-    path?: string;
-}
-
 export interface GroupedOfflineConstraint {
-    constraints: OfflineConstraint[];
+    constraints: mendix.lib.dataSource.OfflineConstraint[];
     operator: "or" | "and";
 }
 
-export type Constraints = (GroupedOfflineConstraint | OfflineConstraint)[] | string;
-
-export const paginationTopicSuffix = "_paginationUpdate";
-
-export const StoreState = <T>(form: mxui.lib.form._FormBase, uniqueid: string) => (state: T) => {
-    const viewState = form.viewState && form.viewState[uniqueid];
-    form.viewState[uniqueid] = { ...viewState, ...(state as any) };
-};
+export type Constraint = string | mendix.lib.dataSource.OfflineConstraint | mendix.lib.dataSource.GroupedOfflineConstraint;
+export type Constraints = (mendix.lib.dataSource.OfflineConstraint | mendix.lib.dataSource.GroupedOfflineConstraint)[] | string;
 
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {
@@ -73,7 +36,7 @@ export class SharedUtils {
         return {};
     }
 
-    static validateCompatibility(props: { listViewEntity?: string, targetListView?: ListView; }): string {
+    static validateCompatibility(props: { listViewEntity?: string, targetListView?: DataSourceHelperListView }): string {
         const { listViewEntity, targetListView } = props;
         const type = targetListView && targetListView.datasource && targetListView.datasource.type;
 

@@ -1,4 +1,4 @@
-import { Component, FormEvent, OptionHTMLAttributes, ReactElement, createElement } from "react";
+import { Component, FormEvent, OptionHTMLAttributes, ReactNode, createElement } from "react";
 import { AttributeType } from "./DropDownSortContainer";
 
 export interface DropDownOptionType extends Partial<AttributeType> {
@@ -68,7 +68,7 @@ export class DropDownSort extends Component<DropDownProps, DropdownState> {
             : "";
     }
 
-    private renderOptions(): Array<ReactElement<{}>> {
+    private renderOptions(): ReactNode[] {
         return this.options.map(optionObject => {
             const { caption, value } = optionObject;
 

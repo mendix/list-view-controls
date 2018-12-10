@@ -1,15 +1,15 @@
-import { Component, ReactChild, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 import { Validate } from "../Validate";
 
-import { DropDownFilter, DropDownFilterProps } from "./DropDownFilter";
+import { DropDownFilter } from "./DropDownFilter";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 import "../ui/DropDownFilter.scss";
 
@@ -32,7 +32,7 @@ export type filterOptions = "none" | "attribute" | "XPath";
 export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
-    targetListView?: ListView;
+    targetListView?: DataSourceHelperListView;
     targetNode?: HTMLElement;
     selectedOption?: FilterProps;
 }
@@ -42,8 +42,8 @@ interface FormState {
 }
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDom: HTMLElement;
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
     private retriesFind = 0;
 
@@ -79,10 +79,21 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
-    componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
+    componentWillReceiveProps(nextProps: ContainerProps) {
+        if (this.state.listViewAvailable) {
+            this.setState({ alertMessage: Validate.validateProps(nextProps) });
+        }
+    }
+
+    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
             const restoreState = this.checkRestoreState();
             this.applyFilter(this.state.selectedOption, restoreState);
+        } else if (this.state.listViewAvailable && this.props.mxObject !== prevProps.mxObject) {
+            const hasContext = this.state.selectedOption.constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
+            if (hasContext) {
+                this.applyFilter(this.state.selectedOption);
+            }
         }
     }
 
@@ -103,23 +114,23 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private renderAlert() {
         return createElement(Alert, {
-            bootstrapStyle: "danger",
-            className: "widget-drop-down-filter-alert"
+            className: "widget-checkbox-filter-alert"
         }, this.state.alertMessage);
     }
 
-    private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
+    private renderDropDownFilter(): ReactNode {
         if (!this.state.alertMessage) {
             const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption;
             const defaultFilterIndex = this.props.filters.map(value => value.caption).indexOf(selectedCaption);
+            const filters: FilterProps[] = JSON.parse(JSON.stringify(this.props.filters));
             if (this.props.mxObject) {
-                this.props.filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
+                filters.forEach(filter => filter.constraint = filter.constraint.replace(/\[%CurrentObject%\]/g,
                     this.props.mxObject.getGuid()
                 ));
             }
             return createElement(DropDownFilter, {
                 defaultFilterIndex,
-                filters: this.props.filters,
+                filters,
                 handleChange: this.applyFilter
             });
         }
@@ -166,10 +177,10 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         }
     }
 
-    private getAttributeConstraint(attribute: string, attributeValue: string): string | OfflineConstraint {
+    private getAttributeConstraint(attribute: string, attributeValue: string): string | mendix.lib.dataSource.OfflineConstraint {
         const { targetListView } = this.state;
         if (window.mx.isOffline()) {
-            const constraints: OfflineConstraint = {
+            const constraints: mendix.lib.dataSource.OfflineConstraint = {
                 attribute,
                 operator: "contains",
                 path: this.props.entity,
@@ -196,10 +207,10 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
 
     private connectToListView() {
         let errorMessage = "";
-        let targetListView: ListView | undefined;
+        let targetListView: DataSourceHelperListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;

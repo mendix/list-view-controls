@@ -1,11 +1,11 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 
 import { Alert } from "../Shared/components/Alert";
 import { SharedUtils } from "../Shared/SharedUtils";
 import { Validate } from "./Validate";
 
-import { DropDownFilter, DropDownFilterProps } from "./components/DropDownFilter";
+import { DropDownFilter } from "./components/DropDownFilter";
 import { ContainerProps } from "./components/DropDownFilterContainer";
 
 // tslint:disable-next-line class-name
@@ -26,10 +26,10 @@ export class preview extends Component<ContainerProps> {
         return createElement(Alert, {
             bootstrapStyle: "danger",
             className: "widget-drop-down-filter-alert"
-        }, Validate.validateProps(this.props));
+        }, Validate.validateProps({ ...this.props as ContainerProps, isWebModeler: true }));
     }
 
-    private renderDropDownFilter(): ReactElement<DropDownFilterProps> {
+    private renderDropDownFilter(): ReactNode {
         const { filters } = this.props;
         const defaultFilterIndex = filters.indexOf(filters.filter(value => value.isDefault)[0]);
 

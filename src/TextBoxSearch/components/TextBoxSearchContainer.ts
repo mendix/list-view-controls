@@ -4,11 +4,11 @@ import * as classNames from "classnames";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { GroupedOfflineConstraint, ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { GroupedOfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch, TextBoxSearchProps } from "./TextBoxSearch";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 export interface ContainerProps extends WrapperProps {
     attributeList: SearchAttributes[];
@@ -24,10 +24,7 @@ export interface SearchAttributes {
 export interface ContainerState {
     alertMessage?: string;
     listViewAvailable: boolean;
-    targetListView?: ListView;
-    targetNode?: HTMLElement;
-    validationPassed?: boolean;
-    defaultSearchText?: string;
+    searchText: string;
 }
 
 interface FormState {
@@ -35,8 +32,8 @@ interface FormState {
 }
 
 export default class SearchContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDom: HTMLElement;
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
     private retriesFind = 0;
 
@@ -44,13 +41,14 @@ export default class SearchContainer extends Component<ContainerProps, Container
         super(props);
 
         this.applySearch = this.applySearch.bind(this);
+
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
-            viewState.defaultSearchText = this.state.defaultSearchText;
+            viewState.defaultSearchText = this.state.searchText;
         });
 
         this.state = {
-            defaultSearchText: this.getDefaultValue(),
+            searchText: this.getDefaultValue(),
             listViewAvailable: false
         };
 
@@ -59,7 +57,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     render() {
         return createElement("div", {
                 className: classNames("widget-text-box-search", this.props.class),
-                ref: (widgetDom) => this.widgetDom = widgetDom,
+                ref: widgetDom => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -76,7 +74,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            this.applySearch(this.state.defaultSearchText);
+            this.applySearch(this.state.searchText);
         }
     }
 
@@ -95,7 +93,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     private renderTextBoxSearch(): ReactElement<TextBoxSearchProps> | null {
         if (!this.state.alertMessage) {
             return createElement(TextBoxSearch, {
-                defaultQuery: this.state.defaultSearchText,
+                defaultQuery: this.state.searchText,
                 onTextChange: this.applySearch,
                 placeholder: this.props.placeHolder
             });
@@ -105,17 +103,15 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private applySearch(searchQuery: string) {
-        // Construct constraint based on search query
-        const constraint = this.getConstraint((mxui as any).dom.escapeHTMLQuotes(searchQuery));
+        const constraint = this.getConstraint(mxui.dom.escapeHTMLQuotes(searchQuery));
 
         if (this.dataSourceHelper) {
             this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
         }
-        this.setState({ defaultSearchText: searchQuery });
+        this.setState({ searchText: searchQuery });
     }
 
     private getConstraint(searchQuery: string): string | GroupedOfflineConstraint {
-        const { targetListView } = this.state;
 
         searchQuery = searchQuery.trim();
 
@@ -124,7 +120,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         }
 
         if (window.mx.isOffline()) {
-            const offlineConstraints: OfflineConstraint[] = [];
+            const offlineConstraints: mendix.lib.dataSource.OfflineConstraint[] = [];
             this.props.attributeList.forEach(search => {
                 offlineConstraints.push({
                     attribute: search.attribute,
@@ -133,14 +129,14 @@ export default class SearchContainer extends Component<ContainerProps, Container
                     value: searchQuery
                 });
             });
-
+            // todo check of empty search for offline
             return {
                 constraints: offlineConstraints,
                 operator: "or"
             };
         }
 
-        if (targetListView && targetListView._datasource && searchQuery) {
+        if (searchQuery) {
             const constraints: string[] = [];
             this.props.attributeList.forEach(searchAttribute => {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
@@ -152,25 +148,22 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private connectToListView() {
-        let errorMessage = "";
-        let targetListView: ListView | undefined;
+        let alertMessage = "";
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
-            targetListView = this.dataSourceHelper.getListView();
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
         } catch (error) {
-            errorMessage = error.message;
+            alertMessage = error.message;
         }
 
         this.setState({
-            alertMessage: errorMessage,
-            listViewAvailable: !!targetListView,
-            targetListView
+            alertMessage,
+            listViewAvailable: !!alertMessage
         });
     }
 
-    private getDefaultValue() {
-        return this.viewStateManager.getPageState("defaultSearchText", this.props.defaultQuery);
+    private getDefaultValue(): string {
+        return this.viewStateManager.getPageState("defaultSearchText", this.props.defaultQuery) as string;
     }
 
 }

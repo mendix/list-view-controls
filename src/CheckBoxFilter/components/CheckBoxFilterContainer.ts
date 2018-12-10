@@ -1,14 +1,14 @@
-import { Component, ReactChild, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 
-import { Alert, AlertProps } from "../../Shared/components/Alert";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, OfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
-import { CheckboxFilter, CheckboxFilterProps } from "./CheckBoxFilter";
+import { Alert } from "../../Shared/components/Alert";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { CheckboxFilter } from "./CheckBoxFilter";
 import { Validate } from "../Validate";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 export interface ContainerProps extends WrapperProps {
     listViewEntity: string;
@@ -29,18 +29,18 @@ type FilterOptions = "attribute" | "XPath" | "None";
 export interface ContainerState {
     alertMessage: ReactChild;
     listViewAvailable: boolean;
-    targetListView?: ListView;
+    targetListView?: DataSourceHelperListView;
     validationPassed?: boolean;
-    isChecked?: boolean;
+    isChecked: boolean;
 }
 
 interface FormState {
-    isChecked?: boolean;
+    isChecked: boolean;
 }
 
 export default class CheckboxFilterContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDom: HTMLElement;
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
     private retriesFind = 0;
 
@@ -61,16 +61,14 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     render() {
-        const errorMessage = this.state.alertMessage || Validate.validateProps(this.props);
-
         return createElement("div",
             {
                 className: classNames("widget-checkbox-filter", this.props.class),
                 ref: widgetDom => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
-            this.renderAlert(errorMessage),
-            this.renderCheckBoxFilter(errorMessage)
+            this.renderAlert(),
+            this.renderCheckBoxFilter()
         );
     }
 
@@ -78,10 +76,22 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
-    componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
+    componentWillReceiveProps(nextProps: ContainerProps) {
+        if (this.state.listViewAvailable) {
+            this.setState({ alertMessage: Validate.validateProps(nextProps) });
+        }
+    }
+
+    componentDidUpdate(prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
             const restoreState = this.checkRestoreState();
             this.applyFilter(this.state.isChecked, restoreState);
+        } else if (this.state.listViewAvailable && this.props.mxObject !== prevProps.mxObject) {
+            const constraint = this.state.isChecked ? this.props.constraint : this.props.unCheckedConstraint;
+            const hasContext = constraint.indexOf(`'[%CurrentObject%]'`) !== -1;
+            if (hasContext) {
+                this.applyFilter(this.state.isChecked);
+            }
         }
     }
 
@@ -100,14 +110,14 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.listViewEntity);
     }
 
-    private renderAlert(message: ReactChild): ReactElement<AlertProps> {
+    private renderAlert(): ReactNode {
         return createElement(Alert, {
             className: "widget-checkbox-filter-alert"
-        }, message);
+        }, this.state.alertMessage);
     }
 
-    private renderCheckBoxFilter(alertMessage: ReactChild): ReactElement<CheckboxFilterProps> {
-        if (!alertMessage) {
+    private renderCheckBoxFilter(): ReactNode {
+        if (!this.state.alertMessage) {
             return createElement(CheckboxFilter, {
                 handleChange: this.applyFilter,
                 isChecked: this.state.isChecked
@@ -125,7 +135,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         }
     }
 
-    private getConstraint(isChecked: boolean): string | OfflineConstraint {
+    private getConstraint(isChecked: boolean): string | mendix.lib.dataSource.OfflineConstraint {
         const { targetListView } = this.state;
 
         if (targetListView && targetListView._datasource) {
@@ -144,15 +154,15 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
                 return this.getAttributeConstraint(attribute, attributeValue);
             }
 
-            return "";
         }
+        return "";
     }
 
-    private getAttributeConstraint(attribute: string, attributeValue: string): string | OfflineConstraint {
+    private getAttributeConstraint(attribute: string, attributeValue: string): string | mendix.lib.dataSource.OfflineConstraint {
         const { targetListView } = this.state;
 
         if (window.mx.isOffline()) {
-            const constraints: OfflineConstraint = {
+            const constraints: mendix.lib.dataSource.OfflineConstraint = {
                 attribute,
                 operator: "contains",
                 path: this.props.listViewEntity,
@@ -178,11 +188,11 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
     }
 
     private connectToListView() {
-        let targetListView: ListView | undefined;
+        let targetListView: DataSourceHelperListView | undefined;
         let errorMessage = "";
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.listViewEntity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.listViewEntity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;

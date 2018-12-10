@@ -59,7 +59,7 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
     private validateConfigs(props: ModelerProps) {
         const queryNode = findDOMNode(this) as HTMLElement;
         const targetNode = SharedUtils.findTargetNode(queryNode);
-        const message = Validate.validate({
+        const message = Validate.validateProps({
             ...props as ModelerProps,
             inWebModeler: true
         });

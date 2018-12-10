@@ -1,15 +1,15 @@
-import { Component, ReactChild, ReactElement, createElement } from "react";
+import { Component, ReactChild, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
-import { HeaderSort, HeaderSortProps, SortOrder } from "./HeaderSort";
+import { HeaderSort, SortOrder } from "./HeaderSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
-import FormViewState from "../../Shared/FormViewState";
+import { FormViewState } from "../../Shared/FormViewState";
 
 import "../ui/HeaderSort.scss";
 
@@ -24,7 +24,7 @@ export interface ContainerProps extends WrapperProps {
 export interface ContainerState {
     alertMessage?: ReactChild;
     listViewAvailable: boolean;
-    targetListView?: ListView;
+    targetListView?: DataSourceHelperListView;
     sortOrder?: SortOrder;
 }
 
@@ -33,8 +33,8 @@ interface FormState {
 }
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDom: HTMLElement;
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
     private viewStateManager: FormViewState<FormState>;
     private subscriptionTopic: string;
     private retriesFind = 0;
@@ -98,7 +98,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
     }
 
-    private renderSort(): ReactElement<HeaderSortProps> {
+    private renderSort(): ReactNode {
         if (!this.state.alertMessage) {
             return createElement(HeaderSort, {
                 caption: this.props.caption,
@@ -112,10 +112,10 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
 
     private connectToListView() {
         let errorMessage = "";
-        let targetListView: ListView | undefined;
+        let targetListView: DataSourceHelperListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             errorMessage = error.message;
