@@ -6,8 +6,8 @@
   "copyright": "Mendix BV",
   "scripts": {
     "start": "webpack-dev-server --hot --open",
-    "emit": "tsc",
-    "pretest": "tsc && npm run lint && npm run build",
+    "checkTyping": "tsc --noEmit",
+    "pretest": "npm run checkTyping && npm run lint && npm run build",
     "test": "npm run test:unit && npm run test:conditional",
     "test:conditional": "node ./node_modules/mendix-widget-build-script/dist/CheckPullRequestFromFork.js && echo 'Skip tests on forked pull request' || npm run deployAndTest",
     "test:dev": "karma start",
@@ -27,7 +27,7 @@
     "developmentPort": 3000
   },
   "pre-commit": [
-    "emit",
+    "checkTyping",
     "lint"
   ],
   "repository": {
@@ -79,7 +79,7 @@
     "karma-spec-reporter": "0.0.32",
     "karma-webpack": "^3.0.5",
     "mendix-client": "^7.15.6",
-    "mendix-widget-build-script": "^1.0.0",
+    "mendix-widget-build-script": "^1.0.3",
     "node-sass": "^4.9.3",
     "pre-commit": "^1.2.2",
     "raw-loader": "^0.5.1",
