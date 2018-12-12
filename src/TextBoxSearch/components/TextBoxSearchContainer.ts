@@ -7,6 +7,7 @@ import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper
 import { GroupedOfflineConstraint, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
 import { TextBoxSearch } from "./TextBoxSearch";
+import { Validate } from "../Validate";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 import { FormViewState } from "../../Shared/FormViewState";
 
@@ -22,7 +23,7 @@ export interface SearchAttributes {
 }
 
 export interface ContainerState {
-    alertMessage?: string;
+    alertMessage?: ReactNode;
     listViewAvailable: boolean;
     searchText: string;
 }
@@ -48,6 +49,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         });
 
         this.state = {
+            alertMessage: Validate.validateProps(this.props),
             searchText: this.getDefaultValue(),
             listViewAvailable: false
         };
@@ -61,7 +63,6 @@ export default class SearchContainer extends Component<ContainerProps, Container
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
-                bootstrapStyle: "danger",
                 className: "widget-text-box-search-alert"
             }, this.state.alertMessage),
             this.renderTextBoxSearch()
@@ -145,7 +146,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private connectToListView() {
-        let alertMessage = "";
+        let alertMessage = this.state.alertMessage || "";
 
         try {
             this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);

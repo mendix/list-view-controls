@@ -24,7 +24,7 @@ export interface ContainerProps extends WrapperProps {
     unCheckedConstraint: string;
 }
 
-type FilterOptions = "attribute" | "XPath" | "None";
+type FilterOptions = "attribute" | "XPath" | "none";
 
 export interface ContainerState {
     alertMessage: ReactChild;
@@ -203,7 +203,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         }
 
         this.setState({
-            alertMessage: errorMessage,
+            alertMessage: errorMessage || this.state.alertMessage,
             listViewAvailable: !!targetListView,
             targetListView
         });
