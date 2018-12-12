@@ -5,7 +5,7 @@ export class Validate {
     static validateProps(props: ContainerProps & { isWebModeler?: boolean }): ReactChild {
         const errorMessages = [];
 
-        if (!window.mx.isOffline() && props.filterBy === "XPath" && !props.constraint) {
+        if ((props.isWebModeler || !window.mx.isOffline()) && props.filterBy === "XPath" && !props.constraint) {
             errorMessages.push("The checked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.filterBy === "attribute" && !props.attribute) {
@@ -14,7 +14,7 @@ export class Validate {
         if (props.filterBy === "attribute" && !props.attributeValue) {
             errorMessages.push("The checked 'Attribute value' is required when 'Filter by' is set to 'Attribute'");
         }
-        if (!window.mx.isOffline() && props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
+        if ((props.isWebModeler || !window.mx.isOffline()) && props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
             errorMessages.push("The unchecked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttribute) {

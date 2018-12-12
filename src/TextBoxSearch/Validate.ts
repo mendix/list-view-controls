@@ -5,7 +5,7 @@ export class Validate {
     static validateProps(props: ContainerProps & { isWebModeler?: boolean }): ReactChild {
         const errorMessages: string[] = [];
 
-        if (window.mx.isOffline()) {
+        if (!props.isWebModeler && window.mx.isOffline()) {
             props.attributeList.forEach((searchAttribute, index) => {
                 if (searchAttribute.attribute.indexOf("/") > -1) {
                     errorMessages.push(`'Search attribute' at position {${index + 1}} over reference is not supported in offline application`);
