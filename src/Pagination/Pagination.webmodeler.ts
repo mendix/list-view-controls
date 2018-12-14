@@ -38,15 +38,11 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
                 items: this.props.items,
                 listViewSize: 20,
                 pageSize: 2,
-                onClickAction: () => {
+                onChange: () => {
                     return;
                 },
                 pagingStyle: this.props.pagingStyle,
-                publishedOffset: 0,
-                publishedPageNumber: 1,
-                pageSizeOnChange: () => {
-                    return;
-                },
+                offset: 0,
                 pageSizeOptions: this.props.pageSizeOptions
             })
         );
@@ -63,7 +59,7 @@ export class preview extends Component<ModelerProps, PaginationWebModelerState> 
     private validateConfigs(props: ModelerProps) {
         const queryNode = findDOMNode(this) as HTMLElement;
         const targetNode = SharedUtils.findTargetNode(queryNode);
-        const message = Validate.validate({
+        const message = Validate.validateProps({
             ...props as ModelerProps,
             inWebModeler: true
         });

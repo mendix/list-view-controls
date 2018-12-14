@@ -1,4 +1,7 @@
+import { DataSourceHelperListView } from "./DataSourceHelper/DataSourceHelper";
+
 export interface WrapperProps {
+    uniqueid: string;
     class: string;
     style: string;
     friendlyId: string;
@@ -6,42 +9,13 @@ export interface WrapperProps {
     mxObject: mendix.lib.MxObject;
 }
 
-export interface ListView extends mxui.widget._WidgetBase {
-    _datasource: {
-        setOffset: (offSet: number) => void;
-        _constraints: Constraints;
-        _entity: string;
-        _pageSize: number;
-        _setSize: number;
-        _sorting: string[][];
-    };
-    _entity: string;
-    _renderData: () => void;
-    _showLoadingIcon: () => void;
-    _sourceReload: () => void;
-    friendlyId: string;
-    datasource: {
-        type: "microflow" | "entityPath" | "database" | "xpath";
-    };
-    update: (obj: mendix.lib.MxObject | null, callback?: () => void) => void;
-    sequence: (sequence: string[], callback?: () => void) => void;
-}
-
-export interface OfflineConstraint {
-    attribute: string;
-    operator: string;
-    value: string;
-    path?: string;
-}
-
 export interface GroupedOfflineConstraint {
-    constraints: OfflineConstraint[];
+    constraints: mendix.lib.dataSource.OfflineConstraint[];
     operator: "or" | "and";
 }
 
-export type Constraints = (GroupedOfflineConstraint | OfflineConstraint)[] | string;
-
-export const paginationTopicSuffix = "_paginationUpdate";
+export type Constraint = string | mendix.lib.dataSource.OfflineConstraint | mendix.lib.dataSource.GroupedOfflineConstraint;
+export type Constraints = (mendix.lib.dataSource.OfflineConstraint | mendix.lib.dataSource.GroupedOfflineConstraint)[] | string;
 
 export class SharedUtils {
     static parseStyle(style = ""): {[key: string]: string} {
@@ -62,7 +36,7 @@ export class SharedUtils {
         return {};
     }
 
-    static validateCompatibility(props: { listViewEntity?: string, targetListView?: ListView; }): string {
+    static validateCompatibility(props: { listViewEntity?: string, targetListView?: DataSourceHelperListView }): string {
         const { listViewEntity, targetListView } = props;
         const type = targetListView && targetListView.datasource && targetListView.datasource.type;
 
@@ -78,7 +52,7 @@ export class SharedUtils {
         if (!(targetListView && targetListView._datasource && targetListView._entity && targetListView.update)) {
             return "This widget version is not compatible with this Mendix version";
         }
-        if (targetListView._entity && listViewEntity !== targetListView._entity) {
+        if (targetListView._entity && listViewEntity !== undefined && listViewEntity !== targetListView._entity) {
             return `The supplied entity "${props.listViewEntity}" does not belong to list view data source`;
         }
 

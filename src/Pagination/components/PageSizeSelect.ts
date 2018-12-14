@@ -1,4 +1,4 @@
-import { ChangeEvent, Component, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactNode, createElement } from "react";
 
 export interface PageSizeSelectProps {
     text?: string;
@@ -7,7 +7,7 @@ export interface PageSizeSelectProps {
     listViewSize: number;
 
     sizeOptions: OptionProps[];
-    handleChange: (optionProps: OnChangeProps) => void;
+    onChange: (offSet?: number, pageSize?: number) => void;
 }
 
 interface PageSizeState {
@@ -25,12 +25,22 @@ export type Display = Partial<OptionProps> & Partial<PageSizeState>;
 export interface OnChangeProps {
     newOffSet: number;
     newPageSize: number;
-    newPageNumber: number;
 }
+
+export const calculateOffSet = (listViewSize: number, newPageSize: number, oldPageNumber: number): OnChangeProps => {
+    const numberOfPages = Math.ceil(listViewSize / newPageSize);
+    const newPageNumber = (oldPageNumber >= 1 && oldPageNumber <= numberOfPages) ? oldPageNumber : 1;
+    const newOffSet = (newPageNumber - 1) * newPageSize;
+
+    return {
+        newOffSet,
+        newPageSize
+    };
+};
 
 export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState> {
     private filters: Display[];
-    private pageSizeSelectDom: HTMLSelectElement;
+    private pageSizeSelectDom: HTMLSelectElement | null = null;
     private defaultPageSize?: number;
 
     constructor(props: PageSizeSelectProps) {
@@ -67,12 +77,12 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
     }
 
     componentDidUpdate(_previousProps: PageSizeSelectProps, _previousState: PageSizeState) {
-        if (this.state.selectedValue === "-1") {
+        if (this.state.selectedValue === "-1" && this.pageSizeSelectDom) {
             this.pageSizeSelectDom.selectedIndex = -1;
         }
     }
 
-    private renderDropDown = () => {
+    private renderDropDown() {
         return createElement("select",
             {
                 className: "form-control",
@@ -86,33 +96,21 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
 
     private handleOnChange = (event: ChangeEvent<HTMLSelectElement>) => {
         const { listViewSize } = this.props;
-        const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value).size;
+        const selectedPageSize = this.filters.find(filter => filter.selectedValue === event.currentTarget.value)!.size as number;
         this.setState({
             selectedValue: event.currentTarget.value,
             pageSize: selectedPageSize
          });
 
-        const newOffSet = this.calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
-        this.props.handleChange(newOffSet);
+        const newOffSet = calculateOffSet(listViewSize, selectedPageSize, this.props.currentPage);
+        this.props.onChange(newOffSet.newOffSet, newOffSet.newPageSize);
     }
 
-    private calculateOffSet = (listViewSize: number, newPageSize: number, oldPageNumber: number): OnChangeProps => {
-        const numberOfPages = Math.ceil(listViewSize / newPageSize);
-        const newPageNumber = (oldPageNumber >= 1 && oldPageNumber <= numberOfPages) ? oldPageNumber : 1;
-        const newOffSet = (newPageNumber - 1) * newPageSize;
-
-        return {
-            newOffSet,
-            newPageNumber,
-            newPageSize
-        };
+    static getSelectedValue(sizeOptions: OptionProps[], selectedPageSize: number): string {
+        return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize)!)}`;
     }
 
-    static getSelectedValue = (sizeOptions: OptionProps[], selectedPageSize: number): string => {
-        return `${sizeOptions.indexOf(sizeOptions.find(sizeOption => sizeOption.size === selectedPageSize))}`;
-    }
-
-    static createOptions = (options: Display[]): ReactElement<{}>[] => {
+    static createOptions(options: Display[]): ReactNode[] {
         return options.map((option, index) => createElement("option", {
             className: "",
             key: index,

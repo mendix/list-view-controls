@@ -5,7 +5,7 @@ export class Validate {
     static validateProps(props: ContainerProps & { isWebModeler?: boolean }): ReactChild {
         const errorMessages = [];
 
-        if (props.filterBy === "XPath" && !props.constraint) {
+        if ((props.isWebModeler || !window.mx.isOffline()) && props.filterBy === "XPath" && !props.constraint) {
             errorMessages.push("The checked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.filterBy === "attribute" && !props.attribute) {
@@ -14,7 +14,7 @@ export class Validate {
         if (props.filterBy === "attribute" && !props.attributeValue) {
             errorMessages.push("The checked 'Attribute value' is required when 'Filter by' is set to 'Attribute'");
         }
-        if (props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
+        if ((props.isWebModeler || !window.mx.isOffline()) && props.unCheckedFilterBy === "XPath" && !props.unCheckedConstraint) {
             errorMessages.push("The unchecked 'XPath constraint' is required when 'Filter by' is set to 'XPath'");
         }
         if (props.unCheckedFilterBy === "attribute" && !props.unCheckedAttribute) {
@@ -24,11 +24,19 @@ export class Validate {
             errorMessages.push("The unchecked 'Attribute value' is required when 'Filter by' is set to 'Attribute'");
         }
         if (!props.isWebModeler) {
-            if (window.mx.isOffline() && props.filterBy === "XPath") {
-                errorMessages.push("The checked 'Filter by' 'XPath' is not supported for offline application");
-            }
-            if (window.mx.isOffline() && props.unCheckedFilterBy === "XPath") {
-                errorMessages.push("The unchecked 'Filter by' 'XPath' is not supported for offline application");
+            if (window.mx.isOffline()) {
+                if (props.filterBy === "XPath") {
+                    errorMessages.push("The checked 'Filter by' 'XPath' is not supported for offline application");
+                }
+                if (props.filterBy === "attribute" && props.attribute.indexOf("/") > -1) {
+                    errorMessages.push(`The checked 'Filter by' 'Attribute' over reference is not supported for offline application`);
+                }
+                if (props.unCheckedFilterBy === "XPath") {
+                    errorMessages.push("The unchecked 'Filter by' 'XPath' is not supported for offline application");
+                }
+                if (props.unCheckedFilterBy === "attribute" && props.unCheckedAttribute.indexOf("/") > -1) {
+                    errorMessages.push(`The unchecked 'Filter by' 'Attribute' over reference is not supported for offline application`);
+                }
             }
             if (!props.mxObject && props.filterBy === "XPath" && props.constraint.indexOf("[%CurrentObject%]'") > -1) {
                 errorMessages.push("The checked 'XPath constraint', requires a context object");

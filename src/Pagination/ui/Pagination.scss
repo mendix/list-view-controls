@@ -101,12 +101,11 @@ $widget-pagination-color-disabled: #999;
     }
 }
 
-.widget-pagination-hide-load-more {
+.hide-load-more .mx-listview-loadMore {
     display: none !important;
 }
 
-.widget-pagination-loading
-{
+.widget-pagination-loading {
     ul:before {
         background-image: url(./loading.gif);
         background-repeat: no-repeat;

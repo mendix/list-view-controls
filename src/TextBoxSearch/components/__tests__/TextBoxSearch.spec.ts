@@ -24,14 +24,7 @@ describe("TextBoxSearch", () => {
                     onChange: jasmine.any(Function) as any,
                     placeholder: textSearchProps.placeholder,
                     value: textSearchProps.defaultQuery
-                }),
-                createElement("button",
-                    {
-                        className: "",
-                        onClick: jasmine.any(Function) as any
-                    },
-                    createElement("span", { className: "glyphicon glyphicon-remove" })
-                )
+                })
             )
         );
     });
@@ -51,10 +44,7 @@ describe("TextBoxSearch", () => {
                     onChange: jasmine.any(Function) as any,
                     placeholder: textSearchProps.placeholder,
                     value: textSearchProps.defaultQuery
-                }),
-                createElement("button", { className: "btn-transparent" },
-                    createElement("span", { className: "glyphicon glyphicon-remove" })
-                )
+                })
             )
         );
     });

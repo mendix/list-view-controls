@@ -1,14 +1,15 @@
-import { Component, ReactElement, createElement } from "react";
+import { Component, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
 import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
-import { DataSourceHelper } from "../../Shared/DataSourceHelper/DataSourceHelper";
-import { ListView, SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
+import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
+import { SharedUtils, WrapperProps } from "../../Shared/SharedUtils";
 
-import { DropDown, DropDownProps } from "./DropDownSort";
+import { DropDownSort } from "./DropDownSort";
 import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
+import { FormViewState } from "../../Shared/FormViewState";
 
 import "../ui/DropDownSort.scss";
 
@@ -30,33 +31,43 @@ export interface ContainerState {
     publishedSortAttribute?: string;
     publishedSortOrder?: string;
     publishedSortWidgetFriendlyId?: string;
-    targetListView?: ListView | null;
-    defaultOption?: AttributeType;
+    targetListView?: DataSourceHelperListView | null;
+    selectedOption: AttributeType;
+}
+
+export interface FormState {
+    selectedOption?: AttributeType;
 }
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
-    private dataSourceHelper: DataSourceHelper;
-    private widgetDOM: HTMLElement;
-    private subscriptionTopic: string;
-
-    readonly state: ContainerState = {
-        defaultOption: this.getDefaultOption(),
-        listViewAvailable: false
-    };
+    private dataSourceHelper?: DataSourceHelper;
+    private widgetDom: HTMLElement | null = null;
+    private viewStateManager: FormViewState<FormState>;
+    private subscriptionTopic = "";
+    private retriesFind = 0;
 
     constructor(props: ContainerProps) {
         super(props);
 
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
         this.updateSort = this.updateSort.bind(this);
-        this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
-        this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
+        const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
+
+        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+            viewState.selectedOption = this.state.selectedOption;
+        });
+
+        // State is moved into constructor to avoid unnecessary
+        // rendering while using Persisted state (FormViewState)
+        this.state = {
+            selectedOption: this.getDefaultOption(),
+            listViewAvailable: false
+        };
     }
 
     render() {
         return createElement("div", {
                 className: classNames("widget-drop-down-sort", this.props.class),
-                ref: (widgetDOM: HTMLElement) => this.widgetDOM = widgetDOM,
+                ref: (widgetDom: HTMLElement) => this.widgetDom = widgetDom,
                 style: SharedUtils.parseStyle(this.props.style)
             },
             createElement(Alert, {
@@ -67,55 +78,78 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         );
     }
 
+    componentDidMount() {
+        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+    }
+
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
         if (this.state.listViewAvailable && !prevState.listViewAvailable) {
-            const selectedSort = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
-
-            if (selectedSort) {
-                this.updateSort(selectedSort.name, selectedSort.sort);
+            if (this.state.selectedOption) {
+                const restoreState = this.checkRestoreState();
+                this.updateSort(this.state.selectedOption, restoreState);
             }
         }
     }
 
-    private checkListViewAvailable(): boolean {
-        return !!SharedContainerUtils.findTargetListView(this.widgetDOM.parentElement, this.props.entity);
+    componentWillUnmount() {
+        this.viewStateManager.destroy();
     }
 
-    private renderDropDown(): ReactElement<DropDownProps> | null {
+    private checkListViewAvailable(): boolean {
+        if (!this.widgetDom) {
+            return false;
+        }
+        this.retriesFind++;
+        if (this.retriesFind > 25) {
+            return true; // Give-up searching
+        }
+
+        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.entity);
+    }
+
+    private renderDropDown(): ReactNode {
         if (!this.state.alertMessage) {
-            return createElement(DropDown, {
+            const selectedCaption = this.state.selectedOption && this.state.selectedOption.caption || "";
+            const defaultSortIndex = this.props.sortAttributes.map(value => value.caption).indexOf(selectedCaption);
+
+            return createElement(DropDownSort, {
                 friendlyId: this.props.friendlyId,
                 onDropDownChangeAction: this.updateSort,
-                publishedSortAttribute: this.state.publishedSortAttribute,
-                publishedSortOrder: this.state.publishedSortOrder,
-                publishedSortWidgetFriendlyId: this.state.publishedSortWidgetFriendlyId,
                 sortAttributes: this.props.sortAttributes,
-                style: SharedUtils.parseStyle(this.props.style)
+                style: SharedUtils.parseStyle(this.props.style),
+                defaultSortIndex: defaultSortIndex !== -1 ? defaultSortIndex : undefined
             });
         }
 
         return null;
     }
 
-    private getDefaultOption() {
-        return this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
+    private checkRestoreState(): boolean {
+        return this.viewStateManager.getPageState("selectedOption") !== undefined;
+    }
+
+    private getDefaultOption(): AttributeType {
+        const initialDefaultOption = this.props.sortAttributes.filter(sortAttribute => sortAttribute.defaultSelected)[0];
+
+        return this.viewStateManager.getPageState("selectedOption", initialDefaultOption);
     }
 
     private connectToListView() {
         let alertMessage = "";
-        let targetListView: ListView | undefined;
+        let targetListView: DataSourceHelperListView | undefined;
 
         try {
-            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDOM.parentElement, this.props.entity);
+            this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
             targetListView = this.dataSourceHelper.getListView();
         } catch (error) {
             alertMessage = error.message;
         }
 
         if (targetListView && !alertMessage) {
-            this.subscriptionTopic = `${targetListView.friendlyId}_sortUpdate`;
+            const id = targetListView.friendlyId + (targetListView.uniqueid ? targetListView.uniqueid : "");
+            this.subscriptionTopic = `${id}_sortUpdate`;
             this.subScribeToWidgetChanges();
-            if (!this.state.defaultOption) {
+            if (!this.state.selectedOption) {
                 DataSourceHelper.showContent(targetListView.domNode);
             }
         }
@@ -127,26 +161,31 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         });
     }
 
-    private updateSort(attribute: string, order: string) {
+    private updateSort(selectedOption: AttributeType, restoreState = false) {
         const { targetListView } = this.state;
 
         if (targetListView && this.dataSourceHelper) {
-            this.dataSourceHelper.setSorting(this.props.friendlyId, [ attribute, order ]);
-            this.publishWidgetChanges(attribute, order);
+            logger.debug(this.props.friendlyId, "updateSort", selectedOption.name, selectedOption.sort);
+            this.dataSourceHelper.setSorting(this.props.friendlyId, [ selectedOption.name, selectedOption.sort ], restoreState);
+            this.setState({ selectedOption });
+            this.publishWidgetChanges(selectedOption);
         }
     }
 
     private subScribeToWidgetChanges() {
         dojoTopic.subscribe(this.subscriptionTopic, (message: string[]) => {
-            this.setState({
-                publishedSortAttribute: message[0],
-                publishedSortOrder: message[1],
-                publishedSortWidgetFriendlyId: message[2]
-            });
+            const attribute = message[0];
+            const order = message[1];
+            const sourceWidgetId = message[2];
+            const selectedOption = this.props.sortAttributes.filter(option => option.name === attribute && option.sort === order)[0];
+            if (attribute && order && this.props.friendlyId !== sourceWidgetId) {
+                this.setState({ selectedOption });
+            }
         });
     }
 
-    private publishWidgetChanges(attribute: string, order: string) {
-        dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.friendlyId ]);
+    private publishWidgetChanges(sortOption: AttributeType) {
+        dojoTopic.publish(this.subscriptionTopic, [ sortOption.name, sortOption.sort, this.props.friendlyId ]);
     }
+
 }

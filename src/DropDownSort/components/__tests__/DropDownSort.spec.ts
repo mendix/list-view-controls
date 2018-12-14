@@ -2,7 +2,7 @@ import { createElement } from "react";
 import { configure, shallow } from "enzyme";
 import Adapter = require("enzyme-adapter-react-16");
 
-import { DropDown, DropDownProps, OptionHTMLAttributesType } from "../DropDownSort";
+import { DropDownProps, DropDownSort, OptionHTMLAttributesType } from "../DropDownSort";
 
 configure({ adapter: new Adapter() });
 
@@ -10,7 +10,7 @@ configure({ adapter: new Adapter() });
 
 describe("DropDownSort", () => {
 
-    const renderDropdown = (props: DropDownProps) => shallow(createElement(DropDown, props));
+    const renderDropdown = (props: DropDownProps) => shallow(createElement(DropDownSort, props));
 
     const dropDownProps: DropDownProps = {
         onDropDownChangeAction: () => jasmine.any(Function) as any,
@@ -51,12 +51,14 @@ describe("DropDownSort", () => {
     });
 
     it("renders with the specified default sort", () => {
+        const sortAttributes = [
+            { caption: "Name Asc", name: "Name", defaultSelected: false, sort: "asc" },
+            { caption: "Name Desc", name: "Name", defaultSelected: true, sort: "desc" }
+        ];
         const props: DropDownProps = {
             ...dropDownProps,
-            sortAttributes: [
-                { caption: "Name Asc", name: "Name", defaultSelected: false, sort: "asc" },
-                { caption: "Name Desc", name: "Name", defaultSelected: true, sort: "desc" }
-            ]
+            sortAttributes,
+            defaultSortIndex: 1
         };
 
         const wrapper = renderDropdown(props);
@@ -78,12 +80,12 @@ describe("DropDownSort", () => {
 
             select.simulate("change", {
                 currentTarget: {
-                    value: newValue + "-2"
+                    value: newValue + "-0"
                 }
             });
 
             setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(newValue, "desc");
+                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
                 done();
             }, 1000);
         });
@@ -105,16 +107,16 @@ describe("DropDownSort", () => {
             });
 
             setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith("Name", "asc");
+                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
 
                 select.simulate("change", {
                     currentTarget: {
-                        value: newValue + "-2"
+                        value: newValue + "-1"
                     }
                 });
 
                 setTimeout(() => {
-                    expect(props.onDropDownChangeAction).toHaveBeenCalledWith(newValue, "desc");
+                    expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[1]);
                     done();
                 }, 1000);
             }, 1000);

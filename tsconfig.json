@@ -16,10 +16,12 @@
       "watch": false,
       "forceConsistentCasingInFileNames": true,
       "noFallthroughCasesInSwitch": true,
+      "strict": true,
       "alwaysStrict": true,
       "skipLibCheck": false,
       "noUnusedLocals": true,
-      "noUnusedParameters": true
+      "noUnusedParameters": true,
+      "strictBindCallApply": true
     },
     "exclude": [
       "dist/",

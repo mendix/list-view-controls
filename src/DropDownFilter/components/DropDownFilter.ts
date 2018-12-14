@@ -1,11 +1,11 @@
-import { ChangeEvent, Component, ReactElement, createElement } from "react";
+import { ChangeEvent, Component, ReactNode, createElement } from "react";
 
 import { FilterProps } from "./DropDownFilterContainer";
 
 export interface DropDownFilterProps {
     defaultFilterIndex: number;
     filters: FilterProps[];
-    handleChange: (FilterProps) => void;
+    handleChange: (FilterProps: FilterProps) => void;
 }
 
 interface DropDownFilterState {
@@ -50,7 +50,7 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         }
     }
 
-    private createOptions(): ReactElement<{}>[] {
+    private createOptions(): ReactNode[] {
         return this.filters.map((option, index) => createElement("option", {
             className: "",
             key: index,
@@ -63,7 +63,7 @@ export class DropDownFilter extends Component<DropDownFilterProps, DropDownFilte
         this.setState({
             selectedValue: event.currentTarget.value
         });
-        const selectedFilter = this.filters.find(filter => filter.selectedValue === event.currentTarget.value);
+        const selectedFilter = this.filters.find(filter => filter.selectedValue === event.currentTarget.value) as FilterProps;
         this.props.handleChange(selectedFilter);
     }
 }

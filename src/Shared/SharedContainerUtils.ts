@@ -1,10 +1,10 @@
 import * as dijitRegistry from "dijit/registry";
 
-import { ListView } from "./SharedUtils";
+import { DataSourceHelperListView } from "./DataSourceHelper/DataSourceHelper";
 
 export class SharedContainerUtils {
-    static findTargetListView(filterNode: HTMLElement, listViewEntity?: string): ListView | undefined {
-        let targetListView: ListView | undefined;
+    static findTargetListView(filterNode: HTMLElement | null, listViewEntity?: string): DataSourceHelperListView | undefined {
+        let targetListView: DataSourceHelperListView | undefined;
 
         while (filterNode) {
             const targetNodes = filterNode.querySelectorAll(`.mx-listview`);

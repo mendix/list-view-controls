@@ -24,7 +24,7 @@ describe("PageSizeDropdown", () => {
     ];
 
     const pageSizeSelectProps: PageSizeSelectProps = {
-        handleChange: () => jasmine.any(Function) as any,
+        onChange: () => jasmine.any(Function) as any,
         pageSize: 2,
         sizeOptions,
         listViewSize: 4,
@@ -71,7 +71,7 @@ describe("PageSizeDropdown", () => {
 
     it("selecting a new value should call onchange prop function with new OnChangeProps", (done) => {
         const props = { ...pageSizeSelectProps, pageSize: 5 };
-        spyOn(props, "handleChange").and.callThrough();
+        spyOn(props, "onChange").and.callThrough();
 
         const wrapper = shallowPageSizeSelect(props);
         const select = wrapper.find("select");
@@ -79,11 +79,10 @@ describe("PageSizeDropdown", () => {
         select.simulate("change", { currentTarget : { value: "2" } }); // Index 2 is page size 10
 
         setTimeout(() => {
-            expect(props.handleChange).toHaveBeenCalledWith({
-                newOffSet: 0,
-                newPageNumber: 1,
-                newPageSize: 10 // Index 2 is page size 10
-            });
+            expect(props.onChange).toHaveBeenCalledWith(
+                0, // newOffSet
+                10 // Index 2 is page size 10
+            );
             done();
         }, 500);
     });

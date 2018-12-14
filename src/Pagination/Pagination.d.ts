@@ -38,4 +38,5 @@ export interface TopicMessage {
     newOffSet: number;
     newPageNumber: number;
     newPageSize?: number;
+    widgetFriendlyID?: string;
 }

@@ -2,7 +2,7 @@ import { Component, createElement } from "react";
 
 import { SharedUtils } from "../Shared/SharedUtils";
 
-import { DropDown } from "./components/DropDownSort";
+import { DropDownSort } from "./components/DropDownSort";
 import { ContainerProps } from "./components/DropDownSortContainer";
 
 declare function require(name: string): string;
@@ -16,7 +16,7 @@ export class preview extends Component<ContainerProps, {}> {
 
     render() {
         return createElement("div", { className: "widget-drop-down-sort" },
-            createElement(DropDown, {
+            createElement(DropDownSort, {
                 onDropDownChangeAction: () => { return; },
                 sortAttributes: this.props.sortAttributes,
                 style: SharedUtils.parseStyle(this.props.style)

@@ -38,6 +38,7 @@
                         <attributeType name="Integer"/>
                         <attributeType name="Decimal"/>
                         <attributeType name="Boolean"/>
+                        <attributeType name="Enum"/>
                         <attributeType name="AutoNumber"/>
                     </attributeTypes>
                 </property>

@@ -16,7 +16,7 @@ Enable users to filter or search a list view.
 * `Header sort`: Add sorting behavior to the headers of a list view.
 
 ## Dependencies
-Mendix 7.9.0
+Mendix 7.20.0
 
 ## Demo projects
 [https://listviewcontrols.mxapps.io](https://listviewcontrols.mxapps.io)

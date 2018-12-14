@@ -27,7 +27,9 @@ describe("Pagination", () => {
         it("is not visible when hide un-used property is set", () => {
             const paginationProps: PaginationProps = {
                 ...defaultStylePaginationProps,
-                hideUnusedPaging: true
+                hideUnusedPaging: true,
+                listViewSize: 10,
+                pageSize: 10
             };
 
             const pagination = shallowRenderPagination(paginationProps);
@@ -42,12 +44,12 @@ describe("Pagination", () => {
         it("renders the structure as disabled when list view is empty", () => {
             const paginationProps: PaginationProps = {
                 ...defaultStylePaginationProps,
-                listViewSize: 0
+                listViewSize: 0,
+                offset: 0,
+                pageSize: 10
             };
 
             const pagination = shallowRenderPagination(paginationProps);
-            const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.componentDidMount();
 
             expect(pagination).toBeElement(
                 createElement("div", { className: "pagination visible" },
@@ -59,9 +61,6 @@ describe("Pagination", () => {
 
     it("renders default page buttons", () => {
         const pagination = shallowRenderPagination({ ...defaultStylePaginationProps, pagingStyle: "pageNumberButtons" });
-
-        const paginationInstance = pagination.instance() as Pagination;
-        paginationInstance.componentDidMount();
 
         expect(pagination).toBeElement(
             createElement("div", { className: "pagination visible" },
@@ -90,7 +89,7 @@ describe("Pagination", () => {
             };
 
             const pagination = shallowRenderPagination(paginationProps);
-            // check if message contains zero
+
             expect(pagination).toBeElement(
                 createElement("div", { className: "pagination visible" },
                     getCustomPageButtons()
@@ -104,95 +103,80 @@ describe("Pagination", () => {
         it("when first button is clicked set page to 1", () => {
             const paginationProps: PaginationProps = {
                 ...defaultStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ selectedPageNumber: 8 });
+            paginationInstance.setState({ currentOffset: 2 });
 
             const firstPageButton = pagination.find(PageButton).at(0);
             firstPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(0);
         });
 
         it("when previous button is clicked and page is 8, set page to 7", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 14, selectedPageNumber: 8 });
+            paginationInstance.setState({ currentOffset: 14 });
 
             const previousPageButton = pagination.find(PageButton).at(1);
             previousPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(7);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(12);
         });
 
         it("when previous button is clicked and page number is at start, disable previous button", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 2 });
+            paginationInstance.setState({ currentOffset: 2 });
             const previousPageButton = pagination.find(PageButton).at(1);
             previousPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(true);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(0);
         });
 
         it("when next button is clicked and page is 4, set page to 5", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const nextPageButton = pagination.find(PageButton).at(2);
             nextPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(5);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
         it("when last button is clicked set page to page count", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
             lastPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(16);
-            expect(paginationInstance.state.nextIsDisabled).toBe(true);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(30);
         });
 
@@ -200,52 +184,49 @@ describe("Pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
                 listViewSize: 33,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 6, selectedPageNumber: 4 });
+            paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
             lastPageButton.props().onClickAction();
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(17);
-            expect(paginationInstance.state.nextIsDisabled).toBe(true);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
+            expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(32);
         });
 
         it("when same custom page button 5 is clicked do nothing", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 5 });
+            paginationInstance.setState({ currentOffset: 8 });
             const pageNumberButton = pagination.find(PageNumberView);
             pageNumberButton.props().onClickAction(5);
 
-            expect(paginationProps.onClickAction).not.toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(5);
+            expect(paginationProps.onChange).not.toHaveBeenCalled();
+            expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
         it("when next custom page button 6 is clicked update pagination", () => {
             const paginationProps: PaginationProps = {
                 ...customStylePaginationProps,
-                onClickAction: jasmine.createSpy("onClick")
+                onChange: jasmine.createSpy("onChange")
             };
 
             const pagination = shallowRenderPagination(paginationProps);
             const paginationInstance = pagination.instance() as Pagination;
-            paginationInstance.setState({ currentOffset: 2, selectedPageNumber: 5 });
+            paginationInstance.setState({ currentOffset: 2 });
             const pageNumberButton = pagination.find(PageNumberView);
             pageNumberButton.props().onClickAction(6);
 
-            expect(paginationProps.onClickAction).toHaveBeenCalled();
-            expect(paginationInstance.state.selectedPageNumber).toBe(6);
+            expect(paginationProps.onChange).toHaveBeenCalled();
+            expect(paginationInstance.state.currentOffset).toBe(10);
         });
     });
 
@@ -254,15 +235,10 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                publishedOffset: 8,
-                publishedPageNumber: 4,
-                updateSource: "multiple"
+                offset: 8
             });
             const paginationInstance = pagination.instance() as Pagination;
 
-            expect(paginationInstance.state.selectedPageNumber).toBe(4);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
             expect(paginationInstance.state.currentOffset).toBe(8);
         });
 
@@ -270,16 +246,11 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             pagination.setProps({
-                publishedOffset: 8,
-                publishedPageNumber: 4,
-                updateSource: "other"
+                offset: 8
             });
             const paginationInstance = pagination.instance() as Pagination;
 
-            expect(paginationInstance.state.selectedPageNumber).toBe(1);
-            expect(paginationInstance.state.nextIsDisabled).toBe(false);
-            expect(paginationInstance.state.previousIsDisabled).toBe(false);
-            expect(paginationInstance.state.currentOffset).toBe(0);
+            expect(paginationInstance.state.currentOffset).toBe(8);
         });
     });
 
@@ -372,7 +343,7 @@ describe("Pagination", () => {
     const getCustomPageSizeSelect = (props: PaginationProps) => {
         return [
             createElement(PageSizeSelect, {
-                handleChange: props.pageSizeOnChange,
+                onChange: props.onChange,
                 pageSize: props.pageSize,
                 sizeOptions: props.pageSizeOptions,
                 listViewSize: props.listViewSize,
@@ -386,10 +357,12 @@ describe("Pagination", () => {
             return getMessageStatus(fromValue, toValue, maxPageSize);
         },
         hideUnusedPaging: false,
+        offset: 0,
         items: [],
+        pageSizeOptions: [],
         listViewSize: 32,
         pageSize: 2,
-        onClickAction: jasmine.any(Function),
+        onChange: jasmine.createSpy("onChange"),
         pagingStyle: "default"
     };
 

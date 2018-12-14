@@ -23,7 +23,6 @@
                         <attributeType name="Integer"/>
                         <attributeType name="Decimal"/>
                         <attributeType name="Boolean"/>
-                        <attributeType name="DateTime"/>
                         <attributeType name="Enum"/>
                         <attributeType name="Long"/>
                         <attributeType name="AutoNumber"/>
