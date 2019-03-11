@@ -16,6 +16,7 @@ import "../ui/HeaderSort.scss";
 export interface ContainerProps extends WrapperProps {
     entity: string;
     caption: string;
+    dynamicCaption: string;
     sortAttribute: string;
     initialSorted: boolean;
     sortOrder: "asc" | "desc"; // initialSortOrder
@@ -100,8 +101,9 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
 
     private renderSort(): ReactNode {
         if (!this.state.alertMessage) {
+            const theCaption = (this.props.mxObject && this.props.dynamicCaption) ? this.props.mxObject.get(this.props.dynamicCaption).toString() : this.props.caption;
             return createElement(HeaderSort, {
-                caption: this.props.caption,
+                caption: theCaption,
                 onClickAction: this.updateSort,
                 sortOrder: this.state.sortOrder
             });
