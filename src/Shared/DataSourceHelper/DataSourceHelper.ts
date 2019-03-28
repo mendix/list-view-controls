@@ -35,12 +35,15 @@ export class DataSourceHelper {
     private widget: DataSourceHelperListView;
     private updateInProgress = false;
     private requiresUpdate = false;
+    private originalSort: string[][];
     public sorting: string[][] = [];
     public constraints: mendix.lib.dataSource.Constraints = [];
     public paging?: Paging;
 
     constructor(widget: DataSourceHelperListView) {
         this.widget = widget;
+        this.originalSort = window.mx.isOffline() ? this.widget._datasource._sort : this.widget._datasource._sorting;
+
         aspect.after(widget, "storeState", (store: (key: string, value: any) => void) => {
             logger.debug("after storeState");
             if (widget.__customWidgetDataSourceHelper) {
@@ -122,10 +125,12 @@ export class DataSourceHelper {
 
     private updateDataSource(callback: () => void, restoreState: boolean) {
         let constraints: Constraints = [];
-        const sorting: string[][] = Object.keys(this.store.sorting)
+        let sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
-
+        if (!sorting.length) {
+            sorting = this.originalSort;
+        }
         // if (!sorting.length) {
         //     this.widget._datasource._sorting.forEach(sortSet => sorting.push(sortSet));
         // }
