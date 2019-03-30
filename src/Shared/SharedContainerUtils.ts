@@ -9,11 +9,6 @@ export class SharedContainerUtils {
         while (filterNode) {
             const targetNodes = filterNode.querySelectorAll(`.mx-listview`);
 
-            if (filterNode.isEqualNode(document) || !filterNode.classList || filterNode.classList.contains("mx-incubator")
-                || filterNode.classList.contains("mx-offscreen")) {
-                break;
-            }
-
             for (let count = 0; count < targetNodes.length; count++) { //tslint:disable-line
                 targetListView = dijitRegistry.byNode(targetNodes.item(count) as HTMLElement);
 
@@ -25,6 +20,12 @@ export class SharedContainerUtils {
                     return targetListView;
                 }
             }
+
+            if (filterNode.isEqualNode(document) || !filterNode.classList || filterNode.classList.contains("mx-incubator")
+            || filterNode.classList.contains("mx-offscreen")) {
+                break;
+            }
+
             filterNode = filterNode.parentNode as HTMLElement;
         }
 
