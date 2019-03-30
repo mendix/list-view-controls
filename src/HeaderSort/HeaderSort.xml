@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="com.mendix.widget.custom.listviewcontrols.HeaderSort" offlineCapable="true" needsEntityContext="true" xmlns="http://www.mendix.com/widget/1.0/">
+<widget id="com.mendix.widget.custom.listviewcontrols.HeaderSort" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Header sort</name>
     <description>Sort Mendix list views using headers</description>
     <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAtFBMVEUAAABV//9Ns/9mZmZJtv9Vu/9JtvhJsPlVVVVIs/tLtPtMs/dLsPhVVVVJsvhXV1dIs/hWVlZVVVVKsvlJs/lJsPpXV1dKsvdVVVVKsfhJsvhJsfhIsfhIsPlVVVVJsfdWVlZIsPdKsfdJsPhJsfhJsfhVVVVJsPhIsfhIsfhJsfhIsfhJsfhJsfdVVVVIsPdWVlZJsPdVVVVJsfdJsfdIsPdIsPdJsfhVVVVIsPhIsPdVVVUbiIIIAAAAOnRSTlMAAwoKDg8jKio8PUBESElJSkpLVldeXmBgb3CJip+foKCio7y91dXW19ja293h4eLi4+Pk5+zt9fX6/A3sdwAAAYBJREFUeAHtkulysjAUhg/yifv+uVRbtS5Yl1qIWuXk/u+rhzmWSaYwzcCftsPzIxOGN8/AmwM5v5ecnJYQLciCkFJAFiTxVwW17baWRWD5iL6VQVBBoppBMEHiMYNgg8QLME0fFXZ1A4HDWYeffNQ4GAgeODqOFewNBEuOruJ+AfvfC/4FHA2KoDFEYmZQYo9ymzUt/0GldEXEdcFAsKDgZELLAhQKofJaMrhG6xJOUYWWd3UYn5AYgoEgPHqxWPOlABPB/eOfeRj1AgwEPIa9e5XJBSQLHL5AvkwHmBkXYCQYo8JYK8BMsESFlVqAmaAYoEJQTCqg44nup6ArvI4yhhq9pAKElLcyC8o3KYU+htp99lHFb/JLj466tiRslxYvEpwpVOFtlbZngD1q+PxyIImpJOaSGESCEx2yeGuRjOKHWAHMpcIcItpvfjPan17bAPVd3C8AfXmEa0MKqDsmbDMVI3lnBKmIaphCWmw3dQFKDVRABhrHYwN+HDk5OR+by4G438X1AwAAAABJRU5ErkJggg==</icon>
@@ -28,14 +28,6 @@
             <caption>Caption</caption>
             <category>General</category>
             <description/>
-        </property>
-        <property key="dynamicCaption" type="attribute">
-            <caption>Dynamic Caption</caption>
-            <category>General</category>
-            <description/>
-            <attributeTypes>
-                <attributeType name="String"/>
-            </attributeTypes>
         </property>
         <property key="initialSorted" type="boolean" defaultValue="false">
             <caption>Initial sorted</caption>
