@@ -13,7 +13,7 @@ interface TextBoxSearchState {
 }
 
 export class TextBoxSearch extends Component<TextBoxSearchProps, TextBoxSearchState> {
-    private searchTimeOut = 100;
+    private searchTimeOut = 500;
     private updateHandle?: number;
     private resetQueryHandle = this.resetQuery.bind(this);
     private onChangeHandle = this.onChange.bind(this);
