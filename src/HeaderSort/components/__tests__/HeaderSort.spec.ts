@@ -13,6 +13,7 @@ describe("HeaderSort", () => {
 
     const defaultProps: HeaderSortProps = {
         caption: "Header",
+        icon: "",
         onClickAction: () => jasmine.any(Function) as any,
         sortOrder: "asc"
     };

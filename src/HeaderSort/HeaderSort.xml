@@ -24,10 +24,15 @@
                 <attributeType name="AutoNumber"/>
             </attributeTypes>
         </property>
-        <property key="caption" type="translatableString">
+        <property key="caption" type="translatableString" required="false">
             <caption>Caption</caption>
             <category>General</category>
             <description/>
+        </property>
+        <property key="icon" type="translatableString" required="false">
+            <caption>Icon</caption>
+            <category>General</category>
+            <description>Enter CSS class(es) here needed to render button as an icon, e.g. "glyphicon glyphicon-sort".</description>
         </property>
         <property key="initialSorted" type="boolean" defaultValue="false">
             <caption>Initial sorted</caption>
