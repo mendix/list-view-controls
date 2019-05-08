@@ -85,7 +85,13 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
     }
 
     function listviewInstanceCompatible(listview: DataSourceHelperListView) {
+        const ignore = !!(listview
+            && !(listview.datasource.type === "database" || listview.datasource.type === "xpath"));
+        if (ignore) {
+            return false;
+        }
         const compatible = !!(listview
+            && (listview.datasource.type === "database" || listview.datasource.type === "xpath")
             && listview._datasource
             && listview._datasource.reload
             && listview._datasource.setOffset

@@ -2,10 +2,10 @@
 [![Dependency Status](https://david-dm.org/mendixlabs/list-view-controls.svg)](https://david-dm.org/mendixlabs/list-view-controls)
 [![Dev Dependency Status](https://david-dm.org/mendixlabs/list-view-controls.svg#info=devDependencies)](https://david-dm.org/mendixlabs/list-view-controls#info=devDependencies)
 [![codecov](https://codecov.io/gh/mendixlabs/list-view-controls/branch/master/graph/badge.svg)](https://codecov.io/gh/mendixlabs/list-view-controls)
-![badge](https://img.shields.io/badge/mendix-7.7.1-green.svg)
+![badge](https://img.shields.io/badge/mendix-7.20.0-green.svg)
 
 # List view controls
-Enable users to filter or search a list view.
+Enable users to filter or search a list view with a data sources Database or XPath
 
 ## Available widgets
 * `Check box filter`: Filters a list view with various constraints when checked or unchecked
