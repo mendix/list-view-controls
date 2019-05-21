@@ -76,7 +76,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
-        if (this.state.listViewAvailable && !prevState.listViewAvailable) {
+        if (this.state.listViewAvailable && !prevState.listViewAvailable && this.props.initialSorted) {
             const restoreState = this.checkRestoreState();
             this.updateSort(this.state.sortOrder, restoreState);
         }
