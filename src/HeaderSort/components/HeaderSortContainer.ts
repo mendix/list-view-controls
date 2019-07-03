@@ -16,6 +16,7 @@ import "../ui/HeaderSort.scss";
 export interface ContainerProps extends WrapperProps {
     entity: string;
     caption: string;
+    icon: string;
     sortAttribute: string;
     initialSorted: boolean;
     sortOrder: "asc" | "desc"; // initialSortOrder
@@ -102,6 +103,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         if (!this.state.alertMessage) {
             return createElement(HeaderSort, {
                 caption: this.props.caption,
+                icon: this.props.icon,
                 onClickAction: this.updateSort,
                 sortOrder: this.state.sortOrder
             });

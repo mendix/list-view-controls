@@ -3,6 +3,7 @@ import * as classNames from "classnames";
 
 export interface HeaderSortProps {
     caption: string;
+    icon: string;
     onClickAction?: (order: SortOrder) => void;
     sortOrder: SortOrder;
 }
@@ -33,7 +34,7 @@ export class HeaderSort extends Component<HeaderSortProps, HeaderSortState> {
                 className: "sort-header",
                 onClick: this.handleClick
             },
-            createElement("span", { className: "" }, this.props.caption),
+            createElement("span", { className: this.props.icon }, this.props.caption),
             createElement("span", { className: classNames("sort-icon", this.state.sortOrder) })
         );
     }
