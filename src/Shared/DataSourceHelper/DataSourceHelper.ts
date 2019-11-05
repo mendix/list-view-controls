@@ -194,7 +194,15 @@ export class DataSourceHelper {
                 this.widget._datasource._sorting = sorting;
             }
             logger.debug("DataSourceHelper .set sort and constraint");
-
+            if (!this.widget.__lvcPagingEnabled) {
+                const offset = this.widget._datasource.getOffset();
+                if (offset > 0) {
+                    logger.debug("reset offset");
+                    const pageSize = this.widget._datasource.getPageSize();
+                    this.widget._datasource.setOffset(0);
+                    this.widget._datasource.setPageSize(pageSize + offset);
+                }
+            }
             if (!this.initialLoad) {
                 this.showLoader();
             }
