@@ -43,10 +43,10 @@ describe("HeaderSort", () => {
     it("changes listview sort order when its clicked ", () => {
         const props: HeaderSortProps = {
             ...defaultProps,
-            onClickAction: () => jasmine.any(Function) as any,
+            onClickAction: () => { /* */ },
             sortOrder: "asc"
         };
-        const spy = spyOn(props, "onClickAction").and.callThrough();
+        const spy = props.onClickAction = jasmine.createSpy();
         const headerSort = renderSort(props);
         const headerSortInstance = headerSort.instance() as any;
 

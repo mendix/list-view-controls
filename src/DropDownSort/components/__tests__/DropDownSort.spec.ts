@@ -74,7 +74,7 @@ describe("DropDownSort", () => {
                 ...dropDownProps,
                 onDropDownChangeAction: value => value
             };
-            const spy = spyOn(props, "onDropDownChangeAction").and.callThrough();
+            const spy = props.onDropDownChangeAction = jasmine.createSpy();
             const wrapper = renderDropdown(props);
             const select = wrapper.find("select");
 
@@ -93,7 +93,7 @@ describe("DropDownSort", () => {
                 ...dropDownProps,
                 onDropDownChangeAction: value => value
             };
-            const spy = spyOn(props, "onDropDownChangeAction").and.callThrough();
+            const spy = props.onDropDownChangeAction = jasmine.createSpy();
             const wrapper = renderDropdown(props);
             const select = wrapper.find("select");
 
