@@ -39,7 +39,7 @@ interface PaginationPageState {
 }
 
 class PaginationContainer extends Component<ModelerProps, PaginationContainerState> {
-    private widgetDom: HTMLElement | null = null;
+    private widgetDom: Element | null = null;
     private viewStateManager: FormViewState<PaginationPageState>;
     private retriesFind = 0;
     private initialLoading = true;
