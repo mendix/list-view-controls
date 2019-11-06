@@ -9,7 +9,7 @@ configure({ adapter: new Adapter() });
 describe("BreakView", () => {
 
     it("renders the structure correctly", () => {
-        const breakView = shallow(createElement(BreakView, {}));
+        const breakView = shallow(createElement(BreakView, { key: "key" }));
 
         expect(breakView).toBeElement(
             createElement("li", { className: "break-view" },

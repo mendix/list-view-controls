@@ -54,7 +54,7 @@ export class DataSourceHelper {
         }, true);
     }
 
-    static getInstance(widgetDom: HTMLElement | null, widgetEntity?: string) {
+    static getInstance(widgetDom: Element | null, widgetEntity?: string) {
         const parentElement = widgetDom && widgetDom.parentElement;
         const widget = SharedContainerUtils.findTargetListView(parentElement, widgetEntity);
         const compatibilityMessage = SharedUtils.validateCompatibility({ listViewEntity: widgetEntity, targetListView: widget });
@@ -194,14 +194,14 @@ export class DataSourceHelper {
                 this.widget._datasource._sorting = sorting;
             }
             logger.debug("DataSourceHelper .set sort and constraint");
-                const offset = this.widget._datasource.getOffset();
-                    const pageSize = this.widget._datasource.getPageSize();
+            const offset = this.widget._datasource.getOffset();
+            const pageSize = this.widget._datasource.getPageSize();
             if (!this.widget.__lvcPagingEnabled && offset > 0) {
                 // In case load more is used, the data source have to reload the full content
                 logger.debug("reset offset");
-                    this.widget._datasource.setOffset(0);
-                    this.widget._datasource.setPageSize(pageSize + offset);
-                }
+                this.widget._datasource.setOffset(0);
+                this.widget._datasource.setPageSize(pageSize + offset);
+            }
             if (!this.initialLoad) {
                 this.showLoader();
             }

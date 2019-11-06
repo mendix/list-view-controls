@@ -1,7 +1,11 @@
 import { SFC, createElement } from "react";
 import * as classNames from "classnames";
 
-export const BreakView: SFC<{}> = () => createElement("li", { className: classNames("break-view") },
+interface BreakProps {
+    key: string;
+}
+
+export const BreakView: SFC<BreakProps> = ({ key }) => createElement("li", { className: classNames("break-view"), key },
     "..."
 );
 

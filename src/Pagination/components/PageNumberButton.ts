@@ -5,7 +5,7 @@ interface PageNumberButtonProps {
     pageNumber: number;
     selectedPageNumber: number;
     onClickAction: (pageNumber: number) => void;
-
+    key?: string | number;
 }
 
 export const PageNumberButton: SFC<PageNumberButtonProps> = (props: PageNumberButtonProps) => createElement("li", {
@@ -13,7 +13,8 @@ export const PageNumberButton: SFC<PageNumberButtonProps> = (props: PageNumberBu
             props.selectedPageNumber === props.pageNumber ? "active" : "",
             props.pageNumber < 10 ? "single-digit" : ""
         ),
-        onClick: () => props.onClickAction(props.pageNumber)
+        onClick: () => props.onClickAction(props.pageNumber),
+        key: props.key
     },
     props.pageNumber
 );

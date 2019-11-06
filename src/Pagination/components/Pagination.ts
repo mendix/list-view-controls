@@ -60,7 +60,8 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     maxPageButtons: 7,
                     onClickAction: this.updatePagination,
                     pageCount,
-                    selectedPageNumber
+                    selectedPageNumber,
+                    key: "numberView"
                 })
             ];
         } else {
@@ -75,41 +76,42 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
     private renderDefault(): ReactNode[] {
         return [
-            this.createFirstButton(),
-            this.createPreviousButton(),
-            this.createMessage(),
-            this.createNextButton(),
-            this.createLastButton()
+            this.createFirstButton(undefined, 0),
+            this.createPreviousButton(undefined, 1),
+            this.createMessage(undefined, 2),
+            this.createNextButton(undefined, 3),
+            this.createLastButton(undefined, 4)
         ];
     }
 
     private renderCustom(): ReactNode[] {
-        return this.props.items.map(option => {
+        return this.props.items.map((option, key) => {
             const buttonProps = {
                 buttonCaption: option.buttonCaption,
                 buttonType: option.item,
                 showIcon: option.showIcon,
-                text: option.text
+                text: option.text,
+                key
             };
 
             if (buttonProps.buttonType === "firstButton") {
-                return this.createFirstButton(buttonProps);
+                return this.createFirstButton(buttonProps, key);
             }
 
             if (buttonProps.buttonType === "nextButton") {
-                return this.createNextButton(buttonProps);
+                return this.createNextButton(buttonProps, key);
             }
 
             if (buttonProps.buttonType === "previousButton") {
-                return this.createPreviousButton(buttonProps);
+                return this.createPreviousButton(buttonProps, key);
             }
 
             if (buttonProps.buttonType === "lastButton") {
-                return this.createLastButton(buttonProps);
+                return this.createLastButton(buttonProps, key);
             }
 
             if (buttonProps.buttonType === "text") {
-                return this.createMessage(buttonProps.text);
+                return this.createMessage(buttonProps.text, key);
             }
 
             if (buttonProps.buttonType === "pageNumberButtons") {
@@ -121,7 +123,8 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     maxPageButtons: option.maxPageButtons,
                     onClickAction: this.updatePagination,
                     pageCount,
-                    selectedPageNumber
+                    selectedPageNumber,
+                    key
                 });
             }
 
@@ -134,13 +137,14 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     pageSize: this.props.pageSize,
                     sizeOptions: this.props.pageSizeOptions,
                     listViewSize,
-                    currentPage
+                    currentPage,
+                    key
                 });
             }
         });
     }
 
-    private createFirstButton(buttonProps?: PageButtonProps): ReactNode {
+    private createFirstButton(buttonProps?: PageButtonProps, key?: number): ReactNode {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -148,11 +152,12 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             buttonType: "firstButton",
             isDisabled,
             onClickAction: this.firstPageClickAction,
-            showIcon: Pagination.getShowIcon(buttonProps)
+            showIcon: Pagination.getShowIcon(buttonProps),
+            key
         });
     }
 
-    private createPreviousButton(buttonProps?: PageButtonProps): ReactNode {
+    private createPreviousButton(buttonProps?: PageButtonProps, key?: number): ReactNode {
         const isDisabled = this.state.currentOffset <= 0;
 
         return createElement(PageButton, {
@@ -160,11 +165,12 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             buttonType: "previousButton",
             isDisabled,
             onClickAction: this.previousPageClickAction,
-            showIcon: Pagination.getShowIcon(buttonProps)
+            showIcon: Pagination.getShowIcon(buttonProps),
+            key
         });
     }
 
-    private createNextButton(buttonProps?: PageButtonProps): ReactNode {
+    private createNextButton(buttonProps?: PageButtonProps, key?: number): ReactNode {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -172,11 +178,12 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             buttonType: "nextButton",
             isDisabled,
             onClickAction: this.nextPageClickAction,
-            showIcon: Pagination.getShowIcon(buttonProps)
+            showIcon: Pagination.getShowIcon(buttonProps),
+            key
         });
     }
 
-    private createLastButton(buttonProps?: PageButtonProps): ReactNode {
+    private createLastButton(buttonProps?: PageButtonProps, key?: number): ReactNode {
         const isDisabled = (this.state.currentOffset + this.props.pageSize) >= this.props.listViewSize;
 
         return createElement(PageButton, {
@@ -184,14 +191,15 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
             buttonType: "lastButton",
             isDisabled,
             onClickAction: this.lastPageClickAction,
-            showIcon: Pagination.getShowIcon(buttonProps)
+            showIcon: Pagination.getShowIcon(buttonProps),
+            key
         });
     }
 
-    private createMessage(message?: string): ReactNode {
+    private createMessage(message?: string, key?: number): ReactNode {
         message = this.getMessageStatus(message);
 
-        return createElement("button", { className: "paging-status" }, message);
+        return createElement("button", { className: "paging-status", key }, message);
     }
 
     private firstPageClickAction = () => {
