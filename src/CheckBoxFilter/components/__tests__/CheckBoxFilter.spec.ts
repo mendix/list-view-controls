@@ -28,7 +28,7 @@ describe("CheckBoxFilter", () => {
             handleChange: value => value,
             isChecked: false
         };
-        spyOn(props, "handleChange").and.callThrough();
+        const spy = spyOn(props, "handleChange").and.callThrough();
         const checkboxFilter = renderCheckBoxFilter(props);
         const filterInstance = checkboxFilter.instance() as any;
 
@@ -36,6 +36,6 @@ describe("CheckBoxFilter", () => {
         filterInstance.componentWillReceiveProps(props);
         checkboxFilter.find("input").simulate("change", { target: { checked: true } });
 
-        expect(props.handleChange).toHaveBeenCalledWith(true);
+        expect(spy).toHaveBeenCalledWith(true);
     });
 });

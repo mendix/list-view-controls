@@ -8,9 +8,10 @@ import { TextBoxSearch, TextBoxSearchProps } from "../TextBoxSearch";
 
 describe("TextBoxSearch", () => {
     const renderSearchBar = (props: TextBoxSearchProps) => shallow(createElement(TextBoxSearch, props));
+    const onTextChange = (_query: string) => { /* */ };
     const textSearchProps: TextBoxSearchProps = {
         defaultQuery: "",
-        onTextChange:  jasmine.any(Function) as any,
+        onTextChange,
         placeholder: "search"
     };
 
@@ -32,7 +33,7 @@ describe("TextBoxSearch", () => {
     it("renders with the specified placeholder", () => {
         const newSearchProps: TextBoxSearchProps = {
             defaultQuery: "",
-            onTextChange:  jasmine.any(Function) as any,
+            onTextChange: jasmine.any(Function) as any,
             placeholder: "search"
         };
         const searchBar = renderSearchBar(newSearchProps);
@@ -50,22 +51,27 @@ describe("TextBoxSearch", () => {
     });
 
     describe("input", () => {
-        it("accepts value", (done) => {
+        beforeEach(() => {
+            jasmine.clock().install();
+        });
+
+        afterEach(() => {
+            jasmine.clock().uninstall();
+        });
+
+        it("accepts value", () => {
             const newValue = "Kenya";
             const barProps: TextBoxSearchProps = {
                 ...textSearchProps,
-                onTextChange: value => value
+                onTextChange: (query: string) => query
             };
-            spyOn(barProps, "onTextChange").and.callThrough();
+            const spy = barProps.onTextChange = jasmine.createSpy("myInputValue");
             const wrapper = renderSearchBar(barProps);
             const input: any = wrapper.find("input");
 
             input.simulate("change", { currentTarget: { value: newValue } });
-
-            setTimeout(() => {
-                expect(barProps.onTextChange).toHaveBeenCalledWith(newValue);
-                done();
-            }, 1000);
+            jasmine.clock().tick(1000);
+            expect(spy).toHaveBeenCalledWith(newValue);
         });
 
         it("renders with specified default query", () => {
@@ -85,37 +91,43 @@ describe("TextBoxSearch", () => {
                 ...textSearchProps,
                 onTextChange: value => value
             };
-            spyOn(barProps, "onTextChange").and.callThrough();
+            const spy = spyOn(barProps, "onTextChange").and.callThrough();
+
             const wrapper = renderSearchBar(barProps);
             const input: any = wrapper.find("input");
 
             input.simulate("change", { currentTarget: { value: "as" } });
+            jasmine.clock().tick(1000);
 
-            setTimeout(() => {
-                expect(barProps.onTextChange).toHaveBeenCalledWith("as");
+            expect(spy).toHaveBeenCalledWith("as");
 
-                input.simulate("change", { currentTarget: { value: newValue } });
+            input.simulate("change", { currentTarget: { value: newValue } });
+            jasmine.clock().tick(1000);
 
-                setTimeout(() => {
-                    expect(barProps.onTextChange).toHaveBeenCalledWith(newValue);
-                }, 1000);
-            }, 1000);
+            expect(spy).toHaveBeenCalledWith(newValue);
         });
 
         it("is cleared when the remove button is clicked", () => {
-            const textSearch = renderSearchBar(textSearchProps);
-            const input: any = textSearch.find("input");
+
+            const barProps: TextBoxSearchProps = {
+                ...textSearchProps,
+                onTextChange: value => value
+            };
+            const spy = spyOn(barProps, "onTextChange").and.callThrough();
+
+            const wrapper = renderSearchBar(barProps);
+            const input: any = wrapper.find("input");
 
             input.simulate("change", { currentTarget: { value: "as" } });
-            setTimeout(() => {
-                const button: any = textSearch.find("button");
+            jasmine.clock().tick(1000);
 
-                button.simulate("click", { currentTarget: { } });
+            expect(spy).toHaveBeenCalledWith("as");
 
-                setTimeout(() => {
-                    expect(input.get(0).value).toBe("");
-                }, 1000);
-            }, 1000);
+            const button: any = wrapper.find("button");
+            button.simulate("click", { currentTarget: { } });
+            jasmine.clock().tick(1000);
+
+            expect(spy).toHaveBeenCalledWith("");
         });
     });
 });
