@@ -68,13 +68,13 @@ describe("DropDownSort", () => {
     });
 
     describe("select", () => {
-        it("changes value", (done) => {
+        it("changes value", () => {
             const newValue = "Code";
             const props: DropDownProps = {
                 ...dropDownProps,
                 onDropDownChangeAction: value => value
             };
-            spyOn(props, "onDropDownChangeAction").and.callThrough();
+            const spy = spyOn(props, "onDropDownChangeAction").and.callThrough();
             const wrapper = renderDropdown(props);
             const select = wrapper.find("select");
 
@@ -84,19 +84,16 @@ describe("DropDownSort", () => {
                 }
             });
 
-            setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
-                done();
-            }, 1000);
+            expect(spy).toHaveBeenCalledWith(props.sortAttributes[0]);
         });
 
-        it("updates when the select option changes", (done) => {
+        it("updates when the select option changes", () => {
             const newValue = "Code";
             const props: DropDownProps = {
                 ...dropDownProps,
                 onDropDownChangeAction: value => value
             };
-            spyOn(props, "onDropDownChangeAction").and.callThrough();
+            const spy = spyOn(props, "onDropDownChangeAction").and.callThrough();
             const wrapper = renderDropdown(props);
             const select = wrapper.find("select");
 
@@ -106,20 +103,15 @@ describe("DropDownSort", () => {
                 }
             });
 
-            setTimeout(() => {
-                expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[0]);
+            expect(spy).toHaveBeenCalledWith(props.sortAttributes[0]);
 
-                select.simulate("change", {
-                    currentTarget: {
-                        value: newValue + "-1"
-                    }
-                });
+            select.simulate("change", {
+                currentTarget: {
+                    value: newValue + "-1"
+                }
+            });
 
-                setTimeout(() => {
-                    expect(props.onDropDownChangeAction).toHaveBeenCalledWith(props.sortAttributes[1]);
-                    done();
-                }, 1000);
-            }, 1000);
+            expect(spy).toHaveBeenCalledWith(props.sortAttributes[1]);
         });
     });
 });

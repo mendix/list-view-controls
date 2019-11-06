@@ -10,10 +10,10 @@ configure({ adapter: new Adapter() });
 describe("HeaderSort", () => {
 
     const renderSort = (props: HeaderSortProps) => shallow(createElement(HeaderSort, props));
-
+    const onClickAction = (_order: any) => { /* */ };
     const defaultProps: HeaderSortProps = {
         caption: "Header",
-        onClickAction: () => jasmine.any(Function) as any,
+        onClickAction,
         sortOrder: "asc"
     };
 
@@ -40,13 +40,13 @@ describe("HeaderSort", () => {
         expect(wrapper.hasClass("desc")).toBe(true);
     });
 
-    it("changes listview sort order when its clicked ", (done) => {
+    it("changes listview sort order when its clicked ", () => {
         const props: HeaderSortProps = {
             ...defaultProps,
             onClickAction: () => jasmine.any(Function) as any,
             sortOrder: "asc"
         };
-        spyOn(props, "onClickAction").and.callThrough();
+        const spy = spyOn(props, "onClickAction").and.callThrough();
         const headerSort = renderSort(props);
         const headerSortInstance = headerSort.instance() as any;
 
@@ -56,9 +56,6 @@ describe("HeaderSort", () => {
 
         headerSortInstance.componentWillReceiveProps(props);
 
-        setTimeout(() => {
-            expect(props.onClickAction).toHaveBeenCalledWith("desc");
-            done();
-        }, 1000);
+        expect(spy).toHaveBeenCalledWith("desc");
     });
 });

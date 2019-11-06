@@ -70,22 +70,18 @@ describe("PageSizeDropdown", () => {
         expect(pageSize.find("select").props().value).toBe("1"); // because the selected page-size 5 is index 1
     });
 
-    it("selecting a new value should call onchange prop function with new OnChangeProps", (done) => {
-        const props = { ...pageSizeSelectProps, pageSize: 5 };
-        spyOn(props, "onChange").and.callThrough();
+    it("selecting a new value should call onchange prop function with new OnChangeProps", () => {
+        const props = { ...pageSizeSelectProps, pageSize: 5, key: "pageSize" };
+        const spy = spyOn(props, "onChange").and.callThrough();
 
         const wrapper = shallowPageSizeSelect(props);
         const select = wrapper.find("select");
 
         select.simulate("change", { currentTarget : { value: "2" } }); // Index 2 is page size 10
-
-        setTimeout(() => {
-            expect(props.onChange).toHaveBeenCalledWith(
-                0, // newOffSet
-                10 // Index 2 is page size 10
-            );
-            done();
-        }, 500);
+        expect(spy).toHaveBeenCalledWith(
+            0, // newOffSet
+            10 // Index 2 is page size 10
+        );
     });
 
 });

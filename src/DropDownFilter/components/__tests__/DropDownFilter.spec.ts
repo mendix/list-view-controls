@@ -43,7 +43,7 @@ describe("DropDownFilter", () => {
     });
 
     describe("select", () => {
-        it("changes value", (done) => {
+        it("changes value", () => {
             const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
                 filters: [ {
@@ -68,13 +68,11 @@ describe("DropDownFilter", () => {
                 }
             });
 
-            setTimeout(() => {
-                expect(props.handleChange).toHaveBeenCalledWith(undefined);
-                done();
-            }, 1000);
+            expect(props.handleChange).toHaveBeenCalledWith(undefined);
+
         });
 
-        it("updates when the select option changes", (done) => {
+        it("updates when the select option changes", () => {
             const newValue = "Uganda";
             const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
@@ -88,7 +86,7 @@ describe("DropDownFilter", () => {
                 } ],
                 handleChange: value => value
             };
-            spyOn(props, "handleChange").and.callThrough();
+            const spy = spyOn(props, "handleChange").and.callThrough();
             const wrapper = renderDropDownFilter(props);
             const select: any = wrapper.find("select");
 
@@ -101,23 +99,18 @@ describe("DropDownFilter", () => {
                 }
             });
 
-            setTimeout(() => {
-                expect(props.handleChange).toHaveBeenCalledWith(undefined);
+            expect(spy).toHaveBeenCalledWith(undefined);
 
-                select.simulate("change", {
-                    currentTarget: {
-                        selectedOptions: [
-                            { getAttribute: (_attribute: string) => "Name" }
-                        ],
-                        value: newValue
-                    }
-                });
+            select.simulate("change", {
+                currentTarget: {
+                    selectedOptions: [
+                        { getAttribute: (_attribute: string) => "Name" }
+                    ],
+                    value: newValue
+                }
+            });
 
-                setTimeout(() => {
-                    expect(props.handleChange).toHaveBeenCalledWith(undefined);
-                    done();
-                }, 1000);
-            }, 1000);
+            expect(props.handleChange).toHaveBeenCalledWith(undefined);
         });
     });
 });
