@@ -315,11 +315,11 @@ describe("Pagination", () => {
     });
 
     const getDefaultPageButtons = (pageButtonProps: PageButtonProps) => [
-        createButton({ ...pageButtonProps, buttonType: "firstButton" }),
-        createButton({ ...pageButtonProps, buttonType: "previousButton" }),
-        createElement("span", { className: "paging-status" }, "From 1 to 2 of 32, page 1 of pages 16"),
-        createButton({ ...pageButtonProps, buttonType: "nextButton" }),
-        createButton({ ...pageButtonProps, buttonType: "lastButton" })
+        createButton({ ...pageButtonProps, buttonType: "firstButton", key: 0 }),
+        createButton({ ...pageButtonProps, buttonType: "previousButton", key: 1 }),
+        createElement("span", { className: "paging-status", key: 2 }, "From 1 to 2 of 32, page 1 of pages 16"),
+        createButton({ ...pageButtonProps, buttonType: "nextButton", key: 3 }),
+        createButton({ ...pageButtonProps, buttonType: "lastButton", key: 4 })
     ];
 
     const getCustomPageButtons = () => {
@@ -331,11 +331,11 @@ describe("Pagination", () => {
         };
 
         return [
-            createButton({ ...props, buttonType: "firstButton" }),
-            createButton({ ...props, buttonType: "previousButton" }),
-            createElement("span", { className: "paging-status" }, "From 1 to 2 of 32, page 1 of pages 16"),
-            createButton({ ...props, buttonType: "nextButton" }),
-            createButton({ ...props, buttonType: "lastButton" }),
+            createButton({ ...props, buttonType: "firstButton", key: 0 }),
+            createButton({ ...props, buttonType: "previousButton", key: 1 }),
+            createElement("span", { className: "paging-status", key: 2 }, "From 1 to 2 of 32, page 1 of pages 16"),
+            createButton({ ...props, buttonType: "nextButton", key: 3 }),
+            createButton({ ...props, buttonType: "lastButton", key: 4 }),
             createElement(PageNumberView, defaultPageNumberViewProps)
         ];
     };
@@ -347,7 +347,8 @@ describe("Pagination", () => {
                 pageSize: props.pageSize,
                 sizeOptions: props.pageSizeOptions,
                 listViewSize: props.listViewSize,
-                currentPage: 1
+                currentPage: 1,
+                key: "key"
             })
         ];
     };
@@ -411,6 +412,7 @@ describe("Pagination", () => {
         maxPageButtons: 7,
         onClickAction: jasmine.any(Function),
         pageCount: 16,
-        selectedPageNumber: 1
+        selectedPageNumber: 1,
+        key: "key"
     };
 });

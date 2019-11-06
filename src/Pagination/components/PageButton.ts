@@ -9,6 +9,7 @@ export interface PageButtonProps {
     onClickAction?: () => void;
     isDisabled?: boolean;
     buttonCaption?: string;
+    key?: string | number;
 }
 
 export const PageButton: SFC<PageButtonProps> = (props) => {
@@ -44,7 +45,8 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
         if (!props.buttonCaption) {
             return createElement("button", {
                     className: classNames(cssClass, disabledClass),
-                    onClick
+                    onClick,
+                    key: props.key
                 },
                 createElement("span", { className: iconClass })
             );
@@ -52,7 +54,8 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
             if (props.buttonType === "firstButton" || props.buttonType === "previousButton") {
                 return createElement("button", {
                         className: classNames(cssClass, disabledClass),
-                        onClick
+                        onClick,
+                        key: props.key
                     },
                     createElement("span", { className: iconClass }),
                     createElement("span", { className: props.buttonType },
@@ -63,7 +66,8 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
 
             return createElement("button", {
                     className: classNames(cssClass, disabledClass),
-                    onClick
+                    onClick,
+                    key: props.key
                 },
                 createElement("span", { className: props.buttonType },
                     props.buttonCaption
@@ -74,7 +78,8 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
     } else if (props.showIcon === "none" && props.buttonCaption) {
         return createElement("button", {
                 className: classNames(cssClass, disabledClass),
-                onClick
+                onClick,
+                key: props.key
             },
             createElement("span", { className: classNames(props.buttonType, "") },
                 props.buttonCaption

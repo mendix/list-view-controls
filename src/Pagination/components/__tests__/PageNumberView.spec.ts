@@ -22,7 +22,7 @@ describe("PageNumberView", () => {
                     getDefaultPageNumberView(3, defaultPageNumberViewProps),
                     getDefaultPageNumberView(4, defaultPageNumberViewProps),
                     getDefaultPageNumberView(5, defaultPageNumberViewProps),
-                    createElement(BreakView, {}),
+                    createElement(BreakView, { key: "break" }),
                     getDefaultPageNumberView(10, defaultPageNumberViewProps)
                 )
             );
@@ -50,11 +50,11 @@ describe("PageNumberView", () => {
             expect(pageNumberView).toBeElement(
                 createElement("ul", {},
                     getDefaultPageNumberView(1, pageNumberViewProps),
-                    createElement(BreakView, {}),
+                    createElement(BreakView, { key: "breakLeft" }),
                     getDefaultPageNumberView(4, pageNumberViewProps),
                     getDefaultPageNumberView(5, pageNumberViewProps),
                     getDefaultPageNumberView(6, pageNumberViewProps),
-                    createElement(BreakView, {}),
+                    createElement(BreakView, { key: "breakRight" }),
                     getDefaultPageNumberView(10, pageNumberViewProps)
                 )
             );
@@ -97,7 +97,8 @@ describe("PageNumberView", () => {
         maxPageButtons: 7,
         onClickAction: jasmine.any(Function),
         pageCount: 10,
-        selectedPageNumber: 1
+        selectedPageNumber: 1,
+        key: "key"
     };
 
     const getDefaultPageNumberView = (pageNumber: number, props: PageNumberViewProps) =>
@@ -106,7 +107,8 @@ describe("PageNumberView", () => {
                     props.selectedPageNumber === pageNumber ? "active" : "",
                     pageNumber < 10 ? "single-digit" : ""
                 ),
-                onClick: jasmine.any(Function)
+                onClick: jasmine.any(Function),
+                key: `page${pageNumber}`
             },
             pageNumber
         );
