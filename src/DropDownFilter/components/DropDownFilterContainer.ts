@@ -42,7 +42,7 @@ interface FormState {
 
 export default class DropDownFilterContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper?: DataSourceHelper;
-    private widgetDom: HTMLElement | null = null;
+    private widgetDom: Element | null = null;
     private viewStateManager: FormViewState<FormState>;
     private retriesFind = 0;
 

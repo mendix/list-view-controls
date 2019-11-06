@@ -41,7 +41,7 @@ export interface FormState {
 
 export default class DropDownSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper?: DataSourceHelper;
-    private widgetDom: HTMLElement | null = null;
+    private widgetDom: Element | null = null;
     private viewStateManager: FormViewState<FormState>;
     private subscriptionTopic = "";
     private retriesFind = 0;

@@ -34,7 +34,7 @@ interface FormState {
 
 export default class HeaderSortContainer extends Component<ContainerProps, ContainerState> {
     private dataSourceHelper?: DataSourceHelper;
-    private widgetDom: HTMLElement | null = null;
+    private widgetDom: Element | null = null;
     private viewStateManager: FormViewState<FormState>;
     private subscriptionTopic = "";
     private retriesFind = 0;
