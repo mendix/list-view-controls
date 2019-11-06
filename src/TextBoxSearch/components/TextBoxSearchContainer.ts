@@ -146,7 +146,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
     }
 
     private connectToListView() {
-        let alertMessage = this.state.alertMessage || "";
+        let alertMessage = "";
 
         try {
             this.dataSourceHelper = DataSourceHelper.getInstance(this.widgetDom, this.props.entity);
@@ -155,7 +155,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         }
 
         this.setState({
-            alertMessage,
+            alertMessage: alertMessage || Validate.validateProps(this.props),
             listViewAvailable: !alertMessage
         });
     }
