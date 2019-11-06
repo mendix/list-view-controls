@@ -1,40 +1,41 @@
 import page from "./pages/home.page";
-import { Element } from "webdriverio";
 
 const testValue = "Uganda";
 
 describe("Text box search", () => {
     it("when query is entered in the search input the list view should be filtered", () => {
         page.open();
-        page.searchInput.waitForVisible();
+        page.searchInput.waitForDisplayed();
+        expect(page.listViewListItems.length).toBe(5);
         page.searchInput.click();
         page.searchInput.setValue(testValue);
-
-        const listviewItems: Element[] = page.listViewList.value;
-        expect(listviewItems.length).toBe(1);
+        browser.pause(1000);
+        expect(page.listViewListItems.length).toBe(1);
     });
 
     it("when query is entered in the search input and clear button clicked the list view should be filtered with new query", () => {
         page.open();
-        page.searchInput.waitForVisible();
+        page.searchInput.waitForDisplayed();
         page.searchInput.click();
         page.searchInput.setValue(testValue);
 
-        let listviewItems: Element[] = page.listViewList.value;
-        expect(listviewItems.length).toBe(1);
+        browser.waitUntil(() => {
+            return page.listViewListItems.length === 1;
+        }, 5000, "wait for single item");
+        expect(page.listViewListItems.length).toBe(1);
 
         page.searchButton.click();
 
-        setTimeout(() => {
-            listviewItems = page.listViewList.value;
-            expect(listviewItems.length).toBeGreaterThan(1);
-        }, 3000);
+        browser.waitUntil(() => {
+            return page.listViewListItems.length === 5;
+        }, 5000, "wait for clear search");
+        expect(page.listViewListItems.length).toBe(5);
 
-        page.searchInput.setValue("e");
+        page.searchInput.setValue("en");
 
-        setTimeout(() => {
-            listviewItems = page.listViewList.value;
-            expect(listviewItems.length).toBeGreaterThan(2);
-        }, 3000);
+        browser.waitUntil(() => {
+            return page.listViewListItems.length === 4;
+        }, 5000, "wait for search items");
+        expect(page.listViewListItems.length).toBe(4);
     });
 });
