@@ -219,7 +219,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         }
 
         this.setState({
-            alertMessage: errorMessage || this.state.alertMessage,
+            alertMessage: errorMessage || Validate.validateProps(this.props),
             listViewAvailable: !!targetListView,
             targetListView
         });
