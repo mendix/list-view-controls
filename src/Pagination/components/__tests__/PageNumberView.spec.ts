@@ -95,7 +95,7 @@ describe("PageNumberView", () => {
     const shallowRenderPageNumberView = (props: PageNumberViewProps) => shallow(createElement(PageNumberView, props));
     const defaultPageNumberViewProps: PageNumberViewProps = {
         maxPageButtons: 7,
-        onClickAction: jasmine.any(Function),
+        onClickAction: () => { /* */ },
         pageCount: 10,
         selectedPageNumber: 1,
         key: "key"

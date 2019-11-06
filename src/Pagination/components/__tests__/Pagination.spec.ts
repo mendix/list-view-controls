@@ -110,7 +110,7 @@ describe("Pagination", () => {
             paginationInstance.setState({ currentOffset: 2 });
 
             const firstPageButton = pagination.find(PageButton).at(0);
-            firstPageButton.props().onClickAction();
+            firstPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(0);
@@ -126,7 +126,7 @@ describe("Pagination", () => {
             paginationInstance.setState({ currentOffset: 14 });
 
             const previousPageButton = pagination.find(PageButton).at(1);
-            previousPageButton.props().onClickAction();
+            previousPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(12);
@@ -142,7 +142,7 @@ describe("Pagination", () => {
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ currentOffset: 2 });
             const previousPageButton = pagination.find(PageButton).at(1);
-            previousPageButton.props().onClickAction();
+            previousPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(0);
@@ -158,7 +158,7 @@ describe("Pagination", () => {
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ currentOffset: 6 });
             const nextPageButton = pagination.find(PageButton).at(2);
-            nextPageButton.props().onClickAction();
+            nextPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(8);
@@ -174,7 +174,7 @@ describe("Pagination", () => {
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
-            lastPageButton.props().onClickAction();
+            lastPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(30);
@@ -191,7 +191,7 @@ describe("Pagination", () => {
             const paginationInstance = pagination.instance() as Pagination;
             paginationInstance.setState({ currentOffset: 6 });
             const lastPageButton = pagination.find(PageButton).at(3);
-            lastPageButton.props().onClickAction();
+            lastPageButton.props().onClickAction!();
 
             expect(paginationProps.onChange).toHaveBeenCalled();
             expect(paginationInstance.state.currentOffset).toBe(32);
@@ -300,7 +300,7 @@ describe("Pagination", () => {
     const defaultPageButtonProps = {
         buttonType: "firstButton" as ButtonType,
         isDisabled: true,
-        onClickAction: jasmine.any(Function),
+        onClickAction: jasmine.any(Function) as any,
         showIcon: "default" as IconType
     };
 
@@ -326,8 +326,8 @@ describe("Pagination", () => {
         const props = {
             buttonCaption: "",
             isDisabled: true,
-            onClickAction: jasmine.any(Function),
-            showIcon: "default" as IconType
+            showIcon: "default" as IconType,
+            onClickAction: jasmine.any(Function) as any
         };
 
         return [
@@ -410,7 +410,7 @@ describe("Pagination", () => {
 
     const defaultPageNumberViewProps: PageNumberViewProps = {
         maxPageButtons: 7,
-        onClickAction: jasmine.any(Function),
+        onClickAction: jasmine.any(Function) as any,
         pageCount: 16,
         selectedPageNumber: 1,
         key: "key"

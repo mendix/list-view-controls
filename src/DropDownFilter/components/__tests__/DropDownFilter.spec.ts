@@ -3,6 +3,7 @@ import { configure, shallow } from "enzyme";
 import Adapter = require("enzyme-adapter-react-16");
 
 import { DropDownFilter, DropDownFilterProps } from "../DropDownFilter";
+import { FilterProps } from "../DropDownFilterContainer";
 
 configure({ adapter: new Adapter() });
 
@@ -44,16 +45,17 @@ describe("DropDownFilter", () => {
 
     describe("select", () => {
         it("changes value", () => {
+            const filter: FilterProps = {
+                attribute: "Code",
+                attributeValue: "256",
+                caption: "Country",
+                constraint: "",
+                filterBy: "attribute",
+                isDefault: false
+            };
             const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
-                filters: [ {
-                    attribute: "Code",
-                    attributeValue: "256",
-                    caption: "Country",
-                    constraint: "",
-                    filterBy: "attribute",
-                    isDefault: false
-                } ],
+                filters: [ filter ],
                 handleChange: jasmine.createSpy("onClick")
             };
             const wrapper = renderDropDownFilter(props);
@@ -61,29 +63,34 @@ describe("DropDownFilter", () => {
 
             select.simulate("change", {
                 currentTarget: {
-                    selectedOptions: [
-                        { getAttribute: (_attribute: string) => "Code" }
-                    ],
-                    value: "256"
+                    value: "0"
                 }
             });
-
-            expect(props.handleChange).toHaveBeenCalledWith(undefined);
+            // tslint:disable-next-line:line no-object-literal-type-assertion
+            expect(props.handleChange).toHaveBeenCalledWith({ ...filter, selectedValue: "0" } as FilterProps);
 
         });
 
         it("updates when the select option changes", () => {
-            const newValue = "Uganda";
+            const filter: FilterProps = {
+                attribute: "Code",
+                attributeValue: "256",
+                caption: "Country",
+                constraint: "",
+                filterBy: "attribute",
+                isDefault: false
+            };
+            const filterNew: FilterProps = {
+                attribute: "Code",
+                attributeValue: "258",
+                caption: "Country",
+                constraint: "",
+                filterBy: "attribute",
+                isDefault: false
+            };
             const props: DropDownFilterProps = {
                 defaultFilterIndex: 1,
-                filters: [ {
-                    attribute: "Code",
-                    attributeValue: "256",
-                    caption: "Country",
-                    constraint: "",
-                    filterBy: "attribute",
-                    isDefault: false
-                } ],
+                filters: [ filter, filterNew ],
                 handleChange: value => value
             };
             const spy = spyOn(props, "handleChange").and.callThrough();
@@ -92,25 +99,24 @@ describe("DropDownFilter", () => {
 
             select.simulate("change", {
                 currentTarget: {
-                    selectedOptions: [
-                        { getAttribute: (_attribute: string) => "Code" }
-                    ],
-                    value: "256"
+                    value: "0"
                 }
             });
 
-            expect(spy).toHaveBeenCalledWith(undefined);
+            // tslint:disable-next-line:line no-object-literal-type-assertion
+            expect(spy).toHaveBeenCalledWith({ ...filter, selectedValue: "0" } as FilterProps);
 
             select.simulate("change", {
                 currentTarget: {
                     selectedOptions: [
-                        { getAttribute: (_attribute: string) => "Name" }
+                        { getAttribute: (_attribute: string) => "Code" }
                     ],
-                    value: newValue
+                    value: "1"
                 }
             });
 
-            expect(props.handleChange).toHaveBeenCalledWith(undefined);
+            // tslint:disable-next-line:line no-object-literal-type-assertion
+            expect(props.handleChange).toHaveBeenCalledWith({ ...filterNew, selectedValue: "1" } as FilterProps);
         });
     });
 });
