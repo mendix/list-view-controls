@@ -8,25 +8,20 @@ const testLastItemValue = "Color 19";
 
 describe("Pagination", () => {
 
-    beforeEach(() => {
-        // wait for the records to be populated
-        browser.timeouts("implicit", 20 * 1000);
-    });
-
     it("when next button is clicked list view should have those items", () => {
         page.open();
-        page.paginationOne.waitForVisible();
-        page.nextButton.waitForVisible();
-        page.listViewOne.waitForVisible();
-        page.listViewFirstItem.waitForVisible();
+        page.paginationOne.waitForDisplayed();
+        page.nextButton.waitForDisplayed();
+        page.listViewOne.waitForDisplayed();
+        page.listViewFirstItem.waitForDisplayed();
 
         const itemValueOne = page.listViewFirstItem.getHTML();
         expect(itemValueOne).toContain(testValueOne);
 
         page.nextButton.click();
-        page.listViewThirdItem.waitForVisible();
+        page.listViewThirdItem.waitForDisplayed();
         page.nextButton.click();
-        page.listViewFifthItem.waitForVisible();
+        page.listViewFifthItem.waitForDisplayed();
 
         const itemValueFive = page.listViewFifthItem.getHTML();
         expect(itemValueFive).toContain(testValueFive);
@@ -34,9 +29,9 @@ describe("Pagination", () => {
 
     it("when last button is clicked list view should have last items ", () => {
         page.open();
-        page.paginationOne.waitForVisible();
-        page.nextButton.waitForVisible();
-        page.lastButton.waitForVisible();
+        page.paginationOne.waitForDisplayed();
+        page.nextButton.waitForDisplayed();
+        page.lastButton.waitForDisplayed();
 
         page.lastButton.click();
 
@@ -46,15 +41,15 @@ describe("Pagination", () => {
 
     it("when first button is clicked list view should show item of first page ", () => {
         page.open();
-        page.paginationOne.waitForVisible();
-        page.nextButton.waitForVisible();
-        page.firstButton.waitForVisible();
-        page.listViewOne.waitForVisible();
+        page.paginationOne.waitForDisplayed();
+        page.nextButton.waitForDisplayed();
+        page.firstButton.waitForDisplayed();
+        page.listViewOne.waitForDisplayed();
         page.nextButton.click();
-        page.listViewThirdItem.waitForVisible();
+        page.listViewThirdItem.waitForDisplayed();
 
         page.firstButton.click();
-        page.listViewFirstItem.waitForVisible();
+        page.listViewFirstItem.waitForDisplayed();
 
         const newItemValue = page.listViewFirstItem.getHTML();
         expect(newItemValue).toContain(testValueOne);
@@ -62,37 +57,32 @@ describe("Pagination", () => {
 
     it("when previous button is clicked list view should show item on the previous page ", () => {
         page.open();
-        page.paginationOne.waitForVisible();
-        page.nextButton.waitForVisible();
-        page.previousButton.waitForVisible();
+        page.paginationOne.waitForDisplayed();
+        page.nextButton.waitForDisplayed();
+        page.previousButton.waitForDisplayed();
 
         page.nextButton.click();
-        page.listViewThirdItem.waitForVisible();
+        page.listViewThirdItem.waitForDisplayed();
         page.nextButton.click();
-        page.listViewFifthItem.waitForVisible();
+        page.listViewFifthItem.waitForDisplayed();
         page.nextButton.click();
-        page.listViewSeventhItem.waitForVisible();
+        page.listViewSeventhItem.waitForDisplayed();
         page.nextButton.click();
-        page.listViewNinethItem.waitForVisible();
+        page.listViewNinethItem.waitForDisplayed();
         page.previousButton.click();
-        page.listViewSeventhItem.waitForVisible();
+        page.listViewSeventhItem.waitForDisplayed();
 
         const seventhItemValue = page.listViewSeventhItem.getHTML();
         expect(seventhItemValue).toContain(testValueSeven);
     });
 
     it("when custom button is clicked list view should show item on the custom page ", () => {
-        // Change window size
-        browser.setViewportSize({
-            height: 720,
-            width: 1720
-        });
-        browser.windowHandleSize();
-        page.open();
 
-        page.customButtonTwo.waitForVisible(120000);
+        page.openCustom();
+
+        page.customButtonTwo.waitForDisplayed(120000);
         page.customButtonTwo.click();
-        page.listView4ThirdItem.waitForVisible();
+        page.listView4ThirdItem.waitForDisplayed();
 
         const thirdItemValue = page.listView4ThirdItem.getHTML();
         expect(thirdItemValue).toContain("Color P 3");
@@ -110,15 +100,15 @@ describe("Pagination", () => {
         });
 
         it("to limit list view items depending on selection", () => {
-            pagesize.pageSizeDropdown.waitForVisible();
-            pagesize.listView.waitForVisible();
+            pagesize.pageSizeDropdown.waitForDisplayed();
+            pagesize.listView.waitForDisplayed();
 
-            pagesize.pageSizeDropdown.element("select").selectByIndex(1); // Index 1 is page size 5
+            pagesize.pageSizeDropdown.$("select").selectByIndex(1); // Index 1 is page size 5
             browser.pause(1000);
-            expect(pagesize.listViewItems.value.length).toEqual(5);
-            pagesize.pageSizeDropdown.element("select").selectByIndex(2); // Index 2 is page size 10
+            expect(pagesize.listViewItems.length).toEqual(5);
+            pagesize.pageSizeDropdown.$("select").selectByIndex(2); // Index 2 is page size 10
             browser.pause(1000);
-            expect(pagesize.listViewItems.value.length).toEqual(10);
+            expect(pagesize.listViewItems.length).toEqual(10);
         });
     });
 

@@ -1,12 +1,12 @@
 class PageSize {
 
     public get pageSizeDropdown() {
-        return browser.element(".pagination .page-size");
+        return $(".pagination .page-size");
     }
 
-    public get listView() { return browser.element(".mx-listview"); }
+    public get listView() { return $(".mx-listview"); }
 
-    public get listViewItems() { return this.listView.elements(".mx-listview-item"); }
+    public get listViewItems() { return this.listView.$$(".mx-listview-item"); }
 
     public openPageSizeDropdown(): void {
         browser.url("/p/page-size");
