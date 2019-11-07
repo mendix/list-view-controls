@@ -1,5 +1,6 @@
 import page from "./pages/home.page";
 import pagesize from "./pages/pageSize.page";
+import paginationCustom from "./pages/paginationCustom.page";
 
 const testValueOne = "Color 1";
 const testValueFive = "Color 5";
@@ -78,13 +79,13 @@ describe("Pagination", () => {
 
     it("when custom button is clicked list view should show item on the custom page ", () => {
 
-        page.openCustom();
+        paginationCustom.open();
 
-        page.customButtonTwo.waitForDisplayed(120000);
-        page.customButtonTwo.click();
-        page.listView4ThirdItem.waitForDisplayed();
+        paginationCustom.customButtonTwo.waitForDisplayed(120000);
+        paginationCustom.customButtonTwo.click();
+        paginationCustom.listView4ThirdItem.waitForDisplayed();
 
-        const thirdItemValue = page.listView4ThirdItem.getHTML();
+        const thirdItemValue = paginationCustom.listView4ThirdItem.getHTML();
         expect(thirdItemValue).toContain("Color P 3");
     });
 
