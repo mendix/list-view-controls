@@ -88,7 +88,7 @@ const widgetConfig = {
                 from: "src/**/*.xml",
                 toType: "template",
                 to: "widgets/[name]/[name].[ext]",
-                ignore: "src/package.xml"
+                ignore: [ "src/package.xml" ]
             }, {
                 from: "src/package.xml",
                 to: "widgets/package.xml"
