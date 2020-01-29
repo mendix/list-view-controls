@@ -74,4 +74,16 @@ export class SharedUtils {
         return targetNode;
     }
 
+    static delay(executor: () => void, condition: () => boolean, period = 500) {
+        return setTimeout(
+            function check() {
+                if (condition()) {
+                    executor();
+                } else {
+                    setTimeout(check, period);
+                }
+            }, period
+        );
+    }
+
 }

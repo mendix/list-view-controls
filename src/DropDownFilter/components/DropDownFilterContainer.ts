@@ -1,6 +1,5 @@
 import { Component, ReactChild, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
-import * as mendixLang from "mendix/lang";
 
 import { Alert } from "../../Shared/components/Alert";
 import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
@@ -75,7 +74,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     }
 
     componentDidMount() {
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+        SharedUtils.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     componentWillReceiveProps(nextProps: ContainerProps) {
