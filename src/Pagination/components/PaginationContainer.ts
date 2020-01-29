@@ -2,7 +2,6 @@ import { Component, ReactChild, ReactNode, createElement } from "react";
 import { hot } from "react-hot-loader";
 
 import * as classNames from "classnames";
-import * as mendixLang from "mendix/lang";
 import * as dojoAspect from "dojo/aspect";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -72,7 +71,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
     componentDidMount() {
         logger.debug(this.props.friendlyId, ".componentDidMount");
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+        SharedUtils.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     render() {

@@ -1,6 +1,5 @@
 import { Component, ReactChild, ReactNode, createElement } from "react";
 import * as classNames from "classnames";
-import * as mendixLang from "mendix/lang";
 import * as dojoTopic from "dojo/topic";
 
 import { Alert } from "../../Shared/components/Alert";
@@ -72,7 +71,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
     }
 
     componentDidMount() {
-        mendixLang.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
+        SharedUtils.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
     componentDidUpdate(_prevProps: ContainerProps, prevState: ContainerState) {
