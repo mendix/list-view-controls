@@ -253,13 +253,14 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
         if (message) {
             const totalPages = pageSize && pageSize !== 0 ? Math.ceil(listViewSize / pageSize) : listViewSize;
-            const selectedPageNumber = Math.ceil(listViewSize / pageSize);
+            const selectedPageNumber = Math.ceil(fromValue / pageSize);
 
             return message.replace("{firstItem}", fromValue.toString())
                 .replace("{lastItem}", toValue.toString())
                 .replace("{totalItems}", listViewSize.toString())
                 .replace("{currentPageNumber}", selectedPageNumber.toString())
-                .replace("{totalPages}", totalPages.toString());
+                .replace("{totalPages}", totalPages.toString())
+                .replace("{pageSize}", pageSize.toString());
         }
 
         return this.props.getMessageStatus(fromValue, toValue, listViewSize);
