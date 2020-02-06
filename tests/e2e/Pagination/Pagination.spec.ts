@@ -77,6 +77,20 @@ describe("Pagination", () => {
         expect(seventhItemValue).toContain(testValueSeven);
     });
 
+    it ("should display current page and total pages", () => {
+        paginationCustom.open();
+
+        const pagingStatus = paginationCustom.pagingStatus;
+        pagingStatus.waitForDisplayed();
+        expect(pagingStatus.getText()).toContain("page 1 of 9");
+
+        paginationCustom.nextButtonPaging.click();
+        paginationCustom.listViewThirdItem.waitForDisplayed();
+
+        expect(pagingStatus.getText()).toContain("page 2 of 9");
+
+    });
+
     it("when custom button is clicked list view should show item on the custom page ", () => {
 
         paginationCustom.open();
