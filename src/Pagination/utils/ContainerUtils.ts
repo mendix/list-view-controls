@@ -51,18 +51,18 @@ export const hideLoader = (targetListView: DataSourceHelperListView) => {
     targetListView.domNode.classList.remove("widget-pagination-loading");
 };
 
-export const mxTranslation = (namespace: string, key: string, replacements: any[], lookAtWindow: boolean) => {
+export const mxTranslation = (namespace: string, key: string, replacements: any[], lookAtWindow: boolean, defaultTemplateValue: string) => {
     if (!lookAtWindow) {
         const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
             || (window.mx.session.getConfig("uiconfig.translations") as any)[`${namespace}.${key}`]
             || "[No translation]";
         return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
-    } else if (window.translations) {
-        const templateString = window.translations[`${namespace}.${key}`]
+    } else if (window.__widgets_translations) {
+        const templateString = window.__widgets_translations[`${namespace}.${key}`]
             || "[No translation]";
         return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
     } else {
-        return "[No translation]";
+        return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), defaultTemplateValue);
     }
 };
 
@@ -73,8 +73,8 @@ export const getTranslations = async (): Promise<void> => {
     if (metadataJson && metadataJson.systemTexts) {
         const systemTexts = metadataJson.systemTexts;
         const localeIndex = metadataJson.languages.indexOf(localeCode);
-        window.translations = Object.keys(systemTexts).reduce((translations, currentKey) => ({ ...translations, [currentKey]: systemTexts[currentKey][localeIndex] }), {});
+        window.__widgets_translations = Object.keys(systemTexts).reduce((translations, currentKey) => ({ ...translations, [currentKey]: systemTexts[currentKey][localeIndex] }), {});
     } else {
-        logger.debug("Error while loading translations");
+        logger.error("Error while loading translations");
     }
 };

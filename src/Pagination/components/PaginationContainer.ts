@@ -77,7 +77,11 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".componentDidMount");
         const isValidConfig = !!mx.session.getConfig("uiconfig.translations");
         if (!isValidConfig) {
-            await getTranslations();
+            try {
+                await getTranslations();
+            } catch (e) {
+                logger.debug(this.props.friendlyId, ".loadingTranslations", e.message);
+            }
             this.setState({ loadTranslations: true });
         }
         SharedUtils.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
@@ -105,7 +109,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
-        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ], this.state.loadTranslations);
+        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ], this.state.loadTranslations, "{1} - {2} / {3}");
     }
 
     private checkListViewAvailable(): boolean {
