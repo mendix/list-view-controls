@@ -1,6 +1,17 @@
 import { DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
 
-declare const window: any;
+export interface Translation {
+    [key: string]: string;
+}
+
+export interface TranslationArray {
+    [key: string]: string[];
+}
+
+export interface CustomWindow extends Window {
+    __widgets_translations: Translation;
+}
+declare let window: CustomWindow;
 
 export const hideLoadMoreButton = (targetNode?: HTMLElement | null) => {
     if (targetNode) {
@@ -52,18 +63,16 @@ export const hideLoader = (targetListView: DataSourceHelperListView) => {
 };
 
 export const mxTranslation = (namespace: string, key: string, replacements: any[], lookAtWindow: boolean, defaultTemplateValue: string) => {
+    let templateString = "[No translation]";
     if (!lookAtWindow) {
-        const templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
+        templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
             || (window.mx.session.getConfig("uiconfig.translations") as any)[`${namespace}.${key}`]
-            || "[No translation]";
-        return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
+            || defaultTemplateValue || "[No translation]";
     } else if (window.__widgets_translations) {
-        const templateString = window.__widgets_translations[`${namespace}.${key}`]
-            || "[No translation]";
-        return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
-    } else {
-        return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), defaultTemplateValue);
+        templateString = window.__widgets_translations[`${namespace}.${key}`]
+            || defaultTemplateValue || "[No translation]";
     }
+    return replacements.reduce((substituteMessage, value, index) => substituteMessage.split("{" + (index + 1) + "}").join(value), templateString);
 };
 
 export const getTranslations = async (): Promise<void> => {
@@ -71,7 +80,7 @@ export const getTranslations = async (): Promise<void> => {
     const metaData = await fetch("/metamodel.json");
     const metadataJson = await metaData.json();
     if (metadataJson && metadataJson.systemTexts) {
-        const systemTexts = metadataJson.systemTexts;
+        const systemTexts = metadataJson.systemTexts as TranslationArray;
         const localeIndex = metadataJson.languages.indexOf(localeCode);
         window.__widgets_translations = Object.keys(systemTexts).reduce((translations, currentKey) => ({ ...translations, [currentKey]: systemTexts[currentKey][localeIndex] }), {});
     } else {
