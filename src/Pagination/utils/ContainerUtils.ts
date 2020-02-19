@@ -63,7 +63,7 @@ export const hideLoader = (targetListView: DataSourceHelperListView) => {
 };
 
 export const mxTranslation = (namespace: string, key: string, replacements: any[], lookAtWindow: boolean, defaultTemplateValue: string) => {
-    let templateString = "[No translation]";
+    let templateString = defaultTemplateValue ?? "[No translation]";
     if (!lookAtWindow) {
         templateString = mx.session.getConfig(`uiconfig.translations.${namespace}.${key}`)
             || (window.mx.session.getConfig("uiconfig.translations") as any)[`${namespace}.${key}`]
