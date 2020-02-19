@@ -10,6 +10,7 @@ import { SharedContainerUtils } from "../../Shared/SharedContainerUtils";
 import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSourceHelper/DataSourceHelper";
 
 import {
+    getTranslations,
     hideLoadMoreButton, mxTranslation, persistListViewHeight,
     resetListViewHeight, setListNodeToEmpty, showLoadMoreButton
 } from "../utils/ContainerUtils";
@@ -29,6 +30,7 @@ interface PaginationContainerState {
     offset: number;
     listSize?: number;
     isPersisted?: boolean;
+    loadTranslations: boolean;
 }
 
 interface PaginationPageState {
@@ -50,6 +52,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         logger.debug(this.props.friendlyId, ".constructor");
 
         this.updateListView = this.updateListView.bind(this);
+        this.translateMessageStatus = this.translateMessageStatus.bind(this);
 
         const id = this.props.uniqueid || this.props.friendlyId;
         this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
@@ -65,12 +68,22 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             alertMessage: Validate.validateProps(this.props),
             pageSize: this.viewStateManager.getPageState("pageSize", undefined), // We dont know, based on the modeler configuration of the list view.
             offset: this.viewStateManager.getPageState("offset", 0),
-            isPersisted: this.viewStateManager.getPageState("isPersisted", false)
+            isPersisted: this.viewStateManager.getPageState("isPersisted", false),
+            loadTranslations: false
         };
     }
 
-    componentDidMount() {
+    async componentDidMount() {
         logger.debug(this.props.friendlyId, ".componentDidMount");
+        const isValidConfig = !!mx.session.getConfig("uiconfig.translations");
+        if (!isValidConfig) {
+            try {
+                await getTranslations();
+            } catch (e) {
+                logger.debug(this.props.friendlyId, ".loadingTranslations", e.message);
+            }
+            this.setState({ loadTranslations: true });
+        }
         SharedUtils.delay(this.connectToListView.bind(this), this.checkListViewAvailable.bind(this), 20);
     }
 
@@ -95,8 +108,8 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
         this.viewStateManager.destroy();
     }
 
-    public static translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
-        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ]);
+    translateMessageStatus(fromValue: number, toValue: number, maxPageSize: number): string {
+        return mxTranslation("mendix.lib.MxDataSource", "status", [ `${fromValue}`, `${toValue}`, `${maxPageSize}` ], this.state.loadTranslations, "{1} - {2} / {3}");
     }
 
     private checkListViewAvailable(): boolean {
@@ -121,7 +134,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
             logger.debug(this.props.friendlyId, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView!._datasource.getSetSize());
 
             return createElement(Pagination, {
-                getMessageStatus: PaginationContainer.translateMessageStatus,
+                getMessageStatus: this.translateMessageStatus,
                 hideUnusedPaging: this.props.hideUnusedPaging,
                 items: this.props.items,
                 listViewSize: this.state.targetListView!._datasource.getSetSize(),
