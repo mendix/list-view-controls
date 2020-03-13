@@ -28,7 +28,7 @@ env:
   - MX_BRANCH_NAME=trunk
   - MX_PROJECT_ID=d66f9c3e-ee99-48f3-a023-457c963bf7f1
   - MX_ENVIRONMENT=Sandbox
-  - MX_USER=ci@flockofbirds.org
+  - MX_USER=widgets@mendix.com
 deploy:
   provider: releases
   api_key: $GITHUB_KEY
