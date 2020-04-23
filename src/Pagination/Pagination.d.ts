@@ -6,7 +6,6 @@ export type ButtonType = "firstButton" | "lastButton" | "nextButton" | "previous
 
 export type IconType = "default" | "none";
 
-export type UpdateSourceType = "multiple" | "other";
 export type RenderPageSizeAs = "dropdown" | "input";
 
 export interface ItemType {
@@ -32,11 +31,4 @@ export interface ModelerProps extends WrapperProps {
     enablePageSize: boolean;
     pageSizeLabel: string;
     pageSizeOptions: PageSizeOption[];
-}
-
-export interface TopicMessage {
-    newOffSet: number;
-    newPageNumber: number;
-    newPageSize?: number;
-    widgetFriendlyID?: string;
 }

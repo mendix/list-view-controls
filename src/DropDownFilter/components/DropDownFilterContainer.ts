@@ -49,8 +49,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         super(props);
 
         this.applyFilter = this.applyFilter.bind(this);
-        const id = this.props.uniqueid || this.props.friendlyId;
-        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+        this.viewStateManager = new FormViewState(this.props.mxform, this.props.uniqueid, viewState => {
             viewState.selectedOption = this.state.selectedOption;
         });
 
@@ -149,8 +148,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     private applyFilter(selectedFilter: FilterProps, restoreState = false) {
         const constraint = this.getConstraint(selectedFilter);
         if (this.dataSourceHelper) {
-            logger.debug(this.props.friendlyId, "applyFilter", constraint);
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint, undefined, restoreState);
+            logger.debug(this.props, this.props.uniqueid, "applyFilter", constraint);
+            this.dataSourceHelper.setConstraint(this.props.uniqueid, constraint, undefined, restoreState);
         }
         this.setState({ selectedOption: selectedFilter });
     }

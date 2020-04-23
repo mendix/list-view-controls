@@ -4,7 +4,6 @@ export interface WrapperProps {
     uniqueid: string;
     class: string;
     style: string;
-    friendlyId: string;
     mxform: mxui.lib.form._FormBase;
     mxObject: mendix.lib.MxObject;
 }

@@ -44,9 +44,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         this.updateSort = this.updateSort.bind(this);
         this.subScribeToWidgetChanges = this.subScribeToWidgetChanges.bind(this);
         this.publishWidgetChanges = this.publishWidgetChanges.bind(this);
-        const id = this.props.uniqueid || this.props.friendlyId.split(".")[2];
 
-        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+        this.viewStateManager = new FormViewState(this.props.mxform, this.props.uniqueid, viewState => {
             viewState.sortOrder = this.state.sortOrder;
         });
 
@@ -121,7 +120,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         }
 
         if (targetListView) {
-            const id = targetListView.friendlyId + (targetListView.uniqueid ? targetListView.uniqueid : "");
+            const id = targetListView.uniqueid;
             this.subscriptionTopic = `${id}_sortUpdate`;
             this.subScribeToWidgetChanges();
             if (!this.props.initialSorted || errorMessage) {
@@ -141,7 +140,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         const { sortAttribute } = this.props;
 
         if (targetListView && this.dataSourceHelper) {
-            this.dataSourceHelper.setSorting(this.props.friendlyId, [ sortAttribute, order ], restoreState);
+            this.dataSourceHelper.setSorting(this.props.uniqueid, [ sortAttribute, order ], restoreState);
             if (!restoreState) {
                 this.setState({ sortOrder: order });
                 this.publishWidgetChanges(sortAttribute, order);
@@ -153,8 +152,8 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
         dojoTopic.subscribe(this.subscriptionTopic, (message: string[]) => {
             const publishedSortAttribute = message[0];
             const publishedSortOrder = message[1] as SortOrder;
-            const publishedSortWidgetFriendlyId = message[2];
-            if (publishedSortWidgetFriendlyId !== this.props.friendlyId) {
+            const publishedSortWidgetUniqueId = message[2];
+            if (publishedSortWidgetUniqueId !== this.props.uniqueid) {
                 if (publishedSortAttribute === this.props.sortAttribute) {
                     this.setState({
                         sortOrder: publishedSortOrder
@@ -170,7 +169,7 @@ export default class HeaderSortContainer extends Component<ContainerProps, Conta
 
     private publishWidgetChanges(attribute: string, order: string) {
         if (this.state.targetListView) {
-            dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.friendlyId ]);
+            dojoTopic.publish(this.subscriptionTopic, [ attribute, order, this.props.uniqueid ]);
         }
     }
 

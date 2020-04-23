@@ -42,8 +42,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         this.applySearch = this.applySearch.bind(this);
 
-        const id = this.props.uniqueid || this.props.friendlyId;
-        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+        this.viewStateManager = new FormViewState(this.props.mxform, this.props.uniqueid, viewState => {
             viewState.defaultSearchText = this.state.searchText;
         });
 
@@ -106,7 +105,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
         const constraint = this.getConstraint(mxui.dom.escapeHTMLQuotes(searchQuery));
 
         if (this.dataSourceHelper) {
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, constraint);
+            this.dataSourceHelper.setConstraint(this.props.uniqueid, constraint);
         }
         this.setState({ searchText: searchQuery });
     }
