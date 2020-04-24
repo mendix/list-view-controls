@@ -49,13 +49,12 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     constructor(props: ModelerProps) {
         super(props);
 
-        logger.debug(this.props.friendlyId, ".constructor");
+        logger.debug(this.props.uniqueid, ".constructor");
 
         this.updateListView = this.updateListView.bind(this);
         this.translateMessageStatus = this.translateMessageStatus.bind(this);
 
-        const id = this.props.uniqueid || this.props.friendlyId;
-        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+        this.viewStateManager = new FormViewState(this.props.mxform, this.props.uniqueid, viewState => {
             if (this.state.validationPassed) {
                 const datasource = this.state.targetListView!._datasource;
                 viewState.pageSize = datasource.getPageSize() || this.state.pageSize;
@@ -74,13 +73,13 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     async componentDidMount() {
-        logger.debug(this.props.friendlyId, ".componentDidMount");
+        logger.debug(this.props.uniqueid, ".componentDidMount");
         const isValidConfig = !!mx.session.getConfig("uiconfig.translations");
         if (!isValidConfig) {
             try {
                 await getTranslations();
             } catch (e) {
-                logger.debug(this.props.friendlyId, ".loadingTranslations", e.message);
+                logger.debug(this.props.uniqueid, ".loadingTranslations", e.message);
             }
             this.setState({ loadTranslations: true });
         }
@@ -88,7 +87,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     render() {
-        logger.debug(this.props.friendlyId, ".render");
+        logger.debug(this.props.uniqueid, ".render");
         return createElement("div",
             {
                 className: classNames("widget-pagination", this.props.class),
@@ -103,7 +102,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     componentWillUnmount() {
-        logger.debug(this.props.friendlyId, ".componentWillUnmount");
+        logger.debug(this.props.uniqueid, ".componentWillUnmount");
         showLoadMoreButton(this.state.targetListView);
         this.viewStateManager.destroy();
     }
@@ -113,7 +112,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private checkListViewAvailable(): boolean {
-        logger.debug(this.props.friendlyId, ".checkListViewAvailable");
+        logger.debug(this.props.uniqueid, ".checkListViewAvailable");
         if (!this.widgetDom) {
             return false;
         }
@@ -127,11 +126,11 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private renderPageButton(): ReactNode {
-        logger.debug(this.props.friendlyId, ".renderPageButton");
+        logger.debug(this.props.uniqueid, ".renderPageButton");
 
         if (this.state.validationPassed && this.state.pageSize && this.state.targetListView!._datasource.getSetSize() > 0) {
             const { offset, pageSize } = this.state;
-            logger.debug(this.props.friendlyId, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView!._datasource.getSetSize());
+            logger.debug(this.props.uniqueid, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView!._datasource.getSetSize());
 
             return createElement(Pagination, {
                 getMessageStatus: this.translateMessageStatus,
@@ -150,7 +149,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     public updateListView(offSet?: number, pageSize?: number) {
-        logger.debug(this.props.friendlyId, ".updateListView");
+        logger.debug(this.props.uniqueid, ".updateListView");
         if (this.state.validationPassed) {
             this.setState({
                 offset: offSet !== undefined ? offSet : this.state.offset,
@@ -192,10 +191,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private beforeListViewDataRender(targetListView: DataSourceHelperListView) {
-        logger.debug(this.props.friendlyId, ".beforeListViewDataRender");
+        logger.debug(this.props.uniqueid, ".beforeListViewDataRender");
 
         dojoAspect.before(targetListView, "_renderData", () => {
-            logger.debug(this.props.friendlyId, "_renderData.before");
+            logger.debug(this.props.uniqueid, "_renderData.before");
 
             const datasource = targetListView._datasource;
             if (datasource.getSetSize() === 0) {
@@ -227,7 +226,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                         listSize: datasource.getSetSize()
                     });
                 } else {
-                    logger.debug(this.props.friendlyId, ".initialLoading False, pagingLoading False");
+                    logger.debug(this.props.uniqueid, ".initialLoading False, pagingLoading False");
                     const previousOffset = this.state.offset;
                     const listSize = datasource.getSetSize();
                     let offset = previousOffset;
@@ -256,7 +255,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private afterListViewLoaded(targetListView: DataSourceHelperListView) {
-        logger.debug(this.props.friendlyId, ".afterListViewLoad");
+        logger.debug(this.props.uniqueid, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
         const pageSize = this.state.pageSize ? this.state.pageSize : datasource.getPageSize() && datasource.getPageSize() || 10;
@@ -269,9 +268,9 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private afterListViewDataRender(targetListView: DataSourceHelperListView) {
-        logger.debug(this.props.friendlyId, ".afterListViewDataRender");
+        logger.debug(this.props.uniqueid, ".afterListViewDataRender");
         dojoAspect.after(targetListView, "_renderData", () => {
-            logger.debug(this.props.friendlyId, "_renderData.after");
+            logger.debug(this.props.uniqueid, "_renderData.after");
             resetListViewHeight(targetListView.domNode as HTMLElement);
         });
     }

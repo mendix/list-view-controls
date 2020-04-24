@@ -6,7 +6,6 @@ export interface DropDownOptionType extends Partial<AttributeType> {
 }
 
 export interface DropDownProps {
-    friendlyId?: string;
     onDropDownChangeAction?: (selectedOption: AttributeType) => void;
     sortAttributes: AttributeType[];
     style: object;

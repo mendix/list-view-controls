@@ -47,8 +47,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         super(props);
 
         this.applyFilter = this.applyFilter.bind(this);
-        const id = this.props.uniqueid || this.props.friendlyId;
-        this.viewStateManager = new FormViewState(this.props.mxform, id, viewState => {
+        this.viewStateManager = new FormViewState(this.props.mxform, this.props.uniqueid, viewState => {
             viewState.isChecked = this.state.isChecked;
         });
 
@@ -128,8 +127,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     private applyFilter(isChecked: boolean, restoreState = false) {
         if (this.dataSourceHelper) {
-            logger.debug(this.props.friendlyId, "applyFilter", isChecked, this.props.group);
-            this.dataSourceHelper.setConstraint(this.props.friendlyId, this.getConstraint(isChecked), this.props.group, restoreState);
+            logger.debug(this.props.uniqueid, "applyFilter", isChecked, this.props.group);
+            this.dataSourceHelper.setConstraint(this.props.uniqueid, this.getConstraint(isChecked), this.props.group, restoreState);
             this.setState({ isChecked });
         }
     }
