@@ -208,7 +208,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     private createMessage(message?: string, key?: number): ReactNode {
         message = this.getMessageStatus(message);
 
-        return createElement("button", { className: "paging-status", key }, message);
+        return createElement("span", { className: "paging-status", key }, message);
     }
 
     private firstPageClickAction = () => {

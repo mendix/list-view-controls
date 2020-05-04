@@ -37,6 +37,7 @@ export const PageNumberButton = (
 const onKeyDown = (onClickAction: () => void, e: KeyboardEvent) => {
     // if enter or space key
     if (e.keyCode === 13 || e.keyCode === 32) {
+        e.preventDefault();
         onClickAction();
     }
 };
