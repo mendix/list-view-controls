@@ -107,8 +107,15 @@ describe("PageNumberView", () => {
                     props.selectedPageNumber === pageNumber ? "active" : "",
                     pageNumber < 10 ? "single-digit" : ""
                 ),
+                role: "button",
                 onClick: jasmine.any(Function),
-                key: `page${pageNumber}`
+                onKeyDown: jasmine.any(Function),
+                key: `page${pageNumber}`,
+                tabindex: 0,
+                "aria-label":
+                    props.selectedPageNumber === pageNumber
+                        ? `Current page, page ${pageNumber}`
+                        : `Go to page ${pageNumber}`
             },
             pageNumber
         );

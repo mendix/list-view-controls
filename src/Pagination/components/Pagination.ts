@@ -36,9 +36,18 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
     render() {
         const { listViewSize, pageSize, hideUnusedPaging } = this.props;
-        const isVisible = !hideUnusedPaging || hideUnusedPaging && listViewSize > pageSize;
-        return createElement("div",
-            { className: classNames("pagination", `${isVisible ? "visible" : "hidden"}`) },
+        const isVisible =
+            !hideUnusedPaging || (hideUnusedPaging && listViewSize > pageSize);
+        return createElement(
+            "div",
+            {
+                className: classNames(
+                    "pagination",
+                    `${isVisible ? "visible" : "hidden"}`
+                ),
+                role: "navigation",
+                "aria-label": "List pagination"
+            },
             this.renderPagination()
         );
     }

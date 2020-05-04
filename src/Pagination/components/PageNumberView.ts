@@ -16,7 +16,7 @@ export const PageNumberView: SFC<PageNumberViewProps> = (props) => {
     const { selectedPageNumber, onClickAction } = props;
     if (props.pageCount <= props.maxPageButtons) {
         for (let pageNumber = 1; pageNumber <= props.pageCount; pageNumber++) {
-            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction, key: `page${pageNumber}` }));
+            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction: onClickAction.bind(null, pageNumber), key: `page${pageNumber}` }));
         }
     } else {
         const leftBreakpoint = Math.ceil(props.maxPageButtons / 2);
@@ -41,19 +41,19 @@ export const PageNumberView: SFC<PageNumberViewProps> = (props) => {
             rightButtonNumber = props.pageCount - 1; // last
         }
         // Add first page button
-        pageItems.push(PageNumberButton({ pageNumber: 1, selectedPageNumber, onClickAction, key: "first" }));
+        pageItems.push(PageNumberButton({ pageNumber: 1, selectedPageNumber, onClickAction: onClickAction.bind(null, 1), key: "first" }));
         if (hasLeftDivider) {
             pageItems.push(createElement(BreakView, { key: "leftDivider" }));
         }
         // Add middle page buttons
         for (let pageNumber = leftButtonNumber; pageNumber <= rightButtonNumber; pageNumber++) {
-            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction, key: `page${pageNumber}` }));
+            pageItems.push(PageNumberButton({ pageNumber, selectedPageNumber, onClickAction: onClickAction.bind(null, pageNumber), key: `page${pageNumber}` }));
         }
         if (hasRightDivider) {
             pageItems.push(createElement(BreakView, { key: "rightDivider" }));
         }
         // Add last page button
-        pageItems.push(PageNumberButton({ pageNumber: props.pageCount, selectedPageNumber, onClickAction, key: "last" }));
+        pageItems.push(PageNumberButton({ pageNumber: props.pageCount, selectedPageNumber, onClickAction: onClickAction.bind(null, props.pageCount), key: "last" }));
     }
 
     return createElement("ul", { key: props.key }, pageItems);
