@@ -76,6 +76,48 @@ describe("PageNumberView", () => {
             expect(pageNumberButton.hasClass("active"));
         });
 
+        it("when custom page button 6 has focus and enter is pressed, set page to 6", () => {
+            const pageNumberViewProps = {
+                ...defaultPageNumberViewProps,
+                onClickAction: jasmine.createSpy("onClick")
+            };
+
+            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
+            const pageNumberButton = pageNumberView.find("li").at(5);
+            pageNumberButton.simulate("keydown", { keyCode: 13 });
+
+            expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
+            expect(pageNumberButton.hasClass("active"));
+        });
+
+        it("when custom page button 6 has focus and space is pressed, set page to 6", () => {
+            const pageNumberViewProps = {
+                ...defaultPageNumberViewProps,
+                onClickAction: jasmine.createSpy("onClick")
+            };
+
+            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
+            const pageNumberButton = pageNumberView.find("li").at(5);
+            pageNumberButton.simulate("keydown", { keyCode: 32 });
+
+            expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
+            expect(pageNumberButton.hasClass("active"));
+        });
+
+        it("when custom page button 6 has focus and h key is pressed, don't set page to 6", () => {
+            const pageNumberViewProps = {
+                ...defaultPageNumberViewProps,
+                onClickAction: jasmine.createSpy("onClick")
+            };
+
+            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
+            const pageNumberButton = pageNumberView.find("li").at(5);
+            pageNumberButton.simulate("keydown", { keyCode: 72 });
+
+            expect(pageNumberViewProps.onClickAction).not.toHaveBeenCalled();
+            expect(pageNumberButton.hasClass("active")).toBe(false);
+        });
+
         it("when a high custom page button 9 is clicked, remove last break view", () => {
             const pageNumberViewProps: PageNumberViewProps = {
                 ...defaultPageNumberViewProps,
