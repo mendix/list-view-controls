@@ -14,6 +14,7 @@ describe("PageButton", () => {
         it("renders first button structure correctly", () => {
             const cssClass = "btn mx-button mx-name-paging-first";
             const iconClass = "glyphicon glyphicon-step-backward";
+            const ariaLabel = "Go to first page";
 
             const pageButton = shallow(createElement(PageButton, {
                 buttonType: "firstButton",
@@ -22,7 +23,8 @@ describe("PageButton", () => {
 
             expect(pageButton).toBeElement(
                 createElement("button", {
-                        className: classNames(cssClass, { disabled: false })
+                        className: classNames(cssClass, { disabled: false }),
+                        "aria-label": ariaLabel
                     },
                     createElement("span", { className: iconClass })
                 )
@@ -32,6 +34,7 @@ describe("PageButton", () => {
         it("renders previous button structure correctly", () => {
             const cssClass = "btn mx-button mx-name-paging-previous";
             const iconClass = "glyphicon glyphicon-backward";
+            const ariaLabel = "Go to previous page";
 
             const pageButton = shallow(createElement(PageButton, {
                 buttonType: "previousButton",
@@ -40,7 +43,8 @@ describe("PageButton", () => {
 
             expect(pageButton).toBeElement(
                 createElement("button", {
-                        className: classNames(cssClass, { disabled: false })
+                        className: classNames(cssClass, { disabled: false }),
+                        "aria-label": ariaLabel
                     },
                     createElement("span", { className: iconClass })
                 )
@@ -50,6 +54,7 @@ describe("PageButton", () => {
         it("renders next button structure correctly", () => {
             const cssClass = "btn mx-button mx-name-paging-next";
             const iconClass = "glyphicon glyphicon-forward";
+            const ariaLabel = "Go to next page";
 
             const pageButton = shallow(createElement(PageButton, {
                 buttonType: "nextButton",
@@ -58,7 +63,8 @@ describe("PageButton", () => {
 
             expect(pageButton).toBeElement(
                 createElement("button", {
-                        className: classNames(cssClass, { disabled: false })
+                        className: classNames(cssClass, { disabled: false }),
+                        "aria-label": ariaLabel
                     },
                     createElement("span", { className: iconClass })
                 )
@@ -68,6 +74,7 @@ describe("PageButton", () => {
         it("renders last button structure correctly", () => {
             const cssClass = "btn mx-button mx-name-paging-last";
             const iconClass = "glyphicon glyphicon-step-forward";
+            const ariaLabel = "Go to last page";
 
             const pageButton = shallow(createElement(PageButton, {
                 buttonType: "lastButton",
@@ -76,7 +83,8 @@ describe("PageButton", () => {
 
             expect(pageButton).toBeElement(
                 createElement("button", {
-                        className: classNames(cssClass, { disabled: false })
+                        className: classNames(cssClass, { disabled: false }),
+                        "aria-label": ariaLabel
                     },
                     createElement("span", { className: iconClass })
                 )
@@ -88,20 +96,22 @@ describe("PageButton", () => {
             it("renders first button structure correctly", () => {
                 const cssClass = "btn mx-button mx-name-paging-first";
                 const iconClass = "glyphicon glyphicon-step-backward";
+                const buttonCaption = "first";
 
                 const pageButton = shallow(createElement(PageButton, {
-                    buttonCaption: "first",
+                    buttonCaption,
                     buttonType: "firstButton",
                     showIcon: "default"
                 }));
 
                 expect(pageButton).toBeElement(
                     createElement("button", {
-                            className: classNames(cssClass, { disabled: false })
+                            className: classNames(cssClass, { disabled: false }),
+                            "aria-label": buttonCaption
                         },
                         createElement("span", { className: iconClass }),
                         createElement("span", { className: "firstButton" },
-                            "first"
+                            buttonCaption
                         )
                     )
                 );
@@ -110,19 +120,21 @@ describe("PageButton", () => {
             it("renders last button structure correctly", () => {
                 const cssClass = "btn mx-button mx-name-paging-last";
                 const iconClass = "glyphicon glyphicon-step-forward";
+                const buttonCaption = "last";
 
                 const pageButton = shallow(createElement(PageButton, {
-                    buttonCaption: "last",
+                    buttonCaption,
                     buttonType: "lastButton",
                     showIcon: "default"
                 }));
 
                 expect(pageButton).toBeElement(
                     createElement("button", {
-                            className: classNames(cssClass, { disabled: false })
+                            className: classNames(cssClass, { disabled: false }),
+                            "aria-label": buttonCaption
                         },
                         createElement("span", { className: "lastButton" },
-                            "last"
+                            buttonCaption
                         ),
                         createElement("span", { className: iconClass })
                     )
@@ -142,8 +154,12 @@ describe("PageButton", () => {
             }));
 
             expect(pageButton).toBeElement(
-                createElement("button", { className: classNames("") },
-                    createElement("span", { className: classNames("") },
+                createElement(
+                    "button",
+                    { className: classNames(""), "aria-label": buttonCaption },
+                    createElement(
+                        "span",
+                        { className: classNames("") },
                         buttonCaption
                     )
                 )

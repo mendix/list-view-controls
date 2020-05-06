@@ -62,12 +62,16 @@ describe("PageNumberView", () => {
     });
 
     describe("on navigation", () => {
-        it("when custom page button 6 is clicked, set page to 6", () => {
-            const pageNumberViewProps = {
+        let pageNumberViewProps: PageNumberViewProps;
+
+        beforeEach(() => {
+            pageNumberViewProps = {
                 ...defaultPageNumberViewProps,
                 onClickAction: jasmine.createSpy("onClick")
             };
+        });
 
+        it("when custom page button 6 is clicked, set page to 6", () => {
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
             pageNumberButton.simulate("click");
@@ -77,53 +81,40 @@ describe("PageNumberView", () => {
         });
 
         it("when custom page button 6 has focus and enter is pressed, set page to 6", () => {
-            const pageNumberViewProps = {
-                ...defaultPageNumberViewProps,
-                onClickAction: jasmine.createSpy("onClick")
-            };
-
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("keydown", { keyCode: 13 });
+            const preventDefaultMock = jasmine.createSpy();
+            pageNumberButton.simulate("keydown", { keyCode: 13, preventDefault: preventDefaultMock });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
+            expect(preventDefaultMock).toHaveBeenCalled();
             expect(pageNumberButton.hasClass("active"));
         });
 
         it("when custom page button 6 has focus and space is pressed, set page to 6", () => {
-            const pageNumberViewProps = {
-                ...defaultPageNumberViewProps,
-                onClickAction: jasmine.createSpy("onClick")
-            };
-
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("keydown", { keyCode: 32 });
+            const preventDefaultMock = jasmine.createSpy();
+            pageNumberButton.simulate("keydown", { keyCode: 32, preventDefault: preventDefaultMock });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
+            expect(preventDefaultMock).toHaveBeenCalled();
             expect(pageNumberButton.hasClass("active"));
         });
 
         it("when custom page button 6 has focus and h key is pressed, don't set page to 6", () => {
-            const pageNumberViewProps = {
-                ...defaultPageNumberViewProps,
-                onClickAction: jasmine.createSpy("onClick")
-            };
-
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("keydown", { keyCode: 72 });
+            const preventDefaultMock = jasmine.createSpy();
+            pageNumberButton.simulate("keydown", { keyCode: 72, preventDefault: preventDefaultMock });
 
             expect(pageNumberViewProps.onClickAction).not.toHaveBeenCalled();
+            expect(preventDefaultMock).not.toHaveBeenCalled();
             expect(pageNumberButton.hasClass("active")).toBe(false);
         });
 
         it("when a high custom page button 9 is clicked, remove last break view", () => {
-            const pageNumberViewProps: PageNumberViewProps = {
-                ...defaultPageNumberViewProps,
-                onClickAction: jasmine.createSpy("onClick"),
-                selectedPageNumber: 7
-            };
+            pageNumberViewProps.selectedPageNumber = 7;
 
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);

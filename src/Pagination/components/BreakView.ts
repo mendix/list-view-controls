@@ -5,7 +5,7 @@ interface BreakProps {
     key: string;
 }
 
-export const BreakView: SFC<BreakProps> = ({ key }) => createElement("li", { className: classNames("break-view"), key },
+export const BreakView: SFC<BreakProps> = (props) => createElement("li", { className: classNames("break-view"), key: props.key },
     "..."
 );
 
