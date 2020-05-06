@@ -22,6 +22,7 @@ export const PageNumberButton = (
             role: "button",
             onClick: onClickAction,
             onKeyDown: onKeyDown.bind(null, onClickAction),
+            onKeyUp: onKeyUp.bind(null, onClickAction),
             key: props.key,
             tabindex: 0,
             "aria-label":
@@ -34,8 +35,15 @@ export const PageNumberButton = (
 };
 
 const onKeyDown = (onClickAction: () => void, e: KeyboardEvent) => {
-    // if enter or space key
-    if (e.keyCode === 13 || e.keyCode === 32) {
+    // if enter key
+    if (e.keyCode === 13) {
+        onClickAction();
+    }
+};
+
+const onKeyUp = (onClickAction: () => void, e: KeyboardEvent) => {
+    // if space key
+    if (e.keyCode === 32) {
         e.preventDefault();
         onClickAction();
     }

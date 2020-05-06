@@ -43,7 +43,7 @@ $widget-pagination-color-disabled: #999;
             }
 
             &:active {
-                color: #0595DB;
+                outline-offset: 0;
             }
         }
 

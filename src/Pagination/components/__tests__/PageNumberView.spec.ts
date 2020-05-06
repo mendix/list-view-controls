@@ -83,11 +83,9 @@ describe("PageNumberView", () => {
         it("when custom page button 6 has focus and enter is pressed, set page to 6", () => {
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
-            const preventDefaultMock = jasmine.createSpy();
-            pageNumberButton.simulate("keydown", { keyCode: 13, preventDefault: preventDefaultMock });
+            pageNumberButton.simulate("keydown", { keyCode: 13 });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
-            expect(preventDefaultMock).toHaveBeenCalled();
             expect(pageNumberButton.hasClass("active"));
         });
 
@@ -95,7 +93,7 @@ describe("PageNumberView", () => {
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
             const preventDefaultMock = jasmine.createSpy();
-            pageNumberButton.simulate("keydown", { keyCode: 32, preventDefault: preventDefaultMock });
+            pageNumberButton.simulate("keyup", { keyCode: 32, preventDefault: preventDefaultMock });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
             expect(preventDefaultMock).toHaveBeenCalled();
@@ -137,12 +135,12 @@ describe("PageNumberView", () => {
     const getDefaultPageNumberView = (pageNumber: number, props: PageNumberViewProps) =>
         createElement("li", {
                 className: classNames(
-                    props.selectedPageNumber === pageNumber ? "active" : "",
-                    pageNumber < 10 ? "single-digit" : ""
+                    props.selectedPageNumber === pageNumber ? "active" : ""
                 ),
                 role: "button",
                 onClick: jasmine.any(Function),
                 onKeyDown: jasmine.any(Function),
+                onKeyUp: jasmine.any(Function),
                 key: `page${pageNumber}`,
                 tabindex: 0,
                 "aria-label":
