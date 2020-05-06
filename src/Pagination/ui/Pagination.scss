@@ -28,11 +28,22 @@ $widget-pagination-color-disabled: #999;
             color: #000;
             border-color: transparent;
             background-color: transparent;
+            outline: 1px solid transparent;
+            outline-offset: 0;
+            margin: 2px;
 
-            &:hover{
+            &:hover {
                 color: $widget-pagination-color-active;
                 border-color: transparent;
                 background-color: transparent;
+            }
+
+            &:focus {
+                outline: 1px solid #0595DB;
+            }
+
+            &:active {
+                color: #0595DB;
             }
         }
 
@@ -86,6 +97,24 @@ $widget-pagination-color-disabled: #999;
                     color: $widget-pagination-color-active;
                     background-color: #DDDDDD;
                 }
+                &:focus:not(.break-view) {
+                    outline: 1px solid #0595DB;
+                    outline-offset: -1px;
+                }
+                &.active:focus {
+                    outline: 1px solid #FFFFFF;
+                    outline-offset: -2px;
+                }
+
+                // Alternative styling IE11, because it doesn't support outline-offset property
+                @media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {
+                    /* IE10+ CSS */
+                    margin: 1px;
+
+                    &.active:focus {
+                        outline: 1px solid #0595DB;
+                    }
+                 }
             }
         }
 
