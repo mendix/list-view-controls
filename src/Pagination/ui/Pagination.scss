@@ -77,30 +77,31 @@ $widget-pagination-color-disabled: #999;
 
             li {
                 color: black;
-                padding: 8px 16px;
+                padding: 8px 0;
                 display: inline-block;
                 width: 48px;
                 cursor: pointer;
+                text-align: center;
 
                 &.break-view{
                     cursor: default;
                 }
 
-                &.single-digit{
-                    padding-left: 20px;
-                }
-                &.active:not(.break-view), &.active:hover:not(.break-view){
+                &.active:not(.break-view), &.active:hover:not(.break-view) {
                     background-color: $widget-pagination-color-active;
                     color: white;
                 }
-                &:hover:not(.break-view){
+
+                &:hover:not(.break-view) {
                     color: $widget-pagination-color-active;
                     background-color: #DDDDDD;
                 }
+
                 &:focus:not(.break-view) {
                     outline: 1px solid #0595DB;
                     outline-offset: -1px;
                 }
+
                 &.active:focus {
                     outline: 1px solid #FFFFFF;
                     outline-offset: -2px;

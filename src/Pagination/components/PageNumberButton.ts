@@ -17,8 +17,7 @@ export const PageNumberButton = (
         "li",
         {
             className: classNames(
-                selectedPageNumber === pageNumber ? "active" : "",
-                pageNumber < 10 ? "single-digit" : ""
+                selectedPageNumber === pageNumber ? "active" : ""
             ),
             role: "button",
             onClick: onClickAction,
