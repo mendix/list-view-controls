@@ -29,12 +29,13 @@ describe("PageNumberView", () => {
         });
 
         it("all buttons when page count is less than maximum number of page buttons ", () => {
-            const pageNumberView = shallowRenderPageNumberView({ ...defaultPageNumberViewProps, pageCount: 2 });
+            const pageNumberViewProps = { ...defaultPageNumberViewProps, pageCount: 2 };
+            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
 
             expect(pageNumberView).toBeElement(
                 createElement("ul", {},
-                    getDefaultPageNumberView(1, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(2, defaultPageNumberViewProps)
+                    getDefaultPageNumberView(1, pageNumberViewProps),
+                    getDefaultPageNumberView(2, pageNumberViewProps)
                 )
             );
         });
@@ -83,7 +84,7 @@ describe("PageNumberView", () => {
         it("when custom page button 6 has focus and enter is pressed, set page to 6", () => {
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("keydown", { keyCode: 13 });
+            pageNumberButton.simulate("keydown", { key: "Enter" });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
             expect(pageNumberButton.hasClass("active"));
@@ -93,7 +94,7 @@ describe("PageNumberView", () => {
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
             const pageNumberButton = pageNumberView.find("li").at(5);
             const preventDefaultMock = jasmine.createSpy();
-            pageNumberButton.simulate("keyup", { keyCode: 32, preventDefault: preventDefaultMock });
+            pageNumberButton.simulate("keyup", { key: " ", preventDefault: preventDefaultMock });
 
             expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
             expect(preventDefaultMock).toHaveBeenCalled();
@@ -143,9 +144,9 @@ describe("PageNumberView", () => {
                 onKeyUp: jasmine.any(Function),
                 key: `page${pageNumber}`,
                 tabindex: 0,
-                "aria-label":
+                title:
                     props.selectedPageNumber === pageNumber
-                        ? `Current page, page ${pageNumber}`
+                        ? `Currently showing page ${pageNumber} of ${props.pageCount}`
                         : `Go to page ${pageNumber}`
             },
             pageNumber
