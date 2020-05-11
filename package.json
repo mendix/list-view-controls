@@ -87,7 +87,7 @@
     "karma-spec-reporter": "0.0.32",
     "karma-webpack": "^4.0.2",
     "mendix-client": "^7.15.8",
-    "mendix-widget-build-script": "^1.0.3",
+    "mendix-widget-build-script": "https://github.com/mendixlabs/mendix-widget-build-script/releases/download/v1.0.3/mendix-widget-build-script-1.0.3.tgz",
     "node-sass": "^4.13.1",
     "pre-commit": "^1.2.2",
     "raw-loader": "^4.0.0",
