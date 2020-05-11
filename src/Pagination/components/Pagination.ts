@@ -5,6 +5,7 @@ import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType } from "../Pagination";
 import { PageNumberView } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
+import { mxTranslation } from "../utils/ContainerUtils";
 
 export interface PaginationProps {
     hideUnusedPaging: boolean;
@@ -46,7 +47,13 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
                     `${isVisible ? "visible" : "hidden"}`
                 ),
                 role: "navigation",
-                "aria-label": "List pagination"
+                "aria-label": mxTranslation(
+                    "mxui.widget.Grid.a11y",
+                    "navigation_aria_label",
+                    [],
+                    true,
+                    "Pagination"
+                )
             },
             this.renderPagination()
         );

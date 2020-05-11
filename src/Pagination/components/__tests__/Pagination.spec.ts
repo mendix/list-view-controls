@@ -18,7 +18,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(defaultStylePaginationProps);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                     getDefaultPageButtons(defaultPageButtonProps)
                 )
             );
@@ -35,7 +35,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(paginationProps);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination hidden", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination hidden", role: "navigation", "aria-label": "Pagination" },
                     getDefaultPageButtons(defaultPageButtonProps)
                 )
             );
@@ -52,7 +52,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(paginationProps);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                     getDefaultPageButtons(defaultPageButtonProps)
                 )
             );
@@ -63,7 +63,7 @@ describe("Pagination", () => {
         const pagination = shallowRenderPagination({ ...defaultStylePaginationProps, pagingStyle: "pageNumberButtons" });
 
         expect(pagination).toBeElement(
-            createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+            createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                 createElement(PageNumberView, defaultPageNumberViewProps)
             )
         );
@@ -75,7 +75,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(customStylePaginationProps);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                     getCustomPageButtons()
                 )
             );
@@ -91,7 +91,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(paginationProps);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                     getCustomPageButtons()
                 )
             );
@@ -289,7 +289,7 @@ describe("Pagination", () => {
             const pagination = shallowRenderPagination(props);
 
             expect(pagination).toBeElement(
-                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "List pagination" },
+                createElement("div", { className: "pagination visible", role: "navigation", "aria-label": "Pagination" },
                     getCustomPageSizeSelect(props)
                 )
             );
