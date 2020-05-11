@@ -2,6 +2,7 @@ import { SFC, createElement } from "react";
 import * as classNames from "classnames";
 
 import { ButtonType, IconType } from "../Pagination";
+import { mxTranslation } from "../utils/ContainerUtils";
 
 export interface PageButtonProps {
     buttonType?: ButtonType;
@@ -15,7 +16,7 @@ export interface PageButtonProps {
 export const PageButton: SFC<PageButtonProps> = (props) => {
     let iconClass = "";
     let cssClass = "";
-    let ariaLabel = "";
+    let title = "";
     const disabledClass = { disabled: props.isDisabled };
     const onClick = !props.isDisabled ? props.onClickAction : () => {
         return;
@@ -25,25 +26,25 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
 
         cssClass = "btn mx-button mx-name-paging-first";
         iconClass = "glyphicon glyphicon-step-backward";
-        ariaLabel = "Go to first page";
+        title = mxTranslation("mxui.widget.Grid.a11y", "first_page", [], true, "Go to first page");
 
     } else if (props.buttonType === "previousButton") {
 
         cssClass = "btn mx-button mx-name-paging-previous";
         iconClass = "glyphicon glyphicon-backward";
-        ariaLabel = "Go to previous page";
+        title = mxTranslation("mxui.widget.Grid.a11y", "previous_page", [], true, "Go to previous page");
 
     } else if (props.buttonType === "nextButton") {
 
         cssClass = "btn mx-button mx-name-paging-next";
         iconClass = "glyphicon glyphicon-forward";
-        ariaLabel = "Go to next page";
+        title = mxTranslation("mxui.widget.Grid.a11y", "next_page", [], true, "Go to next page");
 
     } else if (props.buttonType === "lastButton") {
 
         cssClass = "btn mx-button mx-name-paging-last";
         iconClass = "glyphicon glyphicon-step-forward";
-        ariaLabel = "Go to last page";
+        title = mxTranslation("mxui.widget.Grid.a11y", "last_page", [], true, "Go to last page");
     }
 
     if (props.showIcon === "default") {
@@ -53,7 +54,7 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                     disabled: props.isDisabled,
                     onClick,
                     key: props.key,
-                    "aria-label": ariaLabel
+                    title
                 },
                 createElement("span", { className: iconClass })
             );
@@ -64,7 +65,7 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                         disabled: props.isDisabled,
                         onClick,
                         key: props.key,
-                        "aria-label": props.buttonCaption
+                        title: props.buttonCaption
                     },
                     createElement("span", { className: iconClass }),
                     createElement("span", { className: props.buttonType },
@@ -78,7 +79,7 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                     disabled: props.isDisabled,
                     onClick,
                     key: props.key,
-                    "aria-label": props.buttonCaption
+                    title: props.buttonCaption
                 },
                 createElement("span", { className: props.buttonType },
                     props.buttonCaption
@@ -92,7 +93,7 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                 disabled: props.isDisabled,
                 onClick,
                 key: props.key,
-                "aria-label": props.buttonCaption
+                title: props.buttonCaption
             },
             createElement("span", { className: classNames(props.buttonType, "") },
                 props.buttonCaption
