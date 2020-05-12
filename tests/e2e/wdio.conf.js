@@ -1,14 +1,20 @@
 const debug = process.env.DEBUG;
+const browser = process.env.BROWSER || "chrome";
 
 exports.config = {
     host: "127.0.0.1",
     port: 4444,
     specs: [ "./dist/e2e/**/*.spec.js" ],
     maxInstances: 1,
-    capabilities: [ {
-        maxInstances: 1,
-        browserName: "chrome"
-    } ],
+    capabilities: [
+        browser === "firefox"
+            ? {
+                  browserName: "firefox",
+              }
+            : {
+                  browserName: "chrome",
+              },
+    ],
     sync: true,
     logLevel: "silent",
     coloredLogs: true,
