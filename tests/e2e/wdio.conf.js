@@ -10,9 +10,15 @@ exports.config = {
         browser === "firefox"
             ? {
                   browserName: "firefox",
+                  "moz:firefoxOptions": {
+                    args: debug ? [] : ["-headless"]
+                }
               }
             : {
                   browserName: "chrome",
+                  "goog:chromeOptions": {
+                    args: ["--no-sandbox", "--headless", "--disable-gpu", "--disable-extensions"]
+                }
               },
     ],
     sync: true,
