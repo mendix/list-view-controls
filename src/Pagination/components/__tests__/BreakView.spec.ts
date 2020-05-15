@@ -7,14 +7,9 @@ import { BreakView } from "../BreakView";
 configure({ adapter: new Adapter() });
 
 describe("BreakView", () => {
-
     it("renders the structure correctly", () => {
         const breakView = shallow(createElement(BreakView, { key: "key" }));
 
-        expect(breakView).toBeElement(
-            createElement("li", { className: "break-view" },
-                "..."
-            )
-        );
+        expect(breakView).toBeElement(createElement("li", { className: "break-view", "aria-hidden": true }, "..."));
     });
 });

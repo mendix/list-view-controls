@@ -15,7 +15,6 @@ describe("PageNumberButton", () => {
     beforeEach(() => {
         defaultPageNumberButtonProps = {
             pageNumber: 1,
-            totalPages: 5,
             selectedPageNumber: 2,
             onClickAction: jasmine.createSpy(),
             key: "page1"
@@ -67,7 +66,9 @@ describe("PageNumberButton", () => {
     });
 
     function createExpectedPageNumberButtonElement(props: PageNumberButtonProps) {
-        const { pageNumber, totalPages, selectedPageNumber } = props;
+        const { pageNumber, selectedPageNumber } = props;
+
+        const supportText = selectedPageNumber === pageNumber ? `Go to currently shown page ${pageNumber}` : `Go to page ${pageNumber}`;
 
         return createElement(
             "li",
@@ -78,10 +79,8 @@ describe("PageNumberButton", () => {
                 onKeyDown: jasmine.any(Function),
                 key: `page${pageNumber}`,
                 tabindex: 0,
-                title:
-                    selectedPageNumber === pageNumber
-                        ? `Currently showing page ${pageNumber} of ${totalPages}`
-                        : `Go to page ${pageNumber}`
+                title: supportText,
+                "aria-label": supportText
             },
             pageNumber
         );

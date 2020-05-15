@@ -109,11 +109,10 @@ describe("PageNumberView", () => {
     }
 
     function createExpectedPageNumberButtonElement(pageNumber: number, props: PageNumberViewProps) {
-        const { pageCount, selectedPageNumber } = props;
+        const { selectedPageNumber } = props;
 
         return createElement(PageNumberButton, {
             pageNumber,
-            totalPages: pageCount,
             selectedPageNumber
         } as any);
     }
