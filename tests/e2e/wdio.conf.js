@@ -17,7 +17,7 @@ exports.config = {
             : {
                   browserName: "chrome",
                   "goog:chromeOptions": {
-                    args: ["--no-sandbox", "--headless", "--disable-gpu", "--disable-extensions"]
+                    args: debug ? [] : ["--no-sandbox", "--headless", "--disable-gpu", "--disable-extensions"]
                 }
               },
     ],

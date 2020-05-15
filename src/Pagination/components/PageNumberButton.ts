@@ -1,5 +1,5 @@
 import { ReactElement, createElement } from "react";
-import * as classNames from "classnames";
+import classNames from "classnames";
 
 export interface PageNumberButtonProps {
     pageNumber: number;
