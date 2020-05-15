@@ -310,7 +310,7 @@ describe("Pagination", () => {
         return `${fromValue} to ${toValue} of ${maxPageSize}`;
     };
 
-    const createButton = (buttonProps?: PageButtonProps) => createElement(PageButton, {
+    const createButton = (buttonProps?: PageButtonProps & { key?: string | number }) => createElement(PageButton, {
         ...buttonProps
     });
 
@@ -408,7 +408,7 @@ describe("Pagination", () => {
         pagingStyle: "custom"
     };
 
-    const defaultPageNumberViewProps: PageNumberViewProps = {
+    const defaultPageNumberViewProps: PageNumberViewProps & { key?: string | number } = {
         maxPageButtons: 7,
         onClickAction: jasmine.any(Function) as any,
         pageCount: 16,

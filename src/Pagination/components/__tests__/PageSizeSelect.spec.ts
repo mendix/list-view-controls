@@ -23,7 +23,7 @@ describe("PageSizeDropdown", () => {
         }
     ];
 
-    const pageSizeSelectProps: PageSizeSelectProps = {
+    const pageSizeSelectProps: PageSizeSelectProps & { key?: string | number } = {
         onChange: () => jasmine.any(Function) as any,
         pageSize: 2,
         sizeOptions,

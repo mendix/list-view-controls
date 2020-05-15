@@ -1,43 +1,59 @@
 import { createElement } from "react";
 import { configure, shallow } from "enzyme";
 import Adapter = require("enzyme-adapter-react-16");
-import * as classNames from "classnames";
 
 import { PageNumberView, PageNumberViewProps } from "../PageNumberView";
 import { BreakView } from "../BreakView";
+import { PageNumberButton } from "../PageNumberButton";
 
 configure({ adapter: new Adapter() });
 
 describe("PageNumberView", () => {
+    const defaultPageNumberViewProps: PageNumberViewProps & { key?: string | number } = {
+        maxPageButtons: 7,
+        onClickAction: () => {
+            /* */
+        },
+        pageCount: 10,
+        selectedPageNumber: 1,
+        key: "key"
+    };
 
     describe("render", () => {
-
         it("the entire structure when the page count is less then maximum number of buttons ", () => {
             const pageNumberView = shallowRenderPageNumberView(defaultPageNumberViewProps);
 
-            expect(pageNumberView).toBeElement(
-                createElement("ul", {},
-                    getDefaultPageNumberView(1, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(2, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(3, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(4, defaultPageNumberViewProps),
-                    getDefaultPageNumberView(5, defaultPageNumberViewProps),
-                    createElement(BreakView, { key: "break" }),
-                    getDefaultPageNumberView(10, defaultPageNumberViewProps)
+            expect(
+                pageNumberView.matchesElement(
+                    createElement(
+                        "ul",
+                        {},
+                        createExpectedPageNumberButtonElement(1, defaultPageNumberViewProps),
+                        createExpectedPageNumberButtonElement(2, defaultPageNumberViewProps),
+                        createExpectedPageNumberButtonElement(3, defaultPageNumberViewProps),
+                        createExpectedPageNumberButtonElement(4, defaultPageNumberViewProps),
+                        createExpectedPageNumberButtonElement(5, defaultPageNumberViewProps),
+                        createElement(BreakView),
+                        createExpectedPageNumberButtonElement(10, defaultPageNumberViewProps)
+                    )
                 )
-            );
+            ).toBe(true);
         });
 
         it("all buttons when page count is less than maximum number of page buttons ", () => {
             const pageNumberViewProps = { ...defaultPageNumberViewProps, pageCount: 2 };
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
 
-            expect(pageNumberView).toBeElement(
-                createElement("ul", {},
-                    getDefaultPageNumberView(1, pageNumberViewProps),
-                    getDefaultPageNumberView(2, pageNumberViewProps)
+            expect(
+                pageNumberView.matchesElement(
+                    createElement(
+                        "ul",
+                        {},
+                        createExpectedPageNumberButtonElement(1, pageNumberViewProps),
+                        createExpectedPageNumberButtonElement(2, pageNumberViewProps)
+                    )
                 )
-            );
+            ).toBe(true);
         });
 
         it("structure with two break views when page number is more than maximum number of page buttons", () => {
@@ -48,17 +64,21 @@ describe("PageNumberView", () => {
 
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
 
-            expect(pageNumberView).toBeElement(
-                createElement("ul", {},
-                    getDefaultPageNumberView(1, pageNumberViewProps),
-                    createElement(BreakView, { key: "breakLeft" }),
-                    getDefaultPageNumberView(4, pageNumberViewProps),
-                    getDefaultPageNumberView(5, pageNumberViewProps),
-                    getDefaultPageNumberView(6, pageNumberViewProps),
-                    createElement(BreakView, { key: "breakRight" }),
-                    getDefaultPageNumberView(10, pageNumberViewProps)
+            expect(
+                pageNumberView.matchesElement(
+                    createElement(
+                        "ul",
+                        {},
+                        createExpectedPageNumberButtonElement(1, pageNumberViewProps),
+                        createElement(BreakView),
+                        createExpectedPageNumberButtonElement(4, pageNumberViewProps),
+                        createExpectedPageNumberButtonElement(5, pageNumberViewProps),
+                        createExpectedPageNumberButtonElement(6, pageNumberViewProps),
+                        createElement(BreakView),
+                        createExpectedPageNumberButtonElement(10, pageNumberViewProps)
+                    )
                 )
-            );
+            ).toBe(true);
         });
     });
 
@@ -72,51 +92,11 @@ describe("PageNumberView", () => {
             };
         });
 
-        it("when custom page button 6 is clicked, set page to 6", () => {
-            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
-            const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("click");
-
-            expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
-            expect(pageNumberButton.hasClass("active"));
-        });
-
-        it("when custom page button 6 has focus and enter is pressed, set page to 6", () => {
-            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
-            const pageNumberButton = pageNumberView.find("li").at(5);
-            pageNumberButton.simulate("keydown", { key: "Enter" });
-
-            expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
-            expect(pageNumberButton.hasClass("active"));
-        });
-
-        it("when custom page button 6 has focus and space is pressed, set page to 6", () => {
-            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
-            const pageNumberButton = pageNumberView.find("li").at(5);
-            const preventDefaultMock = jasmine.createSpy();
-            pageNumberButton.simulate("keyup", { key: " ", preventDefault: preventDefaultMock });
-
-            expect(pageNumberViewProps.onClickAction).toHaveBeenCalled();
-            expect(preventDefaultMock).toHaveBeenCalled();
-            expect(pageNumberButton.hasClass("active"));
-        });
-
-        it("when custom page button 6 has focus and h key is pressed, don't set page to 6", () => {
-            const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
-            const pageNumberButton = pageNumberView.find("li").at(5);
-            const preventDefaultMock = jasmine.createSpy();
-            pageNumberButton.simulate("keydown", { keyCode: 72, preventDefault: preventDefaultMock });
-
-            expect(pageNumberViewProps.onClickAction).not.toHaveBeenCalled();
-            expect(preventDefaultMock).not.toHaveBeenCalled();
-            expect(pageNumberButton.hasClass("active")).toBe(false);
-        });
-
         it("when a high custom page button 9 is clicked, remove last break view", () => {
             pageNumberViewProps.selectedPageNumber = 7;
 
             const pageNumberView = shallowRenderPageNumberView(pageNumberViewProps);
-            const pageNumberButton = pageNumberView.find("li").at(5);
+            const pageNumberButton = pageNumberView.find("PageNumberButton").at(5);
             pageNumberButton.simulate("click");
             const breakViews = pageNumberView.find(BreakView);
 
@@ -124,31 +104,17 @@ describe("PageNumberView", () => {
         });
     });
 
-    const shallowRenderPageNumberView = (props: PageNumberViewProps) => shallow(createElement(PageNumberView, props));
-    const defaultPageNumberViewProps: PageNumberViewProps = {
-        maxPageButtons: 7,
-        onClickAction: () => { /* */ },
-        pageCount: 10,
-        selectedPageNumber: 1,
-        key: "key"
-    };
+    function shallowRenderPageNumberView(props: PageNumberViewProps) {
+        return shallow(createElement(PageNumberView, props));
+    }
 
-    const getDefaultPageNumberView = (pageNumber: number, props: PageNumberViewProps) =>
-        createElement("li", {
-                className: classNames(
-                    props.selectedPageNumber === pageNumber ? "active" : ""
-                ),
-                role: "button",
-                onClick: jasmine.any(Function),
-                onKeyDown: jasmine.any(Function),
-                onKeyUp: jasmine.any(Function),
-                key: `page${pageNumber}`,
-                tabindex: 0,
-                title:
-                    props.selectedPageNumber === pageNumber
-                        ? `Currently showing page ${pageNumber} of ${props.pageCount}`
-                        : `Go to page ${pageNumber}`
-            },
-            pageNumber
-        );
+    function createExpectedPageNumberButtonElement(pageNumber: number, props: PageNumberViewProps) {
+        const { pageCount, selectedPageNumber } = props;
+
+        return createElement(PageNumberButton, {
+            pageNumber,
+            totalPages: pageCount,
+            selectedPageNumber
+        } as any);
+    }
 });

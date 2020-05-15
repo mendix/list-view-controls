@@ -10,7 +10,6 @@ export interface PageButtonProps {
     onClickAction?: () => void;
     isDisabled?: boolean;
     buttonCaption?: string;
-    key?: string | number;
 }
 
 export const PageButton: SFC<PageButtonProps> = (props) => {
@@ -53,7 +52,6 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                     className: classNames(cssClass, disabledClass),
                     disabled: props.isDisabled,
                     onClick,
-                    key: props.key,
                     title
                 },
                 createElement("span", { className: iconClass })
@@ -64,7 +62,6 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                         className: classNames(cssClass, disabledClass),
                         disabled: props.isDisabled,
                         onClick,
-                        key: props.key,
                         title: props.buttonCaption
                     },
                     createElement("span", { className: iconClass }),
@@ -78,7 +75,6 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                     className: classNames(cssClass, disabledClass),
                     disabled: props.isDisabled,
                     onClick,
-                    key: props.key,
                     title: props.buttonCaption
                 },
                 createElement("span", { className: props.buttonType },
@@ -92,7 +88,6 @@ export const PageButton: SFC<PageButtonProps> = (props) => {
                 className: classNames(cssClass, disabledClass),
                 disabled: props.isDisabled,
                 onClick,
-                key: props.key,
                 title: props.buttonCaption
             },
             createElement("span", { className: classNames(props.buttonType, "") },

@@ -3,18 +3,17 @@ import * as classNames from "classnames";
 
 import { mxTranslation } from "../utils/ContainerUtils";
 
-interface PageNumberButtonProps {
+export interface PageNumberButtonProps {
     pageNumber: number;
-    totallPages: number;
+    totalPages: number;
     selectedPageNumber: number;
     onClickAction: () => void;
-    key?: string | number;
 }
 
 export const PageNumberButton = (
     props: PageNumberButtonProps
 ): ReactElement => {
-    const { onClickAction, pageNumber, selectedPageNumber, totallPages } = props;
+    const { onClickAction, pageNumber, selectedPageNumber, totalPages } = props;
 
     return createElement(
         "li",
@@ -25,8 +24,6 @@ export const PageNumberButton = (
             role: "button",
             onClick: onClickAction,
             onKeyDown: onKeyDown.bind(null, onClickAction),
-            onKeyUp: onKeyUp.bind(null, onClickAction),
-            key: props.key,
             tabindex: 0,
             title:
                 selectedPageNumber === pageNumber
@@ -35,7 +32,7 @@ export const PageNumberButton = (
                           "page_status",
                           [],
                           true,
-                          `Currently showing page ${pageNumber} of ${totallPages}`
+                          `Currently showing page ${pageNumber} of ${totalPages}`
                       )
                     : `Go to page ${pageNumber}`
         },
@@ -44,13 +41,7 @@ export const PageNumberButton = (
 };
 
 const onKeyDown = (onClickAction: () => void, e: KeyboardEvent) => {
-    if (e.key === "Enter") {
-        onClickAction();
-    }
-};
-
-const onKeyUp = (onClickAction: () => void, e: KeyboardEvent) => {
-    if (e.key === " ") {
+    if (e.key === "Enter" || e.key === " ") {
         e.preventDefault();
         onClickAction();
     }
