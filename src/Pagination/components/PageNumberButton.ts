@@ -1,22 +1,40 @@
-import { SFC, createElement } from "react";
-import * as classNames from "classnames";
+import { ReactElement, createElement } from "react";
+import classNames from "classnames";
 
-interface PageNumberButtonProps {
+export interface PageNumberButtonProps {
     pageNumber: number;
     selectedPageNumber: number;
-    onClickAction: (pageNumber: number) => void;
-    key?: string | number;
+    onClickAction: () => void;
 }
 
-export const PageNumberButton: SFC<PageNumberButtonProps> = (props: PageNumberButtonProps) => createElement("li", {
-        className: classNames(
-            props.selectedPageNumber === props.pageNumber ? "active" : "",
-            props.pageNumber < 10 ? "single-digit" : ""
-        ),
-        onClick: () => props.onClickAction(props.pageNumber),
-        key: props.key
-    },
-    props.pageNumber
-);
+export const PageNumberButton = (
+    props: PageNumberButtonProps
+): ReactElement => {
+    const { onClickAction, pageNumber, selectedPageNumber } = props;
+
+    const supportText = selectedPageNumber === pageNumber ? `Current page, page ${pageNumber}` : `Go to page ${pageNumber}`;
+
+    return createElement(
+        "li",
+        {
+            className: classNames(
+                selectedPageNumber === pageNumber ? "active" : ""
+            ),
+            role: "button",
+            onClick: onClickAction,
+            onKeyDown: onKeyDown.bind(null, onClickAction),
+            tabindex: 0,
+            "aria-label":  supportText
+        },
+        pageNumber
+    );
+};
+
+const onKeyDown = (onClickAction: () => void, e: KeyboardEvent) => {
+    if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onClickAction();
+    }
+};
 
 PageNumberButton.displayName = "PageNumberButton";

@@ -7,7 +7,6 @@ export interface PageSizeSelectProps {
     listViewSize: number;
     sizeOptions: OptionProps[];
     onChange: (offSet?: number, pageSize?: number) => void;
-    key?: string | number;
 }
 
 interface PageSizeState {
@@ -59,7 +58,7 @@ export class PageSizeSelect extends Component<PageSizeSelectProps, PageSizeState
 
     render() {
         return createElement("div",
-            { className: "page-size", key: this.props.key },
+            { className: "page-size" },
             this.renderDropDown()
         );
     }

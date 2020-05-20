@@ -1,14 +1,26 @@
 const debug = process.env.DEBUG;
+const browser = process.env.BROWSER || "chrome";
 
 exports.config = {
     host: "127.0.0.1",
     port: 4444,
     specs: [ "./dist/e2e/**/*.spec.js" ],
     maxInstances: 1,
-    capabilities: [ {
-        maxInstances: 1,
-        browserName: "chrome"
-    } ],
+    capabilities: [
+        browser === "firefox"
+            ? {
+                  browserName: "firefox",
+                  "moz:firefoxOptions": {
+                    args: debug ? [] : ["-headless"]
+                }
+              }
+            : {
+                  browserName: "chrome",
+                  "goog:chromeOptions": {
+                    args: debug ? [] : ["--no-sandbox", "--headless", "--disable-gpu", "--disable-extensions"]
+                }
+              },
+    ],
     sync: true,
     logLevel: "silent",
     coloredLogs: true,

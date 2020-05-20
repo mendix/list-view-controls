@@ -5,6 +5,7 @@ import { PageButton, PageButtonProps } from "./PageButton";
 import { IconType, ItemType, PageStyleType } from "../Pagination";
 import { PageNumberView } from "./PageNumberView";
 import { OptionProps, PageSizeSelect } from "./PageSizeSelect";
+import { mxTranslation } from "../utils/ContainerUtils";
 
 export interface PaginationProps {
     hideUnusedPaging: boolean;
@@ -36,9 +37,24 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
 
     render() {
         const { listViewSize, pageSize, hideUnusedPaging } = this.props;
-        const isVisible = !hideUnusedPaging || hideUnusedPaging && listViewSize > pageSize;
-        return createElement("div",
-            { className: classNames("pagination", `${isVisible ? "visible" : "hidden"}`) },
+        const isVisible =
+            !hideUnusedPaging || (hideUnusedPaging && listViewSize > pageSize);
+        return createElement(
+            "div",
+            {
+                className: classNames(
+                    "pagination",
+                    `${isVisible ? "visible" : "hidden"}`
+                ),
+                role: "navigation",
+                "aria-label": mxTranslation(
+                    "mxui.widget.Grid.a11y",
+                    "navigation_aria_label",
+                    [],
+                    true,
+                    "Pagination"
+                )
+            },
             this.renderPagination()
         );
     }
@@ -199,7 +215,7 @@ export class Pagination extends Component<PaginationProps, PaginationState> {
     private createMessage(message?: string, key?: number): ReactNode {
         message = this.getMessageStatus(message);
 
-        return createElement("button", { className: "paging-status", key }, message);
+        return createElement("span", { className: "paging-status", key }, message);
     }
 
     private firstPageClickAction = () => {
