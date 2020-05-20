@@ -68,7 +68,7 @@ describe("PageNumberButton", () => {
     function createExpectedPageNumberButtonElement(props: PageNumberButtonProps) {
         const { pageNumber, selectedPageNumber } = props;
 
-        const supportText = selectedPageNumber === pageNumber ? `Go to currently shown page ${pageNumber}` : `Go to page ${pageNumber}`;
+        const supportText = selectedPageNumber === pageNumber ? `Current page, page ${pageNumber}` : `Go to page ${pageNumber}`;
 
         return createElement(
             "li",
