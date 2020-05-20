@@ -79,7 +79,6 @@ describe("PageNumberButton", () => {
                 onKeyDown: jasmine.any(Function),
                 key: `page${pageNumber}`,
                 tabindex: 0,
-                title: supportText,
                 "aria-label": supportText
             },
             pageNumber

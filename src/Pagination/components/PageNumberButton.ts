@@ -24,7 +24,6 @@ export const PageNumberButton = (
             onClick: onClickAction,
             onKeyDown: onKeyDown.bind(null, onClickAction),
             tabindex: 0,
-            title: supportText,
             "aria-label":  supportText
         },
         pageNumber
