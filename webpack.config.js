@@ -14,6 +14,7 @@ const widgetConfig = {
     entry: {
         CheckBoxFilter: "./src/CheckBoxFilter/components/CheckBoxFilterContainer.ts",
         DropDownFilter: "./src/DropDownFilter/components/DropDownFilterContainer.ts",
+        DropDownReferenceFilter: "./src/DropDownReferenceFilter/components/DropDownReferenceFilterContainer.ts",
         DropDownSort: "./src/DropDownSort/components/DropDownSortContainer.ts",
         TextBoxSearch: "./src/TextBoxSearch/components/TextBoxSearchContainer.ts",
         Pagination: "./src/Pagination/components/PaginationContainer.ts",
@@ -104,6 +105,7 @@ const previewConfig = {
     entry: {
         CheckBoxFilter: "./src/CheckBoxFilter/CheckBoxFilter.webmodeler.ts",
         DropDownFilter: "./src/DropDownFilter/DropDownFilter.webmodeler.ts",
+        DropDownReferenceFilter: "./src/DropDownReferenceFilter/DropDownReferenceFilter.webmodeler.ts",
         DropDownSort: "./src/DropDownSort/DropDownSort.webmodeler.ts",
         TextBoxSearch: "./src/TextBoxSearch/TextBoxSearch.webmodeler.ts",
         Pagination: "./src/Pagination/Pagination.webmodeler.ts",
