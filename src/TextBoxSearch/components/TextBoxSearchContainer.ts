@@ -117,16 +117,27 @@ export default class SearchContainer extends Component<ContainerProps, Container
         if (!searchQuery) {
             return "";
         }
+        const meta = mx.meta.getEntity(this.props.entity);
 
         if (window.mx.isOffline()) {
             const offlineConstraints: mendix.lib.dataSource.OfflineConstraint[] = [];
             this.props.attributeList.forEach(search => {
-                offlineConstraints.push({
-                    attribute: search.attribute,
-                    operator: "contains",
-                    path: this.props.entity,
-                    value: searchQuery
-                });
+                if (meta.isEnum(search.attribute)) {
+                    this.matchEnumCaptions(meta, search, searchQuery)
+                        .forEach(match => offlineConstraints.push({
+                            attribute: search.attribute,
+                            operator: "contains",
+                            path: this.props.entity,
+                            value: match
+                        }));
+                } else {
+                    offlineConstraints.push({
+                        attribute: search.attribute,
+                        operator: "contains",
+                        path: this.props.entity,
+                        value: searchQuery
+                    });
+                }
             });
             // todo check of empty search for offline
             return {
@@ -137,10 +148,25 @@ export default class SearchContainer extends Component<ContainerProps, Container
 
         const constraints: string[] = [];
         this.props.attributeList.forEach(searchAttribute => {
-            constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+            if (meta.isEnum(searchAttribute.attribute)) {
+                this.matchEnumCaptions(meta, searchAttribute, searchQuery)
+                    .forEach(match => constraints.push(`${searchAttribute.attribute}='${match}'`));
+            } else {
+                constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+            }
         });
 
         return "[" + constraints.join(" or ") + "]";
+    }
+
+    private matchEnumCaptions(meta: mendix.lib.MxMetaObject, search: SearchAttributes, searchQuery: string) {
+        return meta.getEnumMap(search.attribute)
+            .reduce<string[]>((prev, current) => {
+                if (current.caption.match(new RegExp(searchQuery, "i"))) {
+                    prev.push(current.key);
+                }
+                return prev;
+            }, []);
     }
 
     private connectToListView() {
