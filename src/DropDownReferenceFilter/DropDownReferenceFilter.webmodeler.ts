@@ -40,18 +40,14 @@ export class preview extends Component<ContainerProps> {
     private getFilters(): FilterProps[] {
         const filters: FilterProps[] = [ {
             caption: "",
-            filterBy: "none",
-            attribute: "",
-            attributeValue: "",
+            value: "",
             constraint: "",
             isDefault: !this.props.defaultValue
         } ];
         if (this.props.defaultValue) {
             filters.push({
                 caption: this.props.defaultValue,
-                filterBy: "XPath",
-                attribute: "",
-                attributeValue: "",
+                value: this.props.defaultValue,
                 constraint: "",
                 isDefault: !this.props.defaultValue
             });

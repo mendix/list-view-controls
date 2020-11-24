@@ -30,9 +30,7 @@ export type SortOrder = "asc" | "desc";
 
 export interface FilterProps {
     caption: string;
-    filterBy: filterOptions;
-    attribute: string;
-    attributeValue: string;
+    value: string;
     constraint: string;
     isDefault: boolean;
 }
@@ -60,9 +58,7 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
     private retriesFind = 0;
     private defaultFilter: FilterProps = {
         caption: "",
-        filterBy: "none",
-        attribute: "",
-        attributeValue: "",
+        value: "",
         constraint: "",
         isDefault: true
     };
@@ -122,8 +118,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         if (hasContext && !mxObjectId) {
             return;
         }
-
-        const filterEntity = this.props.filterEntityPath.split("/")[1];
+        const pathParts = this.props.filterEntityPath.split("/");
+        const filterEntity = pathParts[pathParts.length - 1];
         const xpath = `//${filterEntity}${this.props.constraint.split("[%CurrentObject%]").join(mxObjectId)}`;
         const sort = createSortProps(this.props.sortAttributes);
         mx.data.get({
@@ -134,8 +130,8 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
                 distinct : true
             },
             count: false,
-            callback: objs => {
-                const options: FilterProps[] = this.getOptions(objs);
+            callback: objects => {
+                const options: FilterProps[] = this.getOptions(objects);
 
                 this.setState({ options });
                 const restoreState = this.checkRestoreState();
@@ -153,21 +149,26 @@ export default class DropDownFilterContainer extends Component<ContainerProps, C
         });
     }
 
-    private getOptions(objs: mendix.lib.MxObject[]): FilterProps[] {
+    private getOptions(objects: mendix.lib.MxObject[]): FilterProps[] {
+        if (objects.length > 1000) {
+            logger.warn("Filter contains more than a 1000 options (including 1000s or more options that need to be retrieved from the server will impact page loading performance considerably on older browsers)");
+        }
         let hasDefault = false;
-        const options: FilterProps[] = objs.map(o => {
-            const value = String(o.get(this.props.attribute));
+        const isAttribute = this.props.filterEntityPath.split("/").length === 1;
+        const path = isAttribute ? "" : `${this.props.filterEntityPath}/`;
+        const options: FilterProps[] = objects.map(o => {
+            const value = o.get(this.props.attribute) as string;
+            const caption = mx.parser.formatAttribute(o, this.props.attribute);
             const isDefault = this.props.defaultValue && this.props.defaultValue === value || false;
             hasDefault = hasDefault || isDefault;
             return {
-                caption: value,
-                filterBy: "XPath",
-                attribute: "",
-                attributeValue: "",
-                constraint: `[(${this.props.filterEntityPath}/${this.props.attribute}='${value}')]`,
+                caption,
+                value,
+                constraint: `[${path}${this.props.attribute}='${value}']`,
                 isDefault
             };
-        });
+        }).filter((value, index, array) => array.map(mapObj => mapObj.value).indexOf(value.value) === index);
+
         options.unshift(this.defaultFilter);
         return options;
     }

@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<widget id="com.mendix.widget.custom.listviewcontrols.DropDownReferenceFilter" offlineCapable="true" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
+<widget id="com.mendix.widget.custom.listviewcontrols.DropDownReferenceFilter" needsEntityContext="false" xmlns="http://www.mendix.com/widget/1.0/">
     <name>Drop down reference filter</name>
     <description>Filter Mendix list views using a drop-down</description>
     <icon>iVBORw0KGgoAAAANSUhEUgAAAEAAAABACAMAAACdt4HsAAAAt1BMVEUAAACAgICAgIBVVVVVVVVNs/9dXV1iYmJVVVVgYGBeXl5VVVVYWFhVVVVZWVlJsPlVVVVXV1dVVVVWVlZYWFhWVlZVVVVWVlZWVlZVVVVXV1dWVlZKsvdXV1dVVVVWVlZVVVVWVlZWVlZVVVVJsfdWVlZWVlZVVVVWVlZVVVVWVlZVVVVJsfhVVVVVVVVVVVVWVlZVVVVWVlZVVVVWVlZVVVVJsfhVVVVVVVVWVlZVVVVIsPdVVVXLdR74AAAAO3RSTlMAAgQGCQoLDQ8QExgdJCgqLTU5O0NERUpNTlJTYGR+gIeLkZmgo6q0u8vQ1NXX2Nvc3eLm6Oz1+fv9/oAKbYIAAAE3SURBVHgB7ZVtU7JQEIbvR8WntPJFSwtMU5Q0VNR8kfj/v6tlls5M43oG+MQ05/oAu2fZa4b7y0GxMBgMhvYyusKyDeJpLc3Wj0og77MBxEaebZQg0gAikEdBasFAHg1+CSCgzj0qjk0omkc68JBeUN9TtSgjobygdl/PIIAdlyMkjOLORhYBplSeO1x3ztRMkU1wu41jr4KoBlRubzIK0A2pmYCYUBF2xQ/dL4V7IR7HXQ/oxe8xRIHl/+z71oWgsqJuV6vt6LWqyAI0Drx/aAi/1jpRO5vR49S6+q8OCxwxm2GUMNSE5XIAoqA05/15SSOwfA5AEsBmwQs0AoqBA5AEfRb0tQI4DvILmL8seC6IIHwQP5SRBG/IK+AQvX9QpLxYFPd08PE/x9WmeP18v4PBYDAUlW8TxaSIMaYQAgAAAABJRU5ErkJggg==</icon>
@@ -9,17 +9,19 @@
             <category>General</category>
             <description>Select the same entity as the list view that this widget should interact with. If multiple list views with this entity are found, the closest is used</description>
         </property>
-        <property key="filterEntityPath" entityProperty="entity" type="entity" pathType="reference" isPath="optional">
-            <caption>Asociation</caption>
+        <property key="filterEntityPath" type="entity" isPath="optional" pathType="reference" entityProperty="entity">
+            <caption>Path</caption>
             <category>General</category>
             <description/>
         </property>
-        <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="filterEntityPath">
+        <property key="attribute" type="attribute" entityProperty="filterEntityPath">
             <caption>Attribute</caption>
             <category>General</category>
-            <description>The attribute on which the filter method is applied to</description>
+            <description>The attribute shown in the drop down</description>
             <attributeTypes>
                 <attributeType name="String"/>
+                <attributeType name="Enum"/>
+                <attributeType name="Boolean"/>
             </attributeTypes>
         </property>
         <property key="constraint" type="entityConstraint" entityProperty="filterEntityPath" required="false">
@@ -32,17 +34,19 @@
             <category>General</category>
             <description/>
             <properties>
-                <property key="attribute" type="attribute" required="false" isPath="optional" pathType="reference" entityProperty="../filterEntityPath">
+                <property key="attribute" type="attribute" entityProperty="../filterEntityPath">
                     <caption>Attribute</caption>
                     <category>Attribute</category>
                     <description/>
                     <attributeTypes>
                         <attributeType name="AutoNumber"/>
                         <attributeType name="Enum"/>
+                        <attributeType name="Boolean"/>
                         <attributeType name="Decimal"/>
                         <attributeType name="Integer"/>
                         <attributeType name="Long"/>
                         <attributeType name="String"/>
+                        <attributeType name="DateTime"/>
                     </attributeTypes>
                 </property>
                 <property key="sortOrder" type="enumeration" defaultValue="asc">
