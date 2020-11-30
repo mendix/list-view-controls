@@ -4,6 +4,7 @@
         <widgetFiles>
             <widgetFile path="CheckBoxFilter/CheckBoxFilter.xml"/>
             <widgetFile path="DropDownFilter/DropDownFilter.xml"/>
+            <widgetFile path="DropDownReferenceFilter/DropDownReferenceFilter.xml"/>
             <widgetFile path="DropDownSort/DropDownSort.xml"/>
             <widgetFile path="TextBoxSearch/TextBoxSearch.xml"/>
             <widgetFile path="Pagination/Pagination.xml"/>
@@ -12,6 +13,7 @@
         <files>
             <file path="com/mendix/widget/custom/listviewcontrols/CheckBoxFilter"/>
             <file path="com/mendix/widget/custom/listviewcontrols/DropDownFilter"/>
+            <file path="com/mendix/widget/custom/listviewcontrols/DropDownReferenceFilter"/>
             <file path="com/mendix/widget/custom/listviewcontrols/DropDownSort"/>
             <file path="com/mendix/widget/custom/listviewcontrols/TextBoxSearch"/>
             <file path="com/mendix/widget/custom/listviewcontrols/Pagination"/>
