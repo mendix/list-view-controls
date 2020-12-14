@@ -123,13 +123,23 @@ export default class SearchContainer extends Component<ContainerProps, Container
             const offlineConstraints: mendix.lib.dataSource.OfflineConstraint[] = [];
             this.props.attributeList.forEach(search => {
                 if (meta.isEnum(search.attribute)) {
-                    this.matchEnumCaptions(meta, search, searchQuery)
-                        .forEach(match => offlineConstraints.push({
+                    const enumCaptionMatches = this.matchEnumCaptions(meta, search, searchQuery);
+
+                    if (enumCaptionMatches.length > 0) {
+                        enumCaptionMatches.forEach(match => offlineConstraints.push({
                             attribute: search.attribute,
                             operator: "contains",
                             path: this.props.entity,
                             value: match
                         }));
+                    } else {
+                        offlineConstraints.push({
+                            attribute: search.attribute,
+                            operator: "contains",
+                            path: this.props.entity,
+                            value: searchQuery
+                        });
+                    }
                 } else {
                     offlineConstraints.push({
                         attribute: search.attribute,
@@ -149,8 +159,13 @@ export default class SearchContainer extends Component<ContainerProps, Container
         const constraints: string[] = [];
         this.props.attributeList.forEach(searchAttribute => {
             if (meta.isEnum(searchAttribute.attribute)) {
-                this.matchEnumCaptions(meta, searchAttribute, searchQuery)
-                    .forEach(match => constraints.push(`${searchAttribute.attribute}='${match}'`));
+                const enumCaptionMatches = this.matchEnumCaptions(meta, searchAttribute, searchQuery);
+
+                if (enumCaptionMatches.length > 0) {
+                    enumCaptionMatches.forEach(match => constraints.push(`${searchAttribute.attribute}='${match}'`));
+                } else {
+                    constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+                }
             } else {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
             }
