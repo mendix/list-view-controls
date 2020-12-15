@@ -137,7 +137,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
                             attribute: search.attribute,
                             operator: "contains",
                             path: this.props.entity,
-                            value: searchQuery
+                            value: " "
                         });
                     }
                 } else {
@@ -164,7 +164,7 @@ export default class SearchContainer extends Component<ContainerProps, Container
                 if (enumCaptionMatches.length > 0) {
                     enumCaptionMatches.forEach(match => constraints.push(`${searchAttribute.attribute}='${match}'`));
                 } else {
-                    constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
+                    constraints.push(`contains(${searchAttribute.attribute}," ")`);
                 }
             } else {
                 constraints.push(`contains(${searchAttribute.attribute},'${searchQuery}')`);
