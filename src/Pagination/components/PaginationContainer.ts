@@ -1,5 +1,4 @@
 import { Component, ReactChild, ReactNode, createElement } from "react";
-import { hot } from "react-hot-loader";
 
 import * as classNames from "classnames";
 import * as dojoAspect from "dojo/aspect";
@@ -11,8 +10,12 @@ import { DataSourceHelper, DataSourceHelperListView } from "../../Shared/DataSou
 
 import {
     getTranslations,
-    hideLoadMoreButton, mxTranslation, persistListViewHeight,
-    resetListViewHeight, setListNodeToEmpty, showLoadMoreButton
+    hideLoadMoreButton,
+    mxTranslation,
+    persistListViewHeight,
+    resetListViewHeight,
+    setListNodeToEmpty,
+    showLoadMoreButton
 } from "../utils/ContainerUtils";
 
 import { ModelerProps } from "../Pagination";
@@ -281,4 +284,4 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
 
 }
 
-export default hot(module)(PaginationContainer);
+export default PaginationContainer;
