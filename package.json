@@ -1,7 +1,7 @@
 {
   "name": "list-view-controls",
   "widgetName": "ListViewControls",
-  "version": "1.3.9",
+  "version": "1.3.10",
   "description": "Search and filter Mendix list views",
   "copyright": "Mendix BV",
   "scripts": {
@@ -93,7 +93,6 @@
     "raw-loader": "^4.0.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
-    "react-hot-loader": "^4.12.19",
     "react-test-renderer": "^16.8.4",
     "remap-istanbul": "^0.13.0",
     "sass-loader": "^8.0.2",

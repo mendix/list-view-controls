@@ -47,7 +47,8 @@ export class DataSourceHelper {
         aspect.after(widget, "storeState", (store: (key: string, value: any) => void) => {
             logger.debug("after storeState");
             if (widget.__customWidgetDataSourceHelper) {
-                store("lvcSorting", widget.__customWidgetDataSourceHelper.sorting);
+                const sorting = widget.__customWidgetDataSourceHelper.sorting && widget.__customWidgetDataSourceHelper.originalSort;
+                store("lvcSorting", sorting);
                 store("lvcConstraints", widget.__customWidgetDataSourceHelper.constraints);
                 store("lvcPaging", widget.__customWidgetDataSourceHelper.paging);
             }
