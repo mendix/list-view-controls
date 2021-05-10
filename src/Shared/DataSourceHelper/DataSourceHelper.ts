@@ -125,7 +125,7 @@ export class DataSourceHelper {
     }
 
     private updateDataSource(callback: () => void, restoreState: boolean) {
-        let constraints: Constraints = [];
+        let constraints: Constraints;
         let sorting: string[][] = Object.keys(this.store.sorting)
             .map(key => this.store.sorting[key])
             .filter(sortConstraint => sortConstraint[0] && sortConstraint[1]);
@@ -161,6 +161,7 @@ export class DataSourceHelper {
                 }
             }
 
+            // TODO: Since we do not include `this.widget_datasource._constraints` here, this can cause filtering to reset all the constraints.
             constraints = [ ...unGroupedConstraints, ...unGroupedOrConstraints, ...groupedConstraints ];
 
         } else {
@@ -178,7 +179,7 @@ export class DataSourceHelper {
                 .join("")
                 .replace(/\[]/g, ""); // Remove empty string "[]"
 
-            constraints = unGroupedConstraints + groupedConstraints;
+            constraints = this.widget._datasource._constraints + unGroupedConstraints + groupedConstraints;
             // if (!restoreState) {
             //     this.widget._datasource._sorting = sorting;
             // }
