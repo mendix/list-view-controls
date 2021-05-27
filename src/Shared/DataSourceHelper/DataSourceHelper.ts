@@ -26,6 +26,7 @@ export interface DataSourceHelperListView extends mxui.widget.ListView {
     __customWidgetPagingLoading: boolean;
     __customWidgetPagingOffset: number;
     _getSearchText?: () => string;
+    hasSearch: boolean;
 }
 
 export class DataSourceHelper {
@@ -182,7 +183,8 @@ export class DataSourceHelper {
 
             // @ts-ignore This is a subclass property, but we also handle it gracefully if not present.
             const searchPaths: string[] | undefined = this.widget._datasource._searchPaths;
-            const searchText: string | undefined = this.widget._getSearchText?.();
+            // If there is no search, trying to get it will error so first check whether search is enabled.
+            const searchText: string | undefined = this.widget.hasSearch ? this.widget._getSearchText?.() : undefined;
 
             // Unfortunately the listview datasource object does not have a `_getSearchConstraints()` function of some kind,
             // but rather builds it on the fly in `setSearchText(string)`. To not affect the ListView widget, we copy that part
