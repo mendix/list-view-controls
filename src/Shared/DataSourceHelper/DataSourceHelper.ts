@@ -25,6 +25,7 @@ export interface DataSourceHelperListView extends mxui.widget.ListView {
     __lvcPrototypeUpdated: boolean;
     __customWidgetPagingLoading: boolean;
     __customWidgetPagingOffset: number;
+    _getSearchText?: () => string;
 }
 
 export class DataSourceHelper {
@@ -179,7 +180,24 @@ export class DataSourceHelper {
                 .join("")
                 .replace(/\[]/g, ""); // Remove empty string "[]"
 
-            constraints = this.widget._datasource._constraints + unGroupedConstraints + groupedConstraints;
+            // @ts-ignore This is a subclass property, but we also handle it gracefully if not present.
+            const searchPaths: string[] | undefined = this.widget._datasource._searchPaths;
+            const searchText: string | undefined = this.widget._getSearchText?.();
+
+            // Unfortunately the listview datasource object does not have a `_getSearchConstraints()` function of some kind,
+            // but rather builds it on the fly in `setSearchText(string)`. To not affect the ListView widget, we copy that part
+            // out of the function and paste it here. Specifically it is in `QuerySource.setSearchText`.
+            const getListViewSearchConstraints = (paths: string[] | undefined, text: string | undefined): string => {
+                if (paths && text && text.trim() !== "") {
+                    const searchConstraints = paths.map(path => `contains(${path},'${searchText}')`);
+                    return `[${searchConstraints.join(" or ")}]`;
+                }
+                return "";
+            };
+
+            const listViewSearchConstraints = getListViewSearchConstraints(searchPaths, searchText);
+
+            constraints = listViewSearchConstraints + unGroupedConstraints + groupedConstraints;
             // if (!restoreState) {
             //     this.widget._datasource._sorting = sorting;
             // }
