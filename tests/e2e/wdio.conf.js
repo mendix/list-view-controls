@@ -1,5 +1,5 @@
 const debug = process.env.DEBUG;
-const browser = process.env.BROWSER || "chrome";
+const browser = process.env.BROWSER || "firefox";
 
 exports.config = {
     host: "127.0.0.1",
@@ -27,7 +27,7 @@ exports.config = {
     bail: 0,
     screenshotPath: "dist/wdio/",
     baseUrl: debug ? "http://localhost:8080/" : "https://listviewcontrols.mxapps.io/",
-    waitforTimeout: 180000,
+    waitforTimeout: 30000,
     connectionRetryTimeout: 200000,
     connectionRetryCount: 2,
     services: [ "selenium-standalone" ],

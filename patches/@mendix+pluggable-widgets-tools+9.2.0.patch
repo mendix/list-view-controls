@@ -1,0 +1,13 @@
+diff --git a/node_modules/@mendix/pluggable-widgets-tools/scripts/e2e.js b/node_modules/@mendix/pluggable-widgets-tools/scripts/e2e.js
+index eac2f5f..21b7e0d 100644
+--- a/node_modules/@mendix/pluggable-widgets-tools/scripts/e2e.js
++++ b/node_modules/@mendix/pluggable-widgets-tools/scripts/e2e.js
+@@ -29,7 +29,7 @@ async function main() {
+     }
+ 
+     const packageConf = JSON.parse(await readFile("package.json"));
+-    const widgetVersion = packageConf?.version;
++    const widgetVersion = packageConf.version;
+ 
+     if (!process.argv.includes("--no-widget-update")) {
+         const widgetMpk = ls(`dist/${widgetVersion}/*.mpk`).length;

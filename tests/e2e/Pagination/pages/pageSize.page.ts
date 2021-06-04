@@ -4,9 +4,9 @@ class PageSize {
         return $(".pagination .page-size");
     }
 
-    public get listView() { return $(".mx-listview"); }
+    public get listView() { return $(".mx-name-listView1 "); }
 
-    public get listViewItems() { return this.listView.$$(".mx-listview-item"); }
+    public get listViewItems() { return this.listView.$$("ul > li"); }
 
     public openPageSizeDropdown(): void {
         browser.url("/p/page-size");
