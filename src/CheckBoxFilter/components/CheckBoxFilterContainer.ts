@@ -127,7 +127,7 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
 
     private applyFilter(isChecked: boolean, restoreState = false) {
         if (this.dataSourceHelper) {
-            logger.debug(this.props.uniqueid, "applyFilter", isChecked, this.props.group);
+            mx.logger.debug(this.props.uniqueid, "applyFilter", isChecked, this.props.group);
             this.dataSourceHelper.setConstraint(this.props.uniqueid, this.getConstraint(isChecked), this.props.group, restoreState);
             this.setState({ isChecked });
         }

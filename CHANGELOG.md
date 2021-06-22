@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## 1.3.14 - 2021-06-22
+
+### Fixed
+
+-  We fixed all `logger` deprecated warnings being thrown during the execution. 
+
+## 1.3.13 - 2021-06-02
+
 ### Fixed
 
 -   Fixed an issue introduced in v1.3.12 where if the list view's search is not enabled, then the widget would error on any list view control widget interaction.  

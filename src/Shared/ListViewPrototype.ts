@@ -13,7 +13,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
         ListView.prototype.__lvcPrototypeUpdated = true;
         ListView.prototype.__postCreateOriginal = ListView.prototype.postCreate;
         ListView.prototype.postCreate = function(this: DataSourceHelperListView) {
-            logger.debug("list view control, overwrites postCreate prototype");
+            mx.logger.debug("list view control, overwrites postCreate prototype");
             this.__postCreateOriginal();
             if (!listviewInstanceCompatible(this)) return;
 
@@ -40,7 +40,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
 
         ListView.prototype.__loadDataOriginal = ListView.prototype._loadData;
         ListView.prototype._loadData = function(this: DataSourceHelperListView, callback: () => void) {
-            logger.debug("List view control, overwrites _loadData prototype");
+            mx.logger.debug("List view control, overwrites _loadData prototype");
             if (!listviewInstanceCompatible(this)) {
                 this.__loadDataOriginal(callback);
                 return;
@@ -67,7 +67,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
             });
         };
     } else {
-        logger.debug("Prototype update called unexpected again");
+        mx.logger.debug("Prototype update called unexpected again");
     }
 
     function listviewPrototypeCompatible(listview: DataSourceHelperListView) {
@@ -79,7 +79,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
             && listview._renderData
         );
         if (!compatible) {
-            logger.error("This Mendix version is not compatible with list view controls. The List view prototype could not be updated.");
+            mx.logger.error("This Mendix version is not compatible with list view controls. The List view prototype could not be updated.");
         }
         return compatible;
     }
@@ -102,7 +102,7 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
             && listview._datasource.getOffset
         );
         if (!compatible) {
-            logger.error("This Mendix version is not compatible with list view controls. The List view controls use is limited.");
+            mx.logger.error("This Mendix version is not compatible with list view controls. The List view controls use is limited.");
         }
         return compatible;
     }
