@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 
 ## [Unreleased]
 
+## 1.3.15 - 2021-06-28
+
+### Fixed
+
+-  We fixed a regression introduced in v1.3.10 which causes `Header Sort` and `Drop down Sort` to not keep the list view sorted when pressing back button.
+
 ## 1.3.14 - 2021-06-22
 
 ### Fixed
