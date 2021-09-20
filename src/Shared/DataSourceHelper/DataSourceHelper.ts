@@ -27,6 +27,7 @@ export interface DataSourceHelperListView extends mxui.widget.ListView {
     __customWidgetPagingOffset: number;
     _getSearchText?: () => string;
     hasSearch: boolean;
+    _lastLoadId: string;
 }
 
 export class DataSourceHelper {

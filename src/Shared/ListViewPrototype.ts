@@ -1,4 +1,5 @@
 import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceHelper";
+import { v4 as uuid } from "uuid";
 
 // Originally the the list view controls always reset the offset to 0 and remove the filtering and sorting
 // To optimize the network call we need to overwrite this behavior when filtering and sorting is set on a list view
@@ -45,11 +46,21 @@ import { DataSourceHelperListView, Paging } from "./DataSourceHelper/DataSourceH
                 this.__loadDataOriginal(callback);
                 return;
             }
+            const loadId = this._lastLoadId = uuid();
+
             if (this.__lvcPagingEnabled) {
                 // Prevent default behavior to reset of offset
                 this._datasource.setOffset(0);
             }
             this._datasource.reload(() => {
+                // Applying logic to avoid wrong rendering of elements
+                if (this._lastLoadId !== loadId) {
+                    if (callback) {
+                        callback();
+                    }
+                    return;
+                }
+
                 const offset = this._datasource.getOffset();
                 if (offset && this._datasource.getSetSize() <= offset) {
                     // When data set is filtered/restored and an offset page shows with no items,
