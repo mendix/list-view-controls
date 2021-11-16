@@ -11,6 +11,7 @@ import { FormViewState } from "../../Shared/FormViewState";
 
 export interface ContainerProps extends WrapperProps {
     listViewEntity: string;
+    listViewClassName: string;
     group: string;
     filterBy: FilterOptions;
     attribute: string;
@@ -105,7 +106,8 @@ export default class CheckboxFilterContainer extends Component<ContainerProps, C
         if (this.retriesFind > 25) {
             return true; // Give-up searching
         }
-        return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.listViewEntity);
+        // return !!SharedContainerUtils.findTargetListView(this.widgetDom.parentElement, this.props.listViewEntity);
+        return !!SharedContainerUtils.findListViewByClassName(this.widgetDom.parentElement, this.props.listViewClassName, this.props.listViewEntity);
     }
 
     private renderAlert(): ReactNode {

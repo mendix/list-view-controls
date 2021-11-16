@@ -9,6 +9,11 @@
             <category>General</category>
             <description>Select the same entity as the list view that this widget should interact with. If multiple list views with this entity are found, the closest is used</description>
         </property>
+        <property key="listViewClassName" type="string">
+            <caption>Class name</caption>
+            <category>General</category>
+            <description>The class name of the list view. See Name under the Common tab in the ListView properties.</description>
+        </property>
         <property key="defaultChecked" type="boolean" defaultValue="false">
             <caption>Default checked</caption>
             <category>General</category>

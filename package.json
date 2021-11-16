@@ -8,6 +8,11 @@
     "githubUrl": "https://github.com/mendix/testProjects",
     "branchName": "list-view-controls"
   },
+  "config": {
+    "projectPath": "C:\\Users\\laurenra\\Documents\\Mendix\\Capital Needs Analysis-lauren-filter/",
+    "mendixHost": "http://localhost:8080",
+    "developmentPort": "3000"
+  },
   "scripts": {
     "start": "webpack-dev-server --hot --open",
     "dev": "grunt",
