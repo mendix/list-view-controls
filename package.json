@@ -96,7 +96,7 @@
     "karma-webpack": "^4.0.2",
     "mendix-client": "^7.15.8",
     "mendix-widget-build-script": "https://github.com/mendixlabs/mendix-widget-build-script/releases/download/v1.0.4/mendix-widget-build-script-1.0.4.tgz",
-    "node-sass": "^4.13.1",
+    "node-sass": "^7.0.0",
     "patch-package": "^6.4.7",
     "pre-commit": "^1.2.2",
     "raw-loader": "^4.0.0",
