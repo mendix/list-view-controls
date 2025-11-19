@@ -52,7 +52,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     constructor(props: ModelerProps) {
         super(props);
 
-        mx.logger.debug(this.props.uniqueid, ".constructor");
+        console.debug(this.props.uniqueid, ".constructor");
 
         this.updateListView = this.updateListView.bind(this);
         this.translateMessageStatus = this.translateMessageStatus.bind(this);
@@ -76,13 +76,13 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     async componentDidMount() {
-        mx.logger.debug(this.props.uniqueid, ".componentDidMount");
+        console.debug(this.props.uniqueid, ".componentDidMount");
         const isValidConfig = !!mx.session.getConfig("uiconfig.translations");
         if (!isValidConfig) {
             try {
                 await getTranslations();
             } catch (e) {
-                mx.logger.debug(this.props.uniqueid, ".loadingTranslations", e.message);
+                console.debug(this.props.uniqueid, ".loadingTranslations", e.message);
             }
             this.setState({ loadTranslations: true });
         }
@@ -90,7 +90,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     render() {
-        mx.logger.debug(this.props.uniqueid, ".render");
+        console.debug(this.props.uniqueid, ".render");
         return createElement("div",
             {
                 className: classNames("widget-pagination", this.props.class),
@@ -105,7 +105,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     componentWillUnmount() {
-        mx.logger.debug(this.props.uniqueid, ".componentWillUnmount");
+        console.debug(this.props.uniqueid, ".componentWillUnmount");
         showLoadMoreButton(this.state.targetListView);
         this.viewStateManager.destroy();
     }
@@ -115,7 +115,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private checkListViewAvailable(): boolean {
-        mx.logger.debug(this.props.uniqueid, ".checkListViewAvailable");
+        console.debug(this.props.uniqueid, ".checkListViewAvailable");
         if (!this.widgetDom) {
             return false;
         }
@@ -129,11 +129,11 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private renderPageButton(): ReactNode {
-        mx.logger.debug(this.props.uniqueid, ".renderPageButton");
+        console.debug(this.props.uniqueid, ".renderPageButton");
 
         if (this.state.validationPassed && this.state.pageSize && this.state.targetListView!._datasource.getSetSize() > 0) {
             const { offset, pageSize } = this.state;
-            mx.logger.debug(this.props.uniqueid, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView!._datasource.getSetSize());
+            console.debug(this.props.uniqueid, ".renderPageButton pagesize, offset, listsize", pageSize, offset, this.state.targetListView!._datasource.getSetSize());
 
             return createElement(Pagination, {
                 getMessageStatus: this.translateMessageStatus,
@@ -152,7 +152,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     public updateListView(offSet?: number, pageSize?: number) {
-        mx.logger.debug(this.props.uniqueid, ".updateListView");
+        console.debug(this.props.uniqueid, ".updateListView");
         if (this.state.validationPassed) {
             this.setState({
                 offset: offSet !== undefined ? offSet : this.state.offset,
@@ -194,10 +194,10 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private beforeListViewDataRender(targetListView: DataSourceHelperListView) {
-        mx.logger.debug(this.props.uniqueid, ".beforeListViewDataRender");
+        console.debug(this.props.uniqueid, ".beforeListViewDataRender");
 
         dojoAspect.before(targetListView, "_renderData", () => {
-            mx.logger.debug(this.props.uniqueid, "_renderData.before");
+            console.debug(this.props.uniqueid, "_renderData.before");
 
             const datasource = targetListView._datasource;
             if (datasource.getSetSize() === 0) {
@@ -229,7 +229,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
                         listSize: datasource.getSetSize()
                     });
                 } else {
-                    mx.logger.debug(this.props.uniqueid, ".initialLoading False, pagingLoading False");
+                    console.debug(this.props.uniqueid, ".initialLoading False, pagingLoading False");
                     const previousOffset = this.state.offset;
                     const listSize = datasource.getSetSize();
                     let offset = previousOffset;
@@ -258,7 +258,7 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private afterListViewLoaded(targetListView: DataSourceHelperListView) {
-        mx.logger.debug(this.props.uniqueid, ".afterListViewLoad");
+        console.debug(this.props.uniqueid, ".afterListViewLoad");
         // Initial load of list view, also take in account the previous page state
         const datasource = targetListView._datasource;
         const pageSize = this.state.pageSize ? this.state.pageSize : datasource.getPageSize() && datasource.getPageSize() || 10;
@@ -271,9 +271,9 @@ class PaginationContainer extends Component<ModelerProps, PaginationContainerSta
     }
 
     private afterListViewDataRender(targetListView: DataSourceHelperListView) {
-        mx.logger.debug(this.props.uniqueid, ".afterListViewDataRender");
+        console.debug(this.props.uniqueid, ".afterListViewDataRender");
         dojoAspect.after(targetListView, "_renderData", () => {
-            mx.logger.debug(this.props.uniqueid, "_renderData.after");
+            console.debug(this.props.uniqueid, "_renderData.after");
             resetListViewHeight(targetListView.domNode as HTMLElement);
         });
     }

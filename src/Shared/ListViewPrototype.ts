@@ -14,7 +14,7 @@ import { v4 as uuid } from "uuid";
         ListView.prototype.__lvcPrototypeUpdated = true;
         ListView.prototype.__postCreateOriginal = ListView.prototype.postCreate;
         ListView.prototype.postCreate = function(this: DataSourceHelperListView) {
-            mx.logger.debug("list view control, overwrites postCreate prototype");
+            console.debug("list view control, overwrites postCreate prototype");
             this.__postCreateOriginal();
             if (!listviewInstanceCompatible(this)) return;
 
@@ -41,7 +41,7 @@ import { v4 as uuid } from "uuid";
 
         ListView.prototype.__loadDataOriginal = ListView.prototype._loadData;
         ListView.prototype._loadData = function(this: DataSourceHelperListView, callback: () => void) {
-            mx.logger.debug("List view control, overwrites _loadData prototype");
+            console.debug("List view control, overwrites _loadData prototype");
             if (!listviewInstanceCompatible(this)) {
                 this.__loadDataOriginal(callback);
                 return;
@@ -78,7 +78,7 @@ import { v4 as uuid } from "uuid";
             });
         };
     } else {
-        mx.logger.debug("Prototype update called unexpected again");
+        console.debug("Prototype update called unexpected again");
     }
 
     function listviewPrototypeCompatible(listview: DataSourceHelperListView) {
@@ -90,7 +90,7 @@ import { v4 as uuid } from "uuid";
             && listview._renderData
         );
         if (!compatible) {
-            mx.logger.error("This Mendix version is not compatible with list view controls. The List view prototype could not be updated.");
+            console.error("This Mendix version is not compatible with list view controls. The List view prototype could not be updated.");
         }
         return compatible;
     }
@@ -113,7 +113,7 @@ import { v4 as uuid } from "uuid";
             && listview._datasource.getOffset
         );
         if (!compatible) {
-            mx.logger.error("This Mendix version is not compatible with list view controls. The List view controls use is limited.");
+            console.error("This Mendix version is not compatible with list view controls. The List view controls use is limited.");
         }
         return compatible;
     }

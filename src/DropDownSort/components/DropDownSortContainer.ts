@@ -162,7 +162,7 @@ export default class DropDownSortContainer extends Component<ContainerProps, Con
         const { targetListView } = this.state;
 
         if (targetListView && this.dataSourceHelper) {
-            mx.logger.debug(this.props.uniqueid, "updateSort", selectedOption.name, selectedOption.sort);
+            console.debug(this.props.uniqueid, "updateSort", selectedOption.name, selectedOption.sort);
             this.dataSourceHelper.setSorting(this.props.uniqueid, [ selectedOption.name, selectedOption.sort ], restoreState);
             this.setState({ selectedOption });
             this.publishWidgetChanges(selectedOption);

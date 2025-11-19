@@ -48,7 +48,7 @@ export class DataSourceHelper {
         this.originalSort = window.mx.isOffline() ? this.widget._datasource._sort : this.widget._datasource._sorting;
 
         aspect.after(widget, "storeState", (store: (key: string, value: any) => void) => {
-            mx.logger.debug("after storeState");
+            console.debug("after storeState");
             if (widget.__customWidgetDataSourceHelper) {
                 const sorting = widget.__customWidgetDataSourceHelper.sorting.length > 0 ? widget.__customWidgetDataSourceHelper.sorting : widget.__customWidgetDataSourceHelper.originalSort;
                 store("lvcSorting", sorting);
@@ -99,13 +99,13 @@ export class DataSourceHelper {
     }
 
     private registerUpdate(restoreState: boolean) {
-        mx.logger.debug("DataSourceHelper .registerUpdate");
+        console.debug("DataSourceHelper .registerUpdate");
         if (this.timeoutHandle) {
             window.clearTimeout(this.timeoutHandle);
         }
         if (!this.updateInProgress) {
             this.timeoutHandle = window.setTimeout(() => {
-                mx.logger.debug("DataSourceHelper .execute");
+                console.debug("DataSourceHelper .execute");
                 this.updateInProgress = true;
                 // TODO Check if there's currently no update happening on the listView coming from another
                 // Feature/functionality/widget which does not use DataSourceHelper
@@ -216,12 +216,12 @@ export class DataSourceHelper {
             } else {
                 this.widget._datasource._sorting = sorting;
             }
-            mx.logger.debug("DataSourceHelper .set sort and constraint");
+            console.debug("DataSourceHelper .set sort and constraint");
             const offset = this.widget._datasource.getOffset();
             const pageSize = this.widget._datasource.getPageSize();
             if (!this.widget.__lvcPagingEnabled && offset > 0) {
                 // In case load more is used, the data source have to reload the full content
-                mx.logger.debug("reset offset");
+                console.debug("reset offset");
                 this.widget._datasource.setOffset(0);
                 this.widget._datasource.setPageSize(pageSize + offset);
             }
@@ -230,9 +230,9 @@ export class DataSourceHelper {
             }
 
             this.widget.update(null, () => {
-                mx.logger.debug("DataSourceHelper .updated");
+                console.debug("DataSourceHelper .updated");
                 if (!this.widget.__lvcPagingEnabled && offset > 0) {
-                    mx.logger.debug("restore offset");
+                    console.debug("restore offset");
                     // Restore the original paging and offset for load more.
                     this.widget._datasource.setOffset(offset);
                     this.widget._datasource.setPageSize(pageSize);
@@ -292,13 +292,13 @@ export class DataSourceHelper {
         };
 
         if (changed) {
-            mx.logger.debug(".updateDatasource changed", offset, pageSize);
+            console.debug(".updateDatasource changed", offset, pageSize);
             this.widget.__customWidgetPagingLoading = true;
             this.showLoader();
             this.widget.sequence([ "_sourceReload", "_renderData" ], () => {
                 this.widget.__customWidgetPagingLoading = false;
                 resetListViewHeight(this.widget.domNode);
-                mx.logger.debug(".updateDatasource updated");
+                console.debug(".updateDatasource updated");
                 this.hideLoader();
             });
         }

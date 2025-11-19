@@ -44,7 +44,7 @@ export const getListNode = (targetNode: HTMLElement): HTMLUListElement => {
 };
 
 export const setListNodeToEmpty = (targetNode: HTMLElement) => {
-    mx.logger.debug("setListNodeToEmpty");
+    console.debug("setListNodeToEmpty");
     // Explicitly remove children as IE does not like listNode.innerHTML = "";
     const listNode = targetNode.querySelector("ul") as HTMLUListElement;
     while (listNode.firstChild) {
@@ -53,12 +53,12 @@ export const setListNodeToEmpty = (targetNode: HTMLElement) => {
 };
 
 export const showLoader = (targetListView: DataSourceHelperListView) => {
-    mx.logger.debug("showLoader");
+    console.debug("showLoader");
     targetListView.domNode.classList.add("widget-pagination-loading");
 };
 
 export const hideLoader = (targetListView: DataSourceHelperListView) => {
-    mx.logger.debug("hideLoader");
+    console.debug("hideLoader");
     targetListView.domNode.classList.remove("widget-pagination-loading");
 };
 
@@ -84,6 +84,6 @@ export const getTranslations = async (): Promise<void> => {
         const localeIndex = metadataJson.languages.indexOf(localeCode);
         window.__widgets_translations = Object.keys(systemTexts).reduce((translations, currentKey) => ({ ...translations, [currentKey]: systemTexts[currentKey][localeIndex] }), {});
     } else {
-        mx.logger.error("Error while loading translations");
+        console.error("Error while loading translations");
     }
 };

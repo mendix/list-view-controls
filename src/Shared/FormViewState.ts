@@ -14,7 +14,7 @@ export class FormViewState<T> {
         const mxform = this.form;
         const widgetViewState = mxform && mxform.viewState ? mxform.viewState[this.widgetId] : void 0;
         const state = widgetViewState && widgetViewState[key] !== undefined ? widgetViewState[key] : defaultValue;
-        mx.logger.debug("getPageState", this.widgetId, key, defaultValue, state);
+        console.debug("getPageState", this.widgetId, key, defaultValue, state);
         return state;
     }
 
